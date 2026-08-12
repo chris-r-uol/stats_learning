@@ -18,6 +18,7 @@ Run:  python tools/build_workbooks.py
 from __future__ import annotations
 
 import csv
+import sys
 from pathlib import Path
 
 from openpyxl import Workbook
@@ -198,10 +199,7 @@ def build_data_workbook() -> None:
                 ws.cell(row=start + 1 + i, column=c, value=val).border = BOX
         autosize(ws, 22)
 
-    XLSX_DIR.mkdir(parents=True, exist_ok=True)
-    out = XLSX_DIR / "transport-stats-data.xlsx"
-    wb.save(out)
-    print(f"  wrote {out.relative_to(ROOT)}  ({len(wb.sheetnames)} sheets)")
+    return wb
 
 
 # ---------------------------------------------------------------------------
@@ -561,18 +559,83 @@ def build_workbench() -> None:
     autosize(ws, 30)
     ws.column_dimensions["C"].width = 62
 
-    WB_DIR.mkdir(parents=True, exist_ok=True)
-    out = WB_DIR / "hypothesis-test-workbench.xlsx"
-    wb.save(out)
-    print(f"  wrote {out.relative_to(ROOT)}  ({len(wb.sheetnames)} sheets)")
+    return wb
 
 
-def main() -> None:
+# ---------------------------------------------------------------------------
+
+TARGETS = [
+    (build_data_workbook, XLSX_DIR / "transport-stats-data.xlsx"),
+    (build_workbench, WB_DIR / "hypothesis-test-workbench.xlsx"),
+]
+
+
+def cell_contents(wb) -> dict:
+    """Every non-blank cell value, keyed by sheet and coordinate.
+
+    Empty strings count as blank: openpyxl writes '' but reads it back as
+    None, so keeping them would make every workbook look changed.
+    """
+    return {
+        (ws.title, cell.coordinate): cell.value
+        for ws in wb.worksheets
+        for row in ws.iter_rows()
+        for cell in row
+        if cell.value is not None and cell.value != ""
+    }
+
+
+def check() -> int:
+    """Confirm the committed workbooks still match what the code would build.
+
+    Compares cell *contents*, not bytes: an .xlsx is a ZIP archive carrying
+    timestamps, so two builds of identical content are never byte-identical.
+    """
+    from openpyxl import load_workbook
+
+    print("Checking the committed workbooks against a fresh build...")
+    problems = []
+    for builder, path in TARGETS:
+        if not path.exists():
+            problems.append(f"{path.relative_to(ROOT)} is missing")
+            continue
+        fresh = cell_contents(builder())
+        committed = cell_contents(load_workbook(path))
+        if fresh == committed:
+            print(f"  {path.relative_to(ROOT)}: {len(fresh)} cells match")
+            continue
+        only_fresh = set(fresh) - set(committed)
+        only_committed = set(committed) - set(fresh)
+        changed = [k for k in set(fresh) & set(committed) if fresh[k] != committed[k]]
+        problems.append(
+            f"{path.relative_to(ROOT)}: {len(changed)} cells differ, "
+            f"{len(only_fresh)} added, {len(only_committed)} removed")
+        for key in (changed + sorted(only_fresh) + sorted(only_committed))[:8]:
+            problems.append(f"    {key[0]}!{key[1]}: "
+                            f"committed {committed.get(key)!r} -> fresh {fresh.get(key)!r}")
+
+    if problems:
+        print("\nThe committed workbooks are out of date:\n")
+        for p in problems:
+            print(f"  x {p}")
+        print("\nRun 'python tools/build_workbooks.py' and commit the result.")
+        return 1
+    print("Up to date.")
+    return 0
+
+
+def main() -> int:
+    if "--check" in sys.argv:
+        return check()
     print("Building workbooks...")
-    build_data_workbook()
-    build_workbench()
+    for builder, path in TARGETS:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        wb = builder()
+        wb.save(path)
+        print(f"  wrote {path.relative_to(ROOT)}  ({len(wb.sheetnames)} sheets)")
     print("Done.")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

@@ -28,12 +28,7 @@ jobs:
       - name: Evaluate the workbench formulas
         run: python tools/check_workbench.py
 
+      # Compares cell contents rather than bytes: an .xlsx is a ZIP carrying
+      # timestamps, so two builds of identical content never match byte for byte.
       - name: Check the workbooks are in step with the data
-        run: |
-          python tools/build_workbooks.py
-          if ! git diff --quiet -- data/xlsx workbooks; then
-            echo "::error::The committed workbooks do not match the committed CSVs."
-            echo "Run 'python tools/build_workbooks.py' and commit the result."
-            git diff --stat -- data/xlsx workbooks
-            exit 1
-          fi
+        run: python tools/build_workbooks.py --check
