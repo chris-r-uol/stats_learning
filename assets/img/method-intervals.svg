@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 912 134" role="img" aria-label="Method for estimating intervals">
+<title>Method for estimating intervals</title>
+<rect x="4" y="4" width="168" height="88" rx="10" fill="#1f4e5f"/>
+<text x="88" y="32" text-anchor="middle" font-size="13" fill="#ffffff" font-family="system-ui, sans-serif">Identify the</text>
+<text x="88" y="48" text-anchor="middle" font-size="13" fill="#ffffff" font-family="system-ui, sans-serif">information in the</text>
+<text x="88" y="64" text-anchor="middle" font-size="13" fill="#ffffff" font-family="system-ui, sans-serif">question</text>
+<rect x="188" y="4" width="168" height="88" rx="10" fill="#1f4e5f"/>
+<text x="272" y="40" text-anchor="middle" font-size="13" fill="#ffffff" font-family="system-ui, sans-serif">Identify missing and</text>
+<text x="272" y="56" text-anchor="middle" font-size="13" fill="#ffffff" font-family="system-ui, sans-serif">solvable information</text>
+<rect x="372" y="4" width="168" height="88" rx="10" fill="#1f4e5f"/>
+<text x="456" y="40" text-anchor="middle" font-size="13" fill="#ffffff" font-family="system-ui, sans-serif">Identify the case</text>
+<text x="456" y="56" text-anchor="middle" font-size="13" fill="#ffffff" font-family="system-ui, sans-serif">from the table</text>
+<rect x="556" y="4" width="168" height="88" rx="10" fill="#1f4e5f"/>
+<text x="640" y="32" text-anchor="middle" font-size="13" fill="#ffffff" font-family="system-ui, sans-serif">Evaluate the</text>
+<text x="640" y="48" text-anchor="middle" font-size="13" fill="#ffffff" font-family="system-ui, sans-serif">function for the</text>
+<text x="640" y="64" text-anchor="middle" font-size="13" fill="#ffffff" font-family="system-ui, sans-serif">known parameters</text>
+<rect x="740" y="4" width="168" height="88" rx="10" fill="#1f4e5f"/>
+<text x="824" y="40" text-anchor="middle" font-size="13" fill="#ffffff" font-family="system-ui, sans-serif">Comment on the</text>
+<text x="824" y="56" text-anchor="middle" font-size="13" fill="#ffffff" font-family="system-ui, sans-serif">result</text>
+<line x1="6" y1="110" x2="894" y2="110" stroke="#1f4e5f" stroke-opacity="0.45" stroke-width="6" stroke-linecap="round"/>
+<path d="M 890,102 L 906,110 L 890,118 Z" fill="#1f4e5f" fill-opacity="0.45"/>
+</svg>

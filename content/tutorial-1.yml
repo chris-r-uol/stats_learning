@@ -1,0 +1,768 @@
+tutorial: 1
+title: Descriptive Statistics and Data Visualisation
+
+intro: |
+  Every statistical claim in transport starts with someone describing a pile of
+  numbers. This tutorial is about doing that honestly: knowing what kind of data
+  you have, summarising it without hiding its shape, and noticing the one
+  observation that quietly distorts everything else.
+
+learning_outcomes:
+  - Identify different types of data.
+  - Calculate basic statistical properties of data sets.
+  - Create visualisations of data sets.
+
+datasets:
+  - id: travel-times
+    name: Car travel time survey
+    csv: travel-times.csv
+    sheet: T1 Travel Times
+
+data_note: |
+  On the **T1 Travel Times** sheet the 55 observations sit in **B4:B58**, so the
+  cell ranges quoted in the worked solutions apply exactly as written.
+
+supplementary: |
+  Do the actual work in Excel (or R, or Python) — this page is here to check
+  your thinking, not to replace your spreadsheet. Where a question asks for a
+  whole table, you will be asked for a few representative cells rather than
+  every one; the full table is in the worked solution so you can compare.
+
+questions:
+
+  # ----------------------------------------------------------- Question 1
+  - id: t1-q1
+    title: Question 1 — Types of data
+    prompt: |
+      Data can be classified as **continuous**, **discrete**, **grouped**,
+      **ordinal** or **nominal**. Classify each example below.
+
+      The distinction that catches people out is *ordinal* versus *nominal*:
+      both are categories, but ordinal categories have a meaningful ranking.
+    steps:
+      - kind: choice
+        prose: true
+        ask: Speed of a moving vehicle over time.
+        options:
+          - value: Continuous
+            correct: true
+          - value: Discrete
+            feedback: |
+              Discrete data can only take separate, countable values. Speed
+              moves smoothly from one value to the next and can take *any*
+              value in between — 31.4157 mph is perfectly possible.
+          - value: Grouped
+            feedback: |
+              Grouped data is data that has been sorted into bands after
+              collection. Speed measured over time is not banded — though it
+              could be *made* grouped by binning it into 10 mph ranges.
+          - value: Ordinal
+            feedback: |
+              Ordinal data is categorical with a ranking. Speed is a number
+              you measure, not a category you assign.
+        hints:
+          - Ask yourself whether a value halfway between two observations is possible.
+
+      - kind: choice
+        prose: true
+        ask: Ranking of traffic congestion (high, medium, low).
+        options:
+          - value: Ordinal
+            correct: true
+          - value: Nominal
+            feedback: |
+              Close — it is categorical, but these categories have an order.
+              High congestion is worse than low congestion, and that ranking is
+              real information. Nominal categories have no such order.
+          - value: Discrete
+            feedback: |
+              Discrete data is counted in whole numbers. "High" is a label, not
+              a count. You could *code* it as 1, 2, 3, but the numbers would
+              only be standing in for the ranking.
+          - value: Grouped
+            feedback: |
+              Grouped data comes from binning an underlying numerical variable
+              into ranges. These are judgement categories, not numeric bands.
+        hints:
+          - Both nominal and ordinal are categorical. What separates them is whether one category is meaningfully "more" than another.
+
+      - kind: choice
+        prose: true
+        ask: Age range of drivers involved in accidents (18–25, 26–35, 36–45, 45+).
+        options:
+          - value: Grouped
+            correct: true
+          - value: Ordinal
+            feedback: |
+              Tempting, because the bands do have an order. But the ordering
+              comes from the underlying *numbers*, not from a judgement — the
+              data started out as ages and was then binned. That makes it
+              grouped.
+          - value: Continuous
+            feedback: |
+              Age itself is continuous (or discrete, if recorded in whole
+              years), but this variable has already been collapsed into bands.
+              Once you only know the band, you have grouped data.
+          - value: Discrete
+            feedback: |
+              The underlying ages are discrete, but what you have been given is
+              those ages sorted into ranges — which is what "grouped" means.
+        hints:
+          - The key word is "range". What happened to the original numbers?
+
+      - kind: choice
+        prose: true
+        ask: Vehicle types (car, truck, bus, and so on).
+        options:
+          - value: Nominal
+            correct: true
+          - value: Ordinal
+            feedback: |
+              These are categories with no ranking. A bus is not better or
+              worse than a car — just different. Without an inherent order it
+              is nominal.
+          - value: Discrete
+            feedback: |
+              You can *count* how many buses there are, but the variable itself
+              is a label rather than a number.
+          - value: Grouped
+            feedback: |
+              Grouped data is binned numerical data. Vehicle type was never a
+              number to begin with.
+
+      - kind: choice
+        prose: true
+        ask: Number of passengers on a bus.
+        options:
+          - value: Discrete
+            correct: true
+          - value: Continuous
+            feedback: |
+              There is no such thing as 23.7 passengers. Because only whole
+              numbers are possible, this is discrete — and that matters later,
+              because discrete data is what the binomial and Poisson
+              distributions are for.
+          - value: Grouped
+            feedback: |
+              It would be grouped if you were told "20–29 passengers". An exact
+              count is not grouped.
+          - value: Nominal
+            feedback: |
+              This is a genuine count, and the numbers mean what they say —
+              30 passengers really is more than 15. That makes it numerical,
+              not categorical.
+    solution:
+      working: |
+        | Example | Type | Why |
+        |---|---|---|
+        | Speed over time | Continuous | Can take any value in a range |
+        | Congestion ranking | Ordinal | Categorical, but ranked |
+        | Age range | Grouped | Discrete data collapsed into bands |
+        | Vehicle type | Nominal | Categorical with no ranking |
+        | Passenger count | Discrete | Whole numbers only |
+      note: |
+        This is not pedantry. The data type decides which summary statistics
+        are meaningful and which distribution you can justify later — you
+        cannot take the mean of a nominal variable, and you should not use a
+        normal distribution for a count of passengers.
+
+  # ----------------------------------------------------------- Question 2
+  - id: t1-q2
+    title: Question 2 — Descriptive statistics
+    dataset_label: T1 Travel Times
+    prompt: |
+      A car travel time survey recorded the time taken to travel between two
+      locations. Using the data in **B4:B58**, calculate the descriptive
+      statistics below. Give answers to 2 decimal places.
+    steps:
+      - kind: numeric
+        ask: How many observations are in the data set?
+        answer: 55
+        tol: {abs: 0}
+        verify: len(travel)
+        solution:
+          excel: "=COUNT(B4:B58)"
+          r: "length(travel_time)"
+          python: "len(df)"
+
+      - kind: numeric
+        ask: What is the mean travel time?
+        answer: 22.58
+        tol: {abs: 0.02}
+        unit: minutes
+        verify: float(travel.mean())
+        traps:
+          - value: 19
+            feedback: |
+              That is the **median**, not the mean. They are different here —
+              and the gap between them is itself telling you the data is
+              skewed.
+          - value: 21.87
+            feedback: |
+              That is the mean with the outlier removed. Question 6 asks for
+              that; here we want the full data set.
+        solution:
+          excel: "=AVERAGE(B4:B58)"
+          r: "mean(travel_time)"
+          python: "df.travel_time.mean()"
+
+      - kind: numeric
+        ask: What is the median travel time?
+        answer: 19
+        tol: {abs: 0.02}
+        unit: minutes
+        verify: float(np.median(travel))
+        traps:
+          - value: 22.58
+            feedback: |
+              That is the mean. The median is the middle value once the data is
+              sorted — the 28th of 55 observations here.
+        solution:
+          excel: "=MEDIAN(B4:B58)"
+          r: "median(travel_time)"
+          python: "df.travel_time.median()"
+
+      - kind: numeric
+        ask: What is the mode?
+        answer: 12
+        tol: {abs: 0}
+        unit: minutes
+        verify: mode_sngl(travel)
+        solution:
+          excel: "=MODE.SNGL(B4:B58)"
+          r: "as.numeric(names(sort(table(travel_time), decreasing = TRUE))[1])"
+          python: "df.travel_time.mode()[0]"
+          note: |
+            `MODE` still works for backwards compatibility, but `MODE.SNGL` is
+            the current name. Use `MODE.MULT` if you suspect more than one
+            value ties for most common.
+        on_correct: |
+          Notice that the three measures of centrality disagree: mean 22.58,
+          median 19, mode 12. The mean is *not* automatically "the middle" —
+          it is being dragged upward by the long right tail.
+
+      - kind: choice
+        ask: Which function gives the standard deviation of this data?
+        options:
+          - value: STDEV.S
+            correct: true
+            feedback: |
+              Right. This is a survey — a *sample* of all the journeys that
+              happen on this route — so the n−1 divisor is the correct one.
+          - value: STDEV.P
+            feedback: |
+              `STDEV.P` treats these 55 observations as the entire population
+              of journeys ever made between these two points. It is a survey,
+              so it is a sample: use `STDEV.S`. The difference here is small
+              (10.58 against 10.68) but the reasoning matters, and it is the
+              single most common slip in this tutorial.
+          - value: STDEVA
+            feedback: |
+              `STDEVA` also counts text and logical values as data. It happens
+              to give the same answer on a clean numeric range, but it will
+              quietly include stray labels if your range picks any up.
+        hints:
+          - Is this data the whole population, or a sample drawn from it?
+
+      - kind: numeric
+        ask: What is the standard deviation?
+        answer: 10.68
+        also_accept: [10.67]
+        tol: {abs: 0.02}
+        unit: minutes
+        verify: stdev_s(travel)
+        traps:
+          - value: 10.58
+            feedback: |
+              That is `STDEV.P` — the population formula, dividing by n instead
+              of n−1. This is a sample, so use `STDEV.S`.
+          - value: 113.99
+            tol: {abs: 0.5}
+            feedback: |
+              That is the **variance**. The standard deviation is its square
+              root, which is also why it is in minutes rather than minutes
+              squared.
+          - value: 9.37
+            feedback: |
+              That is the standard deviation with the outlier removed — that is
+              Question 6. Here we want the full data set.
+        solution:
+          excel: "=STDEV.S(B4:B58)"
+          r: "sd(travel_time)"
+          python: "df.travel_time.std()"
+          note: |
+            R's `sd()` and pandas' `.std()` both default to the sample formula
+            (n−1). NumPy does **not** — `np.std(x)` divides by n, so you need
+            `np.std(x, ddof=1)` to match Excel's `STDEV.S`.
+          working: |
+            The original handout prints 10.67. The exact value is √113.99 =
+            10.6766, which rounds to 10.68; both are accepted here. See the
+            errata note in the repository.
+
+      - kind: numeric
+        ask: What is the variance?
+        answer: 113.99
+        tol: {abs: 0.05}
+        verify: var_s(travel)
+        traps:
+          - value: 111.92
+            feedback: |
+              That is `VAR.P`, the population variance. Use `VAR.S` for a
+              sample. (If you are comparing against the handout's Question 6
+              table, note that the table used the population versions by
+              mistake — that is why its numbers differ.)
+          - value: 10.68
+            tol: {abs: 0.05}
+            feedback: |
+              That is the standard deviation. Variance is its square, in
+              minutes squared.
+        solution:
+          excel: "=VAR.S(B4:B58)"
+          r: "var(travel_time)"
+          python: "df.travel_time.var()"
+
+      - kind: numeric
+        ask: What is the skewness?
+        answer: 1.20
+        tol: {abs: 0.03}
+        verify: skew_excel(travel)
+        traps:
+          - value: 0.69
+            feedback: |
+              That is the skewness with the outlier removed. Removing one
+              extreme value nearly halves the skew — which is exactly the point
+              Question 6 is making.
+        solution:
+          excel: "=SKEW(B4:B58)"
+          r: "e1071::skewness(travel_time, type = 2)"
+          python: "df.travel_time.skew()"
+          note: |
+            You cannot use `SKEW.P` here — that is for a complete population.
+            In R, `e1071::skewness` needs `type = 2` to match Excel; in Python,
+            pandas' `.skew()` already uses the same adjusted formula, but
+            `scipy.stats.skew` needs `bias=False`.
+        on_correct: |
+          A positive skew means a tail stretching to the right — a few very slow
+          journeys pulling the mean above the median. That is what you saw
+          in the three centrality measures.
+
+      - kind: table
+        ask: Give the first, second and third quartiles.
+        tol: {abs: 0.02}
+        columns: ["1st quartile", "2nd quartile", "3rd quartile"]
+        corner: "Travel time (min)"
+        rows: ["Value"]
+        cells:
+          - {key: q1, row: 0, col: 0, answer: 14.5}
+          - {key: q2, row: 0, col: 1, answer: 19}
+          - {key: q3, row: 0, col: 2, answer: 30.5}
+        verify: "[quartile_inc(travel, .25), quartile_inc(travel, .5), quartile_inc(travel, .75)]"
+        solution:
+          excel: "=QUARTILE.INC(B4:B58, 1)   and 2, and 3"
+          r: "quantile(travel_time, c(.25, .5, .75), type = 7)"
+          python: "df.travel_time.quantile([.25, .5, .75])"
+          note: |
+            `QUARTILE.INC(range, 4)` returns the maximum, and `0` the minimum.
+            R's default `type = 7` and pandas' default both match Excel's
+            `.INC` interpolation, so all three agree.
+        on_correct: |
+          The 2nd quartile is 19 — the same as the median, because they are
+          the same thing by definition.
+    solution:
+      working: |
+        | Statistic | Value |
+        |---|---|
+        | Observations | 55 |
+        | Mean | 22.58 |
+        | Median | 19.00 |
+        | Mode | 12 |
+        | Standard deviation | 10.68 |
+        | Variance | 113.99 |
+        | Skewness | 1.20 |
+        | Quartiles (1, 2, 3) | 14.50, 19.00, 30.50 |
+
+  # ----------------------------------------------------------- Question 3
+  - id: t1-q3
+    title: Question 3 — Histogram
+    dataset_label: T1 Histogram Guide
+    prompt: |
+      The count data is on the **T1 Histogram Guide** sheet. Draw a histogram of
+      travel time using **relative frequency density** and a class width of 5.
+
+      In your spreadsheet, add three columns:
+
+      - Relative frequency = count in bin ÷ total count
+      - Relative frequency density = relative frequency ÷ bin width
+      - Cumulative relative frequency = running total of the relative frequencies
+
+      Then fill in the three representative rows below so you can check your
+      columns are right before you plot.
+    steps:
+      - kind: table
+        ask: Complete these three rows of your table.
+        tol: {abs: 0.002}
+        corner: "Bin"
+        columns: ["Relative frequency", "Relative frequency density", "Cumulative relative frequency"]
+        rows: ["(10,15]  count 16", "(25,30]  count 5", "(60,65]  count 1"]
+        cells:
+          - key: r0c0
+            row: 0
+            col: 0
+            answer: 0.291
+            traps:
+              - value: 16
+                tol: {abs: 0.5}
+                feedback: |
+                  That is the raw count. Relative frequency is the count divided
+                  by the total number of observations (55).
+          - key: r0c1
+            row: 0
+            col: 1
+            answer: 0.058
+            traps:
+              - value: 0.291
+                feedback: |
+                  That is the relative frequency again. To get the *density*,
+                  divide it by the class width of 5.
+          - {key: r0c2, row: 0, col: 2, answer: 0.291}
+          - {key: r1c0, row: 1, col: 0, answer: 0.091}
+          - {key: r1c1, row: 1, col: 1, answer: 0.018}
+          - key: r1c2
+            row: 1
+            col: 2
+            answer: 0.745
+            traps:
+              - value: 0.091
+                feedback: |
+                  Cumulative means the running total — every relative frequency
+                  from the first bin up to and including this one, added
+                  together.
+          - {key: r2c0, row: 2, col: 0, answer: 0.018}
+          - {key: r2c1, row: 2, col: 1, answer: 0.004}
+          - key: r2c2
+            row: 2
+            col: 2
+            answer: 1.000
+            traps:
+              - value: 0.982
+                feedback: |
+                  So close. This is the final bin, so the cumulative relative
+                  frequency must reach exactly 1 — every observation has now
+                  been accounted for. You have missed this bin's own
+                  contribution.
+        col_feedback:
+          1: |
+            Every cell in the density column is out. Relative frequency density
+            is relative frequency divided by the **class width** (5 here), not
+            the relative frequency itself. Dividing by the width is what makes
+            the *area* of each bar equal to the proportion of data in it.
+          2: |
+            The whole cumulative column is out. Each entry is the sum of all
+            relative frequencies up to *and including* that bin — so the last
+            one must be exactly 1.000.
+        verify: |
+          [0.291, 0.058, 0.291, 0.091, 0.018, 0.745, 0.018, 0.004, 1.000]
+        hints:
+          - There are 55 observations in total and every class is 5 minutes wide.
+          - The last bin's cumulative value is a free check on your work — it has to be 1.
+
+      - kind: choice
+        ask: Which column do you plot to draw the histogram?
+        options:
+          - value: Relative frequency density
+            correct: true
+            feedback: |
+              Right. Using density rather than raw frequency means the *area*
+              of each bar is the proportion of data it holds — which keeps the
+              plot honest if you ever use unequal class widths.
+          - value: Count
+            feedback: |
+              Plotting raw counts gives you a frequency histogram, which is
+              readable but not what was asked. It also breaks down if your
+              classes are not all the same width.
+          - value: Cumulative relative frequency
+            feedback: |
+              That is the column for Question 4's cumulative plot, not the
+              histogram.
+          - value: Relative frequency
+            feedback: |
+              Very close, but this has not been divided by the class width. It
+              works when every class is the same width, but the question asks
+              specifically for density.
+    solution:
+      working: |
+        | Bin | Count | Rel. freq | Rel. freq density | Cumulative |
+        |---|---|---|---|---|
+        | (0,5] | 0 | 0.000 | 0.000 | 0.000 |
+        | (5,10] | 0 | 0.000 | 0.000 | 0.000 |
+        | (10,15] | 16 | 0.291 | 0.058 | 0.291 |
+        | (15,20] | 16 | 0.291 | 0.058 | 0.582 |
+        | (20,25] | 4 | 0.073 | 0.015 | 0.655 |
+        | (25,30] | 5 | 0.091 | 0.018 | 0.745 |
+        | (30,35] | 7 | 0.127 | 0.025 | 0.873 |
+        | (35,40] | 4 | 0.073 | 0.015 | 0.945 |
+        | (40,45] | 2 | 0.036 | 0.007 | 0.982 |
+        | (45,50] | 0 | 0.000 | 0.000 | 0.982 |
+        | (50,55] | 0 | 0.000 | 0.000 | 0.982 |
+        | (55,60] | 0 | 0.000 | 0.000 | 0.982 |
+        | (60,65] | 1 | 0.018 | 0.004 | 1.000 |
+
+        **To plot it in Excel:** select the relative frequency density column,
+        hold Ctrl (Cmd on a Mac) and also select the bin label column, then
+        Insert → Column chart → 2-D column. Set the gap width to zero so the
+        bars touch, which is what makes it a histogram rather than a bar chart.
+      excel: "=B4/SUM($B$4:$B$16)   then  =C4/5   then  =SUM($C$4:C4)"
+      r: |
+        h <- hist(travel_time, breaks = seq(0, 65, 5), plot = FALSE)
+        h$density                      # relative frequency density
+        cumsum(h$counts) / sum(h$counts)
+      python: |
+        counts, edges = np.histogram(df.travel_time, bins=range(0, 70, 5))
+        rel = counts / counts.sum()
+        density, cumulative = rel / 5, rel.cumsum()
+      note: |
+        Excel's own "Histogram" chart type bins the data for you and gives you
+        less control over the class boundaries. Building the table by hand, as
+        here, is more work but you can see exactly what it is doing.
+
+  # ----------------------------------------------------------- Question 4
+  - id: t1-q4
+    title: Question 4 — Cumulative relative frequency plot
+    prompt: |
+      Draw a cumulative relative frequency plot of travel time using a class
+      width of 5. You already have the column you need from Question 3.
+    steps:
+      - kind: choice
+        ask: What should the last point on this plot equal?
+        options:
+          - value: "1.000"
+            correct: true
+            feedback: |
+              Yes — and that is a useful check on your arithmetic every time you
+              build one of these. If it does not reach 1, a bin has been missed.
+          - value: "0.982"
+            feedback: |
+              That is the cumulative value at the (40,45] bin, before the final
+              outlier at 61 is added. The plot must run all the way to 1.
+          - value: "55"
+            feedback: |
+              That would be the cumulative *count*. Because these are relative
+              frequencies — proportions of the total — the series ends at 1.
+          - value: "It depends on the data"
+            feedback: |
+              It does not. A cumulative relative frequency always ends at
+              exactly 1, whatever the data, because by the final bin you have
+              accounted for 100% of the observations.
+
+      - kind: numeric
+        ask: Reading from your plot, roughly what proportion of journeys took 20 minutes or less?
+        answer: 0.582
+        tol: {abs: 0.02}
+        verify: "0.582"
+        traps:
+          - value: 0.291
+            feedback: |
+              That is the cumulative value at 15 minutes, not 20. Read the
+              value at the *upper* edge of the (15,20] class.
+          - value: 0.418
+            feedback: |
+              You have taken 1 − 0.582, which is the proportion taking *more*
+              than 20 minutes. The cumulative plot reads from the left.
+        hints:
+          - Find 20 on the horizontal axis and read the curve's height there.
+        solution:
+          working: |
+            The cumulative relative frequency at the top of the (15,20] class is
+            0.582, so about 58% of journeys took 20 minutes or less.
+
+            This is the everyday use of a cumulative plot: you can read off
+            "what fraction of journeys were under X minutes" directly, which is
+            exactly the question a transport planner tends to ask.
+    solution:
+      note: |
+        Follow the same charting steps as Question 3, but select the cumulative
+        relative frequency column instead, and use a line or scatter chart
+        rather than columns — the quantity is continuous, so joining the points
+        is meaningful here in a way it is not for a histogram.
+
+  # ----------------------------------------------------------- Question 5
+  - id: t1-q5
+    title: Question 5 — Outliers
+    prompt: |
+      Using the histogram, the cumulative frequency plot and your understanding
+      of the data, how many outliers are likely to be present, and what are
+      they?
+    steps:
+      - kind: numeric
+        ask: How many outliers are in the data set?
+        answer: 1
+        tol: {abs: 0}
+        verify: "int(np.sum(travel > 45))"
+        traps:
+          - value: 0
+            feedback: |
+              Look again at the far right of the histogram. There are three
+              completely empty classes and then a single isolated bar — that
+              gap is the signature of an outlier.
+          - value: 2
+            feedback: |
+              Only one observation sits beyond the gap. The values in the
+              (40,45] class are high, but they are continuous with the rest of
+              the distribution rather than separated from it.
+        hints:
+          - An outlier shows up as a bar separated from the rest of the distribution by empty classes.
+
+      - kind: numeric
+        ask: What is its value?
+        answer: 61
+        tol: {abs: 0}
+        unit: minutes
+        verify: float(travel.max())
+        traps:
+          - value: 42
+            feedback: |
+              42 is the largest value in the main body of the data, but it is
+              not separated from it. The outlier sits in the (60,65] class.
+        solution:
+          excel: "=MAX(B4:B58)"
+          r: "max(travel_time)"
+          python: "df.travel_time.max()"
+
+      - kind: choice
+        ask: Having found it, what should you do with it?
+        prose: true
+        options:
+          - value: Investigate why it occurred, then decide — and say what you decided
+            correct: true
+            feedback: |
+              Exactly. An outlier might be a recording error, or it might be the
+              most important observation you have — a genuine 61-minute journey
+              caused by an incident is real and matters. What is not acceptable
+              is silently deleting it.
+          - value: Delete it immediately — outliers distort the statistics
+            feedback: |
+              This is the tempting one, and it is wrong. Deleting inconvenient
+              data because it moves your numbers is how you end up describing a
+              road network that does not exist. Investigate first; if you do
+              remove it, say so and say why.
+          - value: Always keep it — removing data is never justified
+            feedback: |
+              Too absolute in the other direction. If the value came from a
+              broken detector or a transcription error, keeping it means
+              reporting a fiction. The requirement is justification, not
+              preservation.
+    solution:
+      working: |
+        There is one outlier, with a value of 61 minutes.
+
+        Both plots point to it. On the histogram it is a lone bar in the
+        (60,65] class with three empty classes before it. On the cumulative
+        plot it shows up as a long flat stretch — no data at all — followed by
+        a final step up to 1.
+
+  # ----------------------------------------------------------- Question 6
+  - id: t1-q6
+    title: Question 6 — The effect of removing the outlier
+    dataset_label: T1 Travel Times
+    prompt: |
+      Repeat Question 2 with the outlier removed from your data set, then
+      compare. One observation out of 55 — under 2% of the data — is about to
+      move some statistics a great deal and others hardly at all.
+    steps:
+      - kind: numeric
+        ask: Mean, with the outlier removed.
+        answer: 21.87
+        tol: {abs: 0.02}
+        unit: minutes
+        verify: float(travel_no_outlier.mean())
+        solution:
+          excel: "=AVERAGE(B4:B58) on the reduced range, or =(SUM(B4:B58)-61)/54"
+          r: "mean(travel_time[travel_time < 61])"
+          python: "df.travel_time[df.travel_time < 61].mean()"
+
+      - kind: numeric
+        ask: Standard deviation, with the outlier removed.
+        answer: 9.37
+        tol: {abs: 0.02}
+        unit: minutes
+        verify: stdev_s(travel_no_outlier)
+        traps:
+          - value: 10.68
+            feedback: |
+              That is still the full data set. Make sure your range excludes
+              the 61.
+
+      - kind: numeric
+        ask: Skewness, with the outlier removed.
+        answer: 0.70
+        also_accept: [0.69]
+        tol: {abs: 0.03}
+        verify: skew_excel(travel_no_outlier)
+
+      - kind: choice
+        ask: Which statistic was affected *most* by removing a single observation?
+        options:
+          - value: Variance
+            correct: true
+            feedback: |
+              Yes — it fell from 113.99 to 87.78, a drop of about 23%. Variance
+              squares each deviation from the mean, so a value 38 minutes above
+              the mean contributes enormously. Measures of spread are far more
+              sensitive to extremes than measures of centre.
+          - value: Mean
+            feedback: |
+              The mean moved only 0.71 minutes, about 3%. It is affected, but
+              much less than one of the others — look at the measures of spread.
+          - value: Median
+            feedback: |
+              The median barely moved at all (19 to 18.5), which is precisely
+              why it is the more robust measure of centre. Look instead at the
+              measures of spread.
+          - value: Mode
+            feedback: |
+              The mode did not move at all — it is still 12. Removing one
+              extreme value cannot change which value occurs most often.
+
+      - kind: freetext
+        ask: |
+          Write two or three sentences explaining what this comparison tells you
+          about handling outliers, as you would put it to a colleague who does
+          not do statistics.
+        min_length: 80
+        rubric:
+          - Says which statistics moved a lot (spread — variance, standard deviation, skew) and which barely moved (mode, median, mean).
+          - Explains *why* — squaring the deviations means extreme values dominate measures of spread.
+          - Draws the practical conclusion that data must be checked for outliers before summarising it.
+          - Is written in plain language, without unexplained jargon.
+        solution:
+          working: |
+            **Model answer.** Removing a single unusually slow journey barely
+            changed the typical travel time — the mean dropped by 0.7 minutes
+            and the median by half a minute — but it changed our picture of how
+            *variable* journeys are a great deal, cutting the variance by
+            almost a quarter and nearly halving the skew. This is because
+            measures of spread square the distance of each observation from the
+            mean, so a single extreme value counts for far more than an
+            ordinary one. The practical lesson is that you have to look at your
+            data before you summarise it: quoting a standard deviation without
+            checking for outliers can badly misrepresent how reliable a journey
+            time actually is.
+    solution:
+      working: |
+        | | Without outlier | With outlier | Difference |
+        |---|---|---|---|
+        | Mean | 21.87 | 22.58 | 0.71 |
+        | Median | 18.50 | 19.00 | 0.50 |
+        | Mode | 12.00 | 12.00 | 0.00 |
+        | Standard deviation | 9.37 | 10.68 | 1.31 |
+        | Variance | 87.78 | 113.99 | 26.21 |
+        | Skew | 0.70 | 1.20 | 0.50 |
+        | 1st quartile | 14.25 | 14.50 | 0.25 |
+        | 2nd quartile | 18.50 | 19.00 | 0.50 |
+        | 3rd quartile | 30.00 | 30.50 | 0.50 |
+      note: |
+        The equivalent table in the original handout shows 10.58 and 111.92 in
+        the "with outlier" column. Those are the *population* figures
+        (`STDEV.P`, `VAR.P`), which is inconsistent with Question 2 and with
+        the rest of that same table. The sample values are used here. See
+        `ERRATA.md` in the repository.

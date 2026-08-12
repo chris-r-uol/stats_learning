@@ -1,0 +1,340 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Problem-solving methods — Transport Statistics</title>
+<meta name="description" content="Three reusable methods for probability intervals, interval estimation and hypothesis testing.">
+<link rel="stylesheet" href="assets/css/site.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>📊</text></svg>">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="masthead">
+  <div class="wrap">
+    <a class="brand" href="index.html">Transport Statistics Tutorials</a>
+    <nav aria-label="Main">
+      <a href="tutorial.html?t=1">1</a>
+      <a href="tutorial.html?t=2">2</a>
+      <a href="tutorial.html?t=3">3</a>
+      <a href="tutorial.html?t=4">4</a>
+      <a href="tutorial.html?t=5">5</a>
+      <a href="methodology.html">Methods</a>
+      <a href="reference.html">Reference</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <div class="wrap wrap-narrow">
+
+    <div class="page-head">
+      <div class="eyebrow">Support material</div>
+      <h1>Three methods that cover almost everything</h1>
+      <p class="lede">
+        A method is a sequence of steps you can apply to a whole class of
+        problems rather than working each one out from scratch. Learning these
+        three is a better investment than memorising any individual answer.
+      </p>
+    </div>
+
+    <!-- ============================================================ -->
+    <section class="card">
+      <h2>1. Evaluating probability intervals</h2>
+      <p class="muted small">Useful from Tutorial 2 onwards.</p>
+
+      <figure>
+        <img src="assets/img/method-probability.svg"
+             alt="Five steps: identify the information, identify the probability function, identify the interval, rearrange it, comment on the result.">
+      </figure>
+
+      <ol>
+        <li><strong>Identify the information in the question.</strong> Read
+          carefully and write down the values and relationships you are given.
+          Not everything in a question is relevant.</li>
+        <li><strong>Identify the probability function.</strong> Continuous
+          measurement suggests the normal distribution; a fixed number of
+          yes/no trials suggests the binomial; counts of events in a window
+          suggest the Poisson.</li>
+        <li><strong>Identify the interval to evaluate.</strong> Write it down
+          formally — P(X &lt; 15), P(X &gt; 10), P(a &lt; X &lt; b). Sketching
+          it is not a waste of time.</li>
+        <li><strong>Rearrange it to fit what you have.</strong> Excel works from
+          the left. Anything else has to be turned into a left-hand area first.
+          This is the step that separates people who can do these questions from
+          people who cannot.</li>
+        <li><strong>Comment on the result.</strong> Say what it means in plain
+          language. If you cannot explain it to someone without statistics, you
+          have not finished.</li>
+      </ol>
+
+      <div class="note">
+        <span class="note-title">The rearrangements worth memorising</span>
+        <p>P(X &gt; c) = 1 − P(X ≤ c)</p>
+        <p>P(a &lt; X &lt; b) = P(X &lt; b) − P(X &lt; a)</p>
+        <p style="margin-bottom:0">For <em>discrete</em> data, mind the boundary:
+        P(X &lt; 10) = P(X ≤ 9), which is not the same as P(X ≤ 10).</p>
+      </div>
+
+      <details class="solution" open>
+        <summary>Worked example</summary>
+        <div class="sol-body">
+          <p><em>A normal distribution has mean 0 and standard deviation 1. What
+          is the probability that a value drawn from it is less than −2?</em></p>
+          <ol>
+            <li>Mean 0, standard deviation 1, value of interest −2.</li>
+            <li>We are told it is normal, so <code>NORM.DIST</code>.</li>
+            <li>P(X &lt; −2).</li>
+            <li>Already a left-hand area — no rearrangement needed.</li>
+            <li><code>=NORM.DIST(-2,0,1,TRUE)</code> = 0.02275.</li>
+          </ol>
+          <p style="margin-bottom:0"><strong>Comment:</strong> if a value is
+          picked at random from this distribution, there is about a 2.3% chance
+          it will be below −2.</p>
+        </div>
+      </details>
+    </section>
+
+    <!-- ============================================================ -->
+    <section class="card">
+      <h2>2. Estimating intervals</h2>
+      <p class="muted small">Useful from Tutorial 3 onwards.</p>
+
+      <figure>
+        <img src="assets/img/method-intervals.svg"
+             alt="Five steps: identify the information, identify missing and solvable information, identify the case, evaluate the function, comment on the result.">
+      </figure>
+
+      <ol>
+        <li><strong>Identify the information in the question.</strong> Confidence
+          level, distribution, sample size. If no confidence level is given,
+          pick a sensible one and <em>say that you have</em>.</li>
+        <li><strong>Identify missing but solvable information.</strong> The
+          question will rarely hand you everything. The sample mean and standard
+          deviation are usually derivable from the data.</li>
+        <li><strong>Identify the case from the table.</strong> See below.</li>
+        <li><strong>Evaluate the function.</strong> With the correct spread
+          parameter — which is almost always the standard error, not the
+          standard deviation.</li>
+        <li><strong>Comment on the result.</strong></li>
+      </ol>
+
+      <div class="note warn">
+        <span class="note-title">The mistake that costs the most marks</span>
+        A confidence interval describes how precisely you have located the
+        <strong>mean</strong>, not how spread out the data is. The spread
+        parameter is σ/√n or S/√n. Using the standard deviation on its own gives
+        an interval √n times too wide.
+      </div>
+
+      <h3>Which case applies?</h3>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Case</th>
+              <th>Population normally distributed?</th>
+              <th>Population variance known?</th>
+              <th>Sample size</th>
+              <th>Use</th>
+              <th>Statistic</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>1</strong></td><td>Yes</td><td>Yes</td><td>any</td>
+              <td>Inverse Normal CDF</td>
+              <td class="nowrap">(X̄ − μ) ÷ (σ/√n) ~ Nor(0,1)</td>
+            </tr>
+            <tr>
+              <td><strong>2</strong></td><td>No</td><td>Yes</td><td>n ≥ 20</td>
+              <td>Inverse Normal CDF</td>
+              <td class="nowrap">(X̄ − μ) ÷ (σ/√n) ~ Nor(0,1)</td>
+            </tr>
+            <tr>
+              <td><strong>3</strong></td><td>Yes</td><td>No</td><td>any</td>
+              <td>Inverse t CDF</td>
+              <td class="nowrap">(X̄ − μ) ÷ (S/√n) ~ t(n−1)</td>
+            </tr>
+            <tr>
+              <td><strong>4</strong></td><td>No</td><td>No</td><td>n ≥ 30</td>
+              <td>Inverse Normal CDF</td>
+              <td class="nowrap">(X̄ − μ) ÷ (S/√n) ~ Nor(0,1)</td>
+            </tr>
+            <tr>
+              <td><strong>4</strong></td><td>Roughly normal</td><td>No</td><td>n ≥ 20</td>
+              <td>Inverse t CDF</td>
+              <td class="nowrap">(X̄ − μ) ÷ (S/√n) ~ t(n−1)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>Read the table as two questions:</p>
+      <ul>
+        <li><strong>Do I know the population standard deviation?</strong> If yes,
+          use σ. If no, estimate it from the sample and use S.</li>
+        <li><strong>Can I justify the normal distribution?</strong> Either
+          because the population is normal, or because the sample is large
+          enough for the central limit theorem. If neither, use t.</li>
+      </ul>
+
+      <details class="solution">
+        <summary>Worked example</summary>
+        <div class="sol-body">
+          <p><em>A study of driving speed outside a school sampled 100 vehicles.
+          The average speed was 25 mph with a standard deviation of 2 mph.
+          Estimate a 95% confidence interval for the population mean.</em></p>
+          <ol>
+            <li>n = 100, mean 25, sd 2, 95% confidence so α = 0.05 and the tails
+              are at 0.025 and 0.975.</li>
+            <li>Nothing further to derive.</li>
+            <li>We are not told the population is normal and we do not know its
+              standard deviation, but n = 100 is large — <strong>Case 4</strong>,
+              inverse normal.</li>
+            <li>Standard error = 2 ÷ √100 = 0.2.<br>
+              <code>=NORM.INV(0.025, 25, 0.2)</code> = 24.61<br>
+              <code>=NORM.INV(0.975, 25, 0.2)</code> = 25.39</li>
+          </ol>
+          <p style="margin-bottom:0"><strong>Comment:</strong> we can say with
+          95% confidence that the mean speed of vehicles passing this site is
+          between 24.61 and 25.39 mph.</p>
+          <div class="note small">
+            The version of this example in the original handout uses the
+            standard deviation (2) rather than the standard error (0.2), giving
+            25 ± 3.92 mph. That is the width of the interval covering individual
+            <em>vehicles</em>, not the precision of the <em>mean</em>. The
+            corrected figures are above; see <code>ERRATA.md</code>.
+          </div>
+        </div>
+      </details>
+    </section>
+
+    <!-- ============================================================ -->
+    <section class="card">
+      <h2>3. Hypothesis testing</h2>
+      <p class="muted small">Useful from Tutorial 4 onwards.</p>
+
+      <figure>
+        <img src="assets/img/method-hypothesis.svg"
+             alt="Six steps: state the hypotheses, identify the information, choose a significance level, calculate a test statistic, calculate the critical value and p-value, interpret the results.">
+      </figure>
+
+      <ol>
+        <li><strong>State the null and alternative hypothesis.</strong> H₀ is
+          always the position of no change. Decide here whether the test is one-
+          or two-tailed — two-tailed to detect a difference in any direction,
+          one-tailed when the question names a direction.</li>
+        <li><strong>Identify the important information.</strong> Sample sizes,
+          means, standard deviations. Tabulate them.</li>
+        <li><strong>Choose a significance level.</strong> If none is given, say
+          which you are using. α = 0.05 corresponds to 95% confidence.</li>
+        <li><strong>Choose and calculate a test statistic.</strong> See the
+          chooser on the <a href="reference.html">reference page</a>.</li>
+        <li><strong>Calculate the critical value and the p-value.</strong> Do
+          both. They always agree, so disagreement means you have made an
+          arithmetic slip.</li>
+        <li><strong>Interpret your results.</strong> In plain language, and
+          without ever claiming to have proved H₀.</li>
+      </ol>
+
+      <div class="note warn">
+        <span class="note-title">Decide the direction before you look</span>
+        Choosing a one-tailed test after seeing which way your result went is a
+        way of manufacturing significance. Fix the tails when you state the
+        hypotheses.
+      </div>
+
+      <div class="note">
+        <span class="note-title">Excel cannot do this in one function</span>
+        <code>T.TEST</code> and the Analysis ToolPak both need raw data ranges.
+        When a question gives you only n, the mean and the standard deviation,
+        you must build the test from cell arithmetic — which is what the
+        <a href="workbooks/hypothesis-test-workbench.xlsx">Hypothesis Test
+        Workbench</a> does for you.
+      </div>
+
+      <details class="solution">
+        <summary>Worked example</summary>
+        <div class="sol-body">
+          <p><em>Leeds council surveyed bus lateness in Leeds and Manchester. 64
+          buses in Leeds averaged 144 seconds late; 49 in Manchester averaged
+          121 seconds. The standard deviation was 49 seconds in both. Is the
+          difference significant at 95% confidence?</em></p>
+          <ol>
+            <li>H₀: μ_L = μ_M. H₁: μ_L ≠ μ_M. Two-tailed, because no direction
+              is specified.</li>
+            <li>n_L = 64, n_M = 49, means 144 and 121, s = 49 for both.</li>
+            <li>95% confidence, so α = 0.05, split as 0.025 per tail.</li>
+            <li>Two independent groups with an unknown population sd — a
+              two-sample t-test.<br>
+              t = (144 − 121) ÷ (49 × √(1/64 + 1/49)) = 23 ÷ 9.30 =
+              <strong>2.473</strong><br>
+              df = 64 + 49 − 2 = 111</li>
+            <li><code>=T.INV.2T(0.05, 111)</code> = 1.98</li>
+            <li>2.473 &gt; 1.98, so <strong>reject H₀</strong>.</li>
+          </ol>
+          <p style="margin-bottom:0"><strong>Comment:</strong> there is evidence
+          that bus lateness differs significantly between the two cities. Note
+          what has <em>not</em> been shown: nothing here explains why, and
+          nothing licenses the claim that one city's buses are better run.</p>
+        </div>
+      </details>
+    </section>
+
+    <section class="card">
+      <h2>Which test do I need?</h2>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>Situation</th><th>Test</th><th>Conditions</th></tr></thead>
+          <tbody>
+            <tr><td>One sample vs a known population mean, σ known</td>
+                <td><strong>One-sample z</strong></td>
+                <td>Population sd known</td></tr>
+            <tr><td>One sample vs a hypothesised mean, σ unknown</td>
+                <td><strong>One-sample t</strong></td>
+                <td>Roughly normal, independent observations</td></tr>
+            <tr><td>Two independent groups, σ known or n large</td>
+                <td><strong>Two-sample z</strong></td>
+                <td>Normal populations, or large enough for the CLT</td></tr>
+            <tr><td>Two independent groups, σ unknown</td>
+                <td><strong>Two-sample t</strong></td>
+                <td>Independent, roughly normal, similar variances</td></tr>
+            <tr><td>Same subjects measured twice</td>
+                <td><strong>Paired t</strong></td>
+                <td>Differences roughly normal, pairs independent</td></tr>
+            <tr><td>Two categorical variables</td>
+                <td><strong>Chi-squared</strong></td>
+                <td>Independent observations, every expected value ≥ 5</td></tr>
+            <tr><td>More than two independent groups</td>
+                <td><strong>ANOVA</strong></td>
+                <td>Independent, normal residuals, equal variances</td></tr>
+            <tr><td>Strength of a linear relationship</td>
+                <td><strong>Correlation</strong></td>
+                <td>Two continuous variables</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="small muted" style="margin-bottom:0">
+        The central limit theorem is what makes several of these work: for a
+        large enough sample from almost any population, the distribution of the
+        sample means is approximately normal. It is why "n is large" can stand
+        in for "the population is normal".
+      </p>
+    </section>
+
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <p>Practice material for the Transport Data Collection and Analysis module.</p>
+    <p class="noprint"><span data-theme-toggle></span></p>
+  </div>
+</footer>
+
+<script src="assets/js/progress.js"></script>
+<script src="assets/js/chrome.js"></script>
+</body>
+</html>

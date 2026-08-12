@@ -1,0 +1,13 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# macOS
+.DS_Store
+
+# Excel lock files
+~$*.xlsx
+
+# The original Word handout stays local — see ERRATA.md for its contents
+*.docx

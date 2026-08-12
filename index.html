@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Transport Statistics Tutorials</title>
+<meta name="description" content="Interactive practice for the Transport Data Collection and Analysis statistics tutorials. Type an answer, find out straight away whether it is right, and if not, why.">
+<link rel="stylesheet" href="assets/css/site.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>📊</text></svg>">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="masthead">
+  <div class="wrap">
+    <a class="brand" href="index.html">Transport Statistics Tutorials</a>
+    <nav aria-label="Main">
+      <a href="tutorial.html?t=1">1</a>
+      <a href="tutorial.html?t=2">2</a>
+      <a href="tutorial.html?t=3">3</a>
+      <a href="tutorial.html?t=4">4</a>
+      <a href="tutorial.html?t=5">5</a>
+      <a href="methodology.html">Methods</a>
+      <a href="reference.html">Reference</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <div class="wrap">
+
+    <div class="page-head">
+      <div class="eyebrow">Transport Data Collection and Analysis</div>
+      <h1>Practise the statistics, one step at a time</h1>
+      <p class="lede">
+        Work a question, type your answer, and find out straight away whether it
+        is right — and if it is not, what went wrong. Everything is worked in
+        Excel, with R and Python alongside if you prefer them.
+      </p>
+    </div>
+
+    <div class="card">
+      <h2>How this works</h2>
+      <div class="grid grid-3">
+        <div>
+          <h3>Do the work in your spreadsheet</h3>
+          <p class="small muted">
+            This site checks your thinking; it does not replace Excel. Download
+            the data, do the calculation properly, then bring the answer back
+            here.
+          </p>
+        </div>
+        <div>
+          <h3>Wrong answers are the useful ones</h3>
+          <p class="small muted">
+            Common mistakes are recognised individually. If you use STDEV.P
+            instead of STDEV.S, the site says so rather than just marking you
+            down.
+          </p>
+        </div>
+        <div>
+          <h3>Nothing is recorded anywhere</h3>
+          <p class="small muted">
+            None of this counts towards your assessment, and your answers never
+            leave your browser. Guessing costs you nothing but the learning.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" id="overall" hidden>
+      <h2>Your progress</h2>
+      <div class="progress-bar"><i data-bar></i></div>
+      <p class="progress-meta" data-meta></p>
+      <div class="step-actions">
+        <button class="btn quiet small" id="download-progress" type="button" hidden>
+          Download a summary
+        </button>
+        <button class="btn quiet small" id="reset-all" type="button">
+          Reset everything
+        </button>
+      </div>
+    </div>
+
+    <h2>The five tutorials</h2>
+    <div class="grid grid-2" style="margin-bottom:1.5rem">
+
+      <a class="tut-card" href="tutorial.html?t=1" data-tut="1">
+        <div class="n">Tutorial 1</div>
+        <h3>Descriptive Statistics and Data Visualisation</h3>
+        <p>Types of data, summary statistics, histograms and cumulative plots —
+           and what a single outlier does to all of them.</p>
+        <div class="progress-bar"><i data-bar></i></div>
+        <div class="progress-meta" data-meta>Loading…</div>
+      </a>
+
+      <a class="tut-card" href="tutorial.html?t=2" data-tut="2">
+        <div class="n">Tutorial 2</div>
+        <h3>Parametric Distributions and Probability Modelling</h3>
+        <p>Normal, binomial and Poisson distributions, and the art of
+           rearranging a probability into something Excel can evaluate.</p>
+        <div class="progress-bar"><i data-bar></i></div>
+        <div class="progress-meta" data-meta>Loading…</div>
+      </a>
+
+      <a class="tut-card" href="tutorial.html?t=3" data-tut="3">
+        <div class="n">Tutorial 3</div>
+        <h3>Sampling Distributions and Interval Estimation</h3>
+        <p>Critical values, the difference between a sample and a population,
+           and confidence intervals that mean what they say.</p>
+        <div class="progress-bar"><i data-bar></i></div>
+        <div class="progress-meta" data-meta>Loading…</div>
+      </a>
+
+      <a class="tut-card" href="tutorial.html?t=4" data-tut="4">
+        <div class="n">Tutorial 4</div>
+        <h3>Hypothesis Testing</h3>
+        <p>Null and alternative hypotheses, p-values, Type 1 and Type 2 errors,
+           and one-sample, two-sample and paired tests.</p>
+        <div class="progress-bar"><i data-bar></i></div>
+        <div class="progress-meta" data-meta>Loading…</div>
+      </a>
+
+      <a class="tut-card" href="tutorial.html?t=5" data-tut="5">
+        <div class="n">Tutorial 5</div>
+        <h3>Relationships Within Data</h3>
+        <p>Contingency tables, chi-squared tests of independence, and
+           least-squares regression — including where not to trust it.</p>
+        <div class="progress-bar"><i data-bar></i></div>
+        <div class="progress-meta" data-meta>Loading…</div>
+      </a>
+
+      <div class="tut-card" style="border-style:dashed">
+        <div class="n">Support material</div>
+        <h3>Methods and reference</h3>
+        <p>The three problem-solving methods, the interval-estimation case
+           table, and a function index covering the tail-direction traps.</p>
+        <div class="chiplist" style="margin-top:.6rem">
+          <a class="chip" href="methodology.html">Problem-solving methods</a>
+          <a class="chip" href="reference.html">Function reference</a>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="card">
+      <h2>Downloads</h2>
+      <div class="chiplist">
+        <a class="chip" href="data/xlsx/transport-stats-data.xlsx">Data workbook (.xlsx)</a>
+        <a class="chip" href="workbooks/hypothesis-test-workbench.xlsx">Hypothesis Test Workbench (.xlsx)</a>
+        <a class="chip" href="data/csv/travel-times.csv">Travel times (CSV)</a>
+        <a class="chip" href="data/csv/fuel-consumption.csv">Fuel consumption (CSV)</a>
+        <a class="chip" href="data/csv/hgv-weights.csv">HGV weights (CSV)</a>
+        <a class="chip" href="data/csv/junction-waiting.csv">Junction waiting (CSV)</a>
+        <a class="chip" href="data/csv/reaction-distance.csv">Reaction distance (CSV)</a>
+      </div>
+      <div class="note">
+        <span class="note-title">The Hypothesis Test Workbench</span>
+        Excel has no function that runs a hypothesis test from summary
+        statistics — <code>T.TEST</code> and the Analysis ToolPak both need raw
+        data, and several questions give you only n, the mean and the standard
+        deviation. The workbench has a sheet for each test with the arithmetic
+        already wired up, showing the critical-value route and the p-value route
+        side by side.
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <p>Practice material for the Transport Data Collection and Analysis module.
+       Formative only — nothing here counts towards your assessment.</p>
+    <p class="small">Your progress is stored in this browser alone. Clearing
+       your site data clears it.</p>
+    <p class="noprint">
+      <span data-lang-picker></span>
+      <span data-theme-toggle></span>
+    </p>
+  </div>
+</footer>
+
+<script src="assets/js/vendor/js-yaml.min.js"></script>
+<script src="assets/js/progress.js"></script>
+<script src="assets/js/home.js"></script>
+<script src="assets/js/chrome.js"></script>
+</body>
+</html>

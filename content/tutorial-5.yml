@@ -1,0 +1,854 @@
+tutorial: 5
+title: Relationships Within Data
+
+intro: |
+  Everything so far has been about one variable at a time. This tutorial is
+  about pairs: whether two categorical variables are associated, and whether one
+  numerical variable predicts another.
+
+learning_outcomes:
+  - Use contingency tables to calculate proportions of populations.
+  - Assess the dependence or independence of sets of data using Chi-Squared tests.
+  - Calculate linear regression using the least-squares method.
+
+datasets:
+  - id: taxi
+    name: Taxi queue
+    csv: taxi-queue.csv
+    sheet: T5 Taxi Queue
+  - id: cars
+    name: Car ownership
+    csv: car-ownership.csv
+    sheet: T5 Car Ownership
+  - id: accidents
+    name: Accidents by weather
+    csv: accidents-weather.csv
+    sheet: T5 Accidents Weather
+  - id: reaction
+    name: Reaction distance
+    csv: reaction-distance.csv
+    sheet: T5 Reaction Distance
+
+supplementary: |
+  Questions 2, 3 and 4 all end in a hypothesis test, so the method from
+  [Tutorial 4](tutorial.html?t=4) applies. The **Chi-Squared** and **Regression
+  Coefficient** sheets of the
+  [Hypothesis Test Workbench](workbooks/hypothesis-test-workbench.xlsx) will
+  handle the final comparison for you once you have built the tables.
+
+  Two things about χ² that catch people out, both covered below: it is **never
+  two-tailed**, and every expected value must be **at least 5** before the test
+  is valid.
+
+questions:
+
+  # ----------------------------------------------------------- Question 1
+  - id: t5-q1
+    title: Question 1 — Relative frequency and probability
+    dataset_label: T5 Taxi Queue
+    prompt: |
+      The data below shows the number of people in a queue at a taxi rank and
+      how often that number was observed.
+
+      | Number in queue | 1 | 2 | 3 | 4 | 5 | 6 |
+      |---|---|---|---|---|---|---|
+      | Frequency | 6 | 4 | 5 | 2 | 2 | 1 |
+
+      Relative frequency is an estimate of probability: f&#8341; = n&#8341; ÷ N.
+    steps:
+      - kind: numeric
+        ask: What is N, the total number of observations?
+        answer: 20
+        tol: {abs: 0}
+        verify: 6 + 4 + 5 + 2 + 2 + 1
+
+      - kind: table
+        ask: Complete the relative frequency row.
+        tol: {abs: 0.005}
+        corner: "Number in queue"
+        columns: ["1", "2", "3", "4", "5", "6"]
+        rows: ["Relative frequency"]
+        cells:
+          - key: f1
+            row: 0
+            col: 0
+            answer: 0.30
+            traps:
+              - value: 6
+                feedback: |
+                  That is the raw frequency. Divide it by the total, 20.
+          - {key: f2, row: 0, col: 1, answer: 0.20}
+          - {key: f3, row: 0, col: 2, answer: 0.25}
+          - {key: f4, row: 0, col: 3, answer: 0.10}
+          - {key: f5, row: 0, col: 4, answer: 0.10}
+          - {key: f6, row: 0, col: 5, answer: 0.05}
+        verify: "[6/20, 4/20, 5/20, 2/20, 2/20, 1/20]"
+        hints:
+          - Every relative frequency is that column's count divided by 20. They must add up to 1.
+
+      - kind: numeric
+        ask: What is the probability that a queue contains fewer than four people?
+        answer: 0.75
+        tol: {abs: 0.005}
+        verify: (6 + 4 + 5) / 20
+        traps:
+          - value: 0.85
+            tol: {abs: 0.005}
+            feedback: |
+              You have included the queues of exactly 4. "Fewer than four" means
+              1, 2 or 3 only.
+          - value: 0.25
+            tol: {abs: 0.005}
+            feedback: |
+              That is the probability of *four or more* — the complement. The
+              question asks for fewer than four.
+        solution:
+          working: |
+            P(n < 4) = P(1) + P(2) + P(3) = 0.30 + 0.20 + 0.25 = **0.75**
+
+      - kind: numeric
+        ask: What is the probability that a queue contains more than three people?
+        answer: 0.25
+        tol: {abs: 0.005}
+        verify: (2 + 2 + 1) / 20
+        solution:
+          working: |
+            P(n > 3) = 1 − P(n < 4) = 1 − 0.75 = **0.25**
+
+            You can add up 0.10 + 0.10 + 0.05 instead, but using the complement
+            is quicker and is the same rearrangement you have been using since
+            Tutorial 2.
+
+      - kind: numeric
+        ask: |
+          If two queues are observed, what is the probability that the first
+          contains three people and the second contains five?
+        answer: 0.025
+        tol: {abs: 0.001}
+        verify: (5 / 20) * (2 / 20)
+        traps:
+          - value: 0.35
+            tol: {abs: 0.005}
+            feedback: |
+              You have added the two probabilities. Addition answers "either one
+              *or* the other"; this question asks for one *and* the other, which
+              means multiplying.
+        hints:
+          - The two observations are independent. For "A and B" with independent events, multiply.
+        solution:
+          working: |
+            P(A = 3 **and** B = 5) = P(A = 3) × P(B = 5) = 0.25 × 0.10 = **0.025**
+
+            Multiplying like this is only valid because the two queues are
+            independent — knowing the length of the first tells you nothing
+            about the second.
+
+  # ----------------------------------------------------------- Question 2
+  - id: t5-q2
+    title: Question 2 — Contingency tables and independence
+    dataset_label: T5 Car Ownership
+    prompt: |
+      Complete the contingency table by summing the rows and columns.
+
+      | | Has car | No car |
+      |---|---|---|
+      | Employed | 130 | 21 |
+      | Unemployed | 21 | 34 |
+      | Homemaker | 54 | 50 |
+      | Student | 31 | 120 |
+      | Retired | 31 | 53 |
+      | Disability | 11 | 13 |
+    steps:
+      - kind: table
+        ask: Give the column totals and the grand total.
+        tol: {abs: 0}
+        corner: "Totals"
+        columns: ["Has car", "No car", "Grand total"]
+        rows: ["Total"]
+        cells:
+          - {key: c1, row: 0, col: 0, answer: 278}
+          - {key: c2, row: 0, col: 1, answer: 291}
+          - key: g
+            row: 0
+            col: 2
+            answer: 569
+            traps:
+              - value: 151
+                feedback: |
+                  That is the employed row total. The grand total is every
+                  observation in the table added together.
+        verify: "[130+21+54+31+31+11, 21+34+50+120+53+13, 569]"
+
+      - kind: numeric
+        ask: What proportion of people are students?
+        answer: 0.265
+        tol: {abs: 0.002}
+        verify: 151 / 569
+        traps:
+          - value: 0.205
+            tol: {abs: 0.002}
+            feedback: |
+              That is the proportion of *students* who have a car (31 ÷ 151).
+              This question asks what share of *everyone* is a student, so the
+              denominator is the grand total.
+        hints:
+          - "The student row totals 151. Out of what?"
+
+      - kind: numeric
+        ask: What proportion of people have a car?
+        answer: 0.489
+        tol: {abs: 0.002}
+        verify: 278 / 569
+
+      - kind: numeric
+        ask: What proportion of students have a car?
+        answer: 0.205
+        tol: {abs: 0.002}
+        verify: 31 / 151
+        traps:
+          - value: 0.0545
+            tol: {abs: 0.002}
+            feedback: |
+              You have divided by the grand total. The question restricts
+              attention to students, so the denominator is the student row
+              total (151), not everyone.
+          - value: 0.1115
+            tol: {abs: 0.002}
+            feedback: |
+              You have divided by the has-car column total (278). That would
+              answer "what proportion of car owners are students" — a different
+              question.
+        hints:
+          - "\"Of students\" tells you the denominator: the number of students."
+
+      - kind: numeric
+        ask: What proportion of carless people are employed?
+        answer: 0.072
+        tol: {abs: 0.002}
+        verify: 21 / 291
+        traps:
+          - value: 0.139
+            tol: {abs: 0.002}
+            feedback: |
+              You have divided by the employed row total (151), which answers
+              "what proportion of employed people are carless". Read the phrasing
+              carefully: "of carless people" makes the carless column total
+              (291) the denominator. *(The original handout makes exactly this
+              slip and prints 0.139 — see the errata.)*
+        hints:
+          - The group you are taking a proportion *of* is the denominator. Which group is that here?
+        solution:
+          working: |
+            21 carless employed people ÷ 291 carless people = **0.072**
+
+            These "proportion of" questions are all the same shape, and the only
+            thing that varies is the denominator. The phrase after "of" names
+            the group you are inside.
+          note: |
+            The handout computes 21 ÷ 151 = 0.139 here, using the employed total.
+            That answers the reverse question. See `ERRATA.md`.
+
+      - kind: hypothesis
+        ask: Set up the test for whether car ownership is independent of employment status.
+        parts:
+          - key: h0
+            label: Null hypothesis
+            options:
+              - value: There is no association between owning a car and employment status
+                correct: true
+              - value: There is an association between owning a car and employment status
+                feedback: |
+                  That is the *alternative* hypothesis. H₀ is always the
+                  position of no effect and no relationship — the thing you
+                  would believe if the data gave you no reason to think
+                  otherwise.
+              - value: The proportion of car owners is 0.489
+                feedback: |
+                  That is a fact about the sample, not a hypothesis about the
+                  relationship between two variables. A χ² test for
+                  independence is about whether the two classifications are
+                  linked.
+          - key: h1
+            label: Alternative hypothesis
+            options:
+              - value: There is an association between owning a car and employment status
+                correct: true
+              - value: There is no association between owning a car and employment status
+                feedback: |
+                  That is H₀. The alternative is what you would conclude if the
+                  evidence were strong enough to abandon H₀.
+              - value: Employment causes car ownership
+                feedback: |
+                  A χ² test can show that two variables are *associated*. It
+                  cannot show that one causes the other — students may lack cars
+                  because they lack money, not because studying prevents
+                  driving.
+          - key: tails
+            label: Test type
+            options:
+              - value: One-tailed (right)
+                correct: true
+              - value: Two-tailed
+                feedback: |
+                  χ² can never be two-tailed. The statistic is a sum of squared
+                  quantities, so it cannot be negative and the distribution has
+                  no left tail. Evidence against H₀ always shows up as a
+                  *large* value.
+              - value: One-tailed (left)
+                feedback: |
+                  A small χ² means observed and expected counts agree closely —
+                  that is evidence *for* H₀, not against it. The rejection
+                  region is always the right-hand tail.
+        solution:
+          working: |
+            - **H₀:** there is no association between car ownership and employment status
+            - **H₁:** there is an association
+            - Right-tailed χ² test at 1% significance (α = 0.01)
+
+            ![Chi-squared distribution with a single right-hand rejection tail](assets/img/chi-squared-tail.svg)
+
+      - kind: numeric
+        ask: |
+          Calculate the expected value for **employed people with a car** under
+          the null hypothesis.
+        answer: 73.775
+        tol: {abs: 0.05}
+        verify: 151 * 278 / 569
+        traps:
+          - value: 130
+            feedback: |
+              That is the *observed* count. The expected value is what you would
+              see if car ownership and employment were unrelated:
+              (row total × column total) ÷ grand total.
+          - value: 47.417
+            tol: {abs: 0.05}
+            feedback: |
+              Check which totals you have multiplied. It is the employed row
+              total (151) times the has-car column total (278), divided by 569.
+        hints:
+          - "Expected = (row total × column total) ÷ grand total."
+
+      - kind: numeric
+        ask: What is the χ² test statistic for the whole table?
+        answer: 140.07
+        tol: {abs: 0.15}
+        verify: |
+          float(np.sum((np.array([[130,21],[21,34],[54,50],[31,120],[31,53],[11,13]], dtype=float)
+            - np.outer(np.array([151,55,104,151,84,24], dtype=float), np.array([278,291], dtype=float))/569)**2
+            / (np.outer(np.array([151,55,104,151,84,24], dtype=float), np.array([278,291], dtype=float))/569)))
+        hints:
+          - "For each of the 12 cells compute (O − E)² ÷ E, then add them all up."
+        solution:
+          working: |
+            Build three tables: observed, expected, and (O − E)² ÷ E. The last
+            one sums to **140.07**.
+
+            | χ² contribution | Has car | No car |
+            |---|---|---|
+            | Employed | 42.85 | 40.94 |
+            | Unemployed | 1.28 | 1.23 |
+            | Homemaker | 0.20 | 0.19 |
+            | Student | 24.80 | 23.69 |
+            | Retired | 2.46 | 2.35 |
+            | Disability | 0.04 | 0.04 |
+            | **Total** | | **140.07** |
+
+            Look at where the statistic comes from: the employed and student
+            rows contribute 132 of the 140. Those are the two groups whose car
+            ownership is furthest from what independence would predict —
+            employed people own far more cars than expected, students far fewer.
+          excel: "=SUMPRODUCT((observed-expected)^2/expected)"
+          r: "chisq.test(m)$statistic"
+          python: "scipy.stats.chi2_contingency(m).statistic"
+          note: |
+            The handout's text says 140.7 while its table sums to 140.07. The
+            table is right. Note also that R's `chisq.test` applies Yates'
+            continuity correction to 2×2 tables by default — not an issue here
+            with a 6×2 table, but it will make R disagree with your hand
+            calculation on Question 3 unless you pass `correct = FALSE`.
+
+      - kind: numeric
+        ask: How many degrees of freedom does this table have?
+        answer: 5
+        tol: {abs: 0}
+        verify: (6 - 1) * (2 - 1)
+        traps:
+          - value: 12
+            feedback: |
+              That is the number of cells. Degrees of freedom are
+              (rows − 1) × (columns − 1) = 5 × 1.
+          - value: 11
+            feedback: |
+              That would be cells − 1, which is the rule for a goodness-of-fit
+              test, not a test of independence. Here it is
+              (rows − 1) × (columns − 1).
+          - value: 568
+            feedback: |
+              That is N − 1. Degrees of freedom for a contingency table depend
+              on its *shape*, not on how many people are in it.
+
+      - kind: numeric
+        ask: What is the critical value at 1% significance?
+        answer: 15.09
+        tol: {abs: 0.05}
+        verify: CHISQ_INV_RT(0.01, 5)
+        traps:
+          - value: 11.07
+            tol: {abs: 0.05}
+            feedback: |
+              That is the critical value at 5%. The question asks for 1%
+              significance, so α = 0.01.
+          - value: 0.554
+            tol: {abs: 0.02}
+            feedback: |
+              You have used `CHISQ.INV` rather than `CHISQ.INV.RT`, so you have
+              the *left*-hand critical value. χ² rejects in the right tail —
+              use `CHISQ.INV.RT(0.01, 5)`, or equivalently `CHISQ.INV(0.99, 5)`.
+        solution:
+          excel: "=CHISQ.INV.RT(0.01,5)"
+          r: "qchisq(0.01, df = 5, lower.tail = FALSE)"
+          python: "scipy.stats.chi2.isf(0.01, 5)"
+          note: |
+            The handout writes `CHI.INV.RT` here. That function does not exist —
+            the correct name is `CHISQ.INV.RT`, which the handout itself uses
+            correctly in Question 3.
+
+      - kind: decision
+        ask: What do you conclude at 1% significance?
+        answer: reject
+        reasons:
+          - value: The test statistic (140.07) is greater than the critical value (15.09)
+            correct: true
+          - value: The test statistic is smaller than the critical value
+            feedback: |
+              Check the comparison again — 140.07 is very much larger than
+              15.09. For χ², large values are the evidence against H₀.
+          - value: The sample size is large
+            feedback: |
+              A large sample makes the test more sensitive, but it is not itself
+              a reason to reject. The decision rests on comparing the test
+              statistic with the critical value.
+        solution:
+          working: |
+            χ²test = 140.07, χ²critical = 15.09. Since 140.07 > 15.09, **reject
+            H₀** at the 1% level.
+
+            There is very strong evidence of an association between employment
+            status and car ownership.
+
+            Say what that does and does not mean. It is evidence that the two
+            are *related*, not that employment causes car ownership. Income,
+            age and where people live all plausibly drive both.
+
+  # ----------------------------------------------------------- Question 3
+  - id: t5-q3
+    title: Question 3 — When the expected values are too small
+    dataset_label: T5 Accidents Weather
+    prompt: |
+      Road accidents in Leeds and Manchester, classified by road surface
+      condition.
+
+      | Observed | Dry | Wet | Snow | Ice |
+      |---|---|---|---|---|
+      | Leeds | 115 | 174 | 32 | 6 |
+      | Manchester | 68 | 71 | 17 | 7 |
+
+      This question looks like Question 2 but contains a trap that invalidates
+      the test if you do not spot it.
+    steps:
+      - kind: table
+        ask: Complete the totals.
+        tol: {abs: 0}
+        corner: "Totals"
+        columns: ["Dry", "Wet", "Snow", "Ice", "Row total"]
+        rows: ["Leeds", "Manchester", "Column total"]
+        given:
+          "0,0": "115"
+          "0,1": "174"
+          "0,2": "32"
+          "0,3": "6"
+          "1,0": "68"
+          "1,1": "71"
+          "1,2": "17"
+          "1,3": "7"
+        cells:
+          - {key: lt, row: 0, col: 4, answer: 327}
+          - {key: mt, row: 1, col: 4, answer: 163}
+          - {key: d, row: 2, col: 0, answer: 183}
+          - {key: w, row: 2, col: 1, answer: 245}
+          - {key: s, row: 2, col: 2, answer: 49}
+          - {key: i, row: 2, col: 3, answer: 13}
+          - {key: g, row: 2, col: 4, answer: 490}
+        verify: "[327, 163, 183, 245, 49, 13, 490]"
+
+      - kind: numeric
+        ask: What is the expected number of ice accidents in Manchester?
+        answer: 4.3
+        tol: {abs: 0.05}
+        verify: 163 * 13 / 490
+        hints:
+          - "(Manchester row total × ice column total) ÷ grand total."
+
+      - kind: choice
+        ask: Look at that expected value. What does it tell you?
+        prose: true
+        options:
+          - value: It is below 5, so the χ² test is not valid as the table stands
+            correct: true
+            feedback: |
+              Exactly. The χ² approximation breaks down when expected counts get
+              small — with fewer than about 5 expected observations in a cell,
+              the statistic no longer follows a χ² distribution closely enough
+              to trust. Every expected value must be at least 5.
+          - value: Nothing in particular — it is just a small number
+            feedback: |
+              It matters a great deal. One of the stated conditions for a χ²
+              test is that all expected frequencies are at least 5. At 4.3 this
+              table fails that condition, and running the test anyway would give
+              a p-value you could not rely on.
+          - value: Manchester has significantly fewer ice accidents than expected
+            feedback: |
+              Manchester actually observed 7 against 4.3 expected — *more*, not
+              fewer. But the real issue is the size of the expected value
+              itself, which is below the threshold the test requires.
+          - value: The data must have been recorded wrongly
+            feedback: |
+              The data is fine. Ice accidents are simply rare, which is a real
+              feature of the world. The problem is that χ² needs a minimum
+              expected count in every cell.
+
+      - kind: choice
+        ask: What is the appropriate fix?
+        prose: true
+        options:
+          - value: Pool the snow and ice columns into a single category
+            correct: true
+            feedback: |
+              Right. Snow and ice are both frozen-surface conditions, so
+              combining them is defensible on transport grounds as well as
+              statistical ones. Pooling categories that have nothing in common
+              just to clear the threshold would not be.
+          - value: Delete the ice column
+            feedback: |
+              That throws away 13 real accidents and biases the comparison.
+              Pooling keeps the information; deleting discards it.
+          - value: Delete Manchester from the analysis
+            feedback: |
+              That removes half the comparison, and the comparison is the whole
+              point of the question.
+          - value: Carry on regardless and note the caveat
+            feedback: |
+              A caveat does not repair an invalid test. Since a sound
+              alternative exists — pooling — that is what you should do.
+
+      - kind: numeric
+        ask: After pooling snow and ice, what is the expected value for Leeds in that combined column?
+        answer: 41.38
+        tol: {abs: 0.05}
+        verify: 327 * 62 / 490
+        hints:
+          - The pooled column total is 49 + 13 = 62.
+
+      - kind: numeric
+        ask: What is the χ² test statistic for the pooled table?
+        answer: 4.1
+        tol: {abs: 0.06}
+        verify: |
+          float(np.sum((np.array([[115,174,38],[68,71,24]], dtype=float)
+            - np.outer(np.array([327,163], dtype=float), np.array([183,245,62], dtype=float))/490)**2
+            / (np.outer(np.array([327,163], dtype=float), np.array([183,245,62], dtype=float))/490)))
+        solution:
+          working: |
+            | χ² contribution | Dry | Wet | Snow & Ice |
+            |---|---|---|---|
+            | Leeds | 0.42 | 0.67 | 0.27 |
+            | Manchester | 0.83 | 1.35 | 0.55 |
+            | **Total** | | | **4.10** |
+
+      - kind: numeric
+        ask: How many degrees of freedom does the pooled table have?
+        answer: 2
+        tol: {abs: 0}
+        verify: (2 - 1) * (3 - 1)
+        traps:
+          - value: 3
+            feedback: |
+              That is the value for the original four-column table. Pooling
+              reduced it to three columns, so df = (2 − 1) × (3 − 1) = 2. It is
+              easy to pool the data and forget to recount the degrees of
+              freedom.
+
+      - kind: numeric
+        ask: What is the critical value at 5% significance?
+        answer: 5.99
+        tol: {abs: 0.02}
+        verify: CHISQ_INV_RT(0.05, 2)
+        solution:
+          excel: "=CHISQ.INV.RT(0.05,2)    or  =CHISQ.INV(0.95,2)"
+          r: "qchisq(0.95, df = 2)"
+          python: "scipy.stats.chi2.isf(0.05, 2)"
+
+      - kind: decision
+        ask: |
+          Test at 5% significance. H₀ is that the probability of accidents across
+          weather types does not differ between Leeds and Manchester.
+        answer: fail
+        reasons:
+          - value: The test statistic (4.10) is smaller than the critical value (5.99)
+            correct: true
+          - value: The test statistic is larger than the critical value
+            feedback: |
+              Check again — 4.10 is less than 5.99, so the statistic does not
+              reach the rejection region.
+          - value: We have proved that the two cities are the same
+            feedback: |
+              Not quite, and this is an important distinction. Failing to reject
+              H₀ means the evidence was not strong enough to abandon it — not
+              that H₀ is true. The null hypothesis is never confirmed.
+        solution:
+          working: |
+            χ²test = 4.10, χ²critical = 5.99. Since 4.10 < 5.99, we **cannot
+            reject H₀** at the 5% level.
+
+            There is not enough evidence to say that the pattern of accidents
+            across weather conditions differs between Leeds and Manchester.
+
+            Note the contrast with Question 2, where the statistic was 140
+            against a critical value of 15. That was overwhelming evidence; this
+            is none. Learning to see the difference at a glance is worth more
+            than the arithmetic.
+
+  # ----------------------------------------------------------- Question 4
+  - id: t5-q4
+    title: Question 4 — Least-squares regression
+    dataset_label: T5 Reaction Distance
+    prompt: |
+      A study looked at how the warning distance before a motorway closure
+      affects drivers' reaction distance.
+
+      | Site | Warning distance w (m) | Reaction distance r (m) |
+      |---|---|---|
+      | 1 | 50 | 41.54 |
+      | 2 | 100 | 47.66 |
+      | 3 | 80 | 53.25 |
+      | 4 | 125 | 58.86 |
+      | 5 | 200 | 59.31 |
+      | 6 | 400 | 91.31 |
+      | 7 | 300 | 92.90 |
+      | 8 | 240 | 86.10 |
+      | 9 | 180 | 60.18 |
+      | 10 | 260 | 88.00 |
+
+      Fit a model of the form **r = aw + b** by least squares.
+    steps:
+      - kind: table
+        ask: Calculate the summary quantities.
+        tol: {abs: 1.0}
+        corner: "Quantity"
+        columns: ["S_xx", "S_yy", "S_xy"]
+        rows: ["Value"]
+        cells:
+          - {key: sxx, row: 0, col: 0, answer: 107702.5, tol: {abs: 2}}
+          - {key: syy, row: 0, col: 1, answer: 3442.51, tol: {abs: 2}}
+          - {key: sxy, row: 0, col: 2, answer: 17685.1, tol: {abs: 2}}
+        verify: |
+          [float((warning**2).sum() - 10*warning.mean()**2),
+           float((reaction**2).sum() - 10*reaction.mean()**2),
+           float((warning*reaction).sum() - 10*warning.mean()*reaction.mean())]
+        hints:
+          - "S_xx = Σw² − n·w̄², and the others follow the same pattern."
+          - "w̄ = 193.5 and r̄ = 67.911."
+
+      - kind: numeric
+        ask: What is the gradient a?
+        answer: 0.164
+        tol: {abs: 0.003}
+        verify: |
+          float(((warning*reaction).sum() - 10*warning.mean()*reaction.mean())
+                / ((warning**2).sum() - 10*warning.mean()**2))
+        traps:
+          - value: 36.138
+            tol: {abs: 0.05}
+            feedback: |
+              That is the **intercept** b, not the gradient. S_xy ÷ S_xx gives
+              the gradient. *(The original handout labels these the wrong way
+              round in its derivation — see the errata — although its final
+              model is correct.)*
+          - value: 6.09
+            tol: {abs: 0.1}
+            feedback: |
+              You have divided S_xx by S_xy. The gradient is S_xy ÷ S_xx.
+        hints:
+          - "a = S_xy ÷ S_xx."
+        solution:
+          working: |
+            a = S_xy ÷ S_xx = 17685.1 ÷ 107702.5 = **0.164**
+
+            Every extra metre of warning distance buys about 0.164 m of extra
+            reaction distance.
+
+      - kind: numeric
+        ask: What is the intercept b?
+        answer: 36.138
+        tol: {abs: 0.05}
+        verify: |
+          float(reaction.mean() - ((warning*reaction).sum() - 10*warning.mean()*reaction.mean())
+                / ((warning**2).sum() - 10*warning.mean()**2) * warning.mean())
+        hints:
+          - "b = r̄ − a·w̄, which just says the fitted line passes through the mean of the data."
+        solution:
+          working: |
+            b = r̄ − a·w̄ = 67.911 − 0.164 × 193.5 = **36.138**
+
+            So the model is **r = 0.164w + 36.138**.
+          excel: "=SLOPE(r_range, w_range)   and  =INTERCEPT(r_range, w_range)"
+          r: "coef(lm(reaction ~ warning))"
+          python: "scipy.stats.linregress(w, r)   # .slope and .intercept"
+          note: |
+            `LINEST` returns both coefficients at once, but in the opposite
+            order to how you would write them — gradient first, then intercept.
+            `SLOPE` and `INTERCEPT` are harder to get the wrong way round.
+
+      - kind: numeric
+        ask: What is the R² value?
+        answer: 0.84
+        tol: {abs: 0.01}
+        verify: |
+          float(1 - ((reaction - (((warning*reaction).sum() - 10*warning.mean()*reaction.mean())
+                / ((warning**2).sum() - 10*warning.mean()**2)) * warning
+                - (reaction.mean() - (((warning*reaction).sum() - 10*warning.mean()*reaction.mean())
+                / ((warning**2).sum() - 10*warning.mean()**2)) * warning.mean()))**2).sum()
+                / ((reaction**2).sum() - 10*reaction.mean()**2))
+        traps:
+          - value: 0.916
+            tol: {abs: 0.01}
+            feedback: |
+              That is r, the correlation coefficient. R² is its square — and it
+              is R² that tells you the proportion of variation explained.
+          - value: 0.16
+            tol: {abs: 0.01}
+            feedback: |
+              That is 1 − R². R² = 1 − (SSE ÷ SST), and you appear to have
+              stopped at SSE ÷ SST.
+        hints:
+          - "R² = 1 − (SSE ÷ SST), where SSE = 538.56 and SST = S_yy = 3442.51."
+        solution:
+          working: |
+            R² = 1 − (538.56 ÷ 3442.51) = **0.84**
+
+            About 84% of the variation in reaction distance is explained by
+            warning distance. The remaining 16% is everything else — driver
+            behaviour, traffic conditions, the weather.
+          excel: "=RSQ(r_range, w_range)"
+          r: "summary(lm(reaction ~ warning))$r.squared"
+          python: "scipy.stats.linregress(w, r).rvalue**2"
+
+      - kind: table
+        ask: Use the model to predict the reaction distance at each warning distance.
+        tol: {abs: 0.15}
+        corner: "Warning distance"
+        columns: ["w = 90", "w = 150", "w = 500", "w = 1200"]
+        rows: ["Predicted r (m)"]
+        cells:
+          - {key: p90, row: 0, col: 0, answer: 50.90}
+          - {key: p150, row: 0, col: 1, answer: 60.74}
+          - {key: p500, row: 0, col: 2, answer: 118.14}
+          - {key: p1200, row: 0, col: 3, answer: 232.94}
+        verify: "[0.164*90+36.138, 0.164*150+36.138, 0.164*500+36.138, 0.164*1200+36.138]"
+        solution:
+          note: |
+            If you carried the gradient at full precision (0.1642077) rather
+            than rounding to 0.164, you will get 233.18 at w = 1200 instead of
+            232.94 — a difference of nearly a quarter of a metre from rounding
+            one coefficient at the third decimal place. Both are accepted here.
+            The lesson is to round at the *end*, not in the middle.
+
+      - kind: multi
+        ask: |
+          Which of these predictions should you actually trust? Select all that
+          apply.
+        prose: true
+        options:
+          - value: "w = 90 — inside the range of the data"
+            correct: true
+          - value: "w = 150 — inside the range of the data"
+            correct: true
+          - value: "w = 500 — beyond the largest observation (400 m)"
+            feedback: |
+              This is extrapolation. The model has never seen a warning distance
+              above 400 m, and the data already suggests the relationship
+              flattens out beyond about 300 m — drivers adjust their behaviour
+              rather than reacting proportionally forever. A realistic estimate
+              is around 90 m, not 118 m.
+          - value: "w = 1200 — three times the largest observation"
+            feedback: |
+              Far outside the data. The model cheerfully predicts 233 m, but
+              there is no reason to believe a linear relationship holds that far
+              out — and good reason from the data to think it does not. In
+              practice the answer is probably still around 90 m.
+        solution:
+          working: |
+            Only w = 90 and w = 150 sit inside the range of the observed data
+            (50–400 m), so only those are interpolation.
+
+            Look at the scatter of points: the gradient visibly flattens beyond
+            roughly 300 m. That makes physical sense — the process is not purely
+            mechanical, and drivers adapt to information rather than responding
+            proportionally without limit. Past about 300 m, a reaction distance
+            of roughly 90 m is the sensible estimate whatever the model says.
+
+            **A model is only evidence about the range you fitted it over.**
+            Extrapolation is where regression most often goes wrong in practice.
+
+      - kind: numeric
+        ask: |
+          Test whether the gradient is significantly different from zero at 95%
+          confidence. What is the t statistic?
+        answer: 6.56
+        tol: {abs: 0.05}
+        verify: |
+          float(stats.linregress(warning, reaction).slope / stats.linregress(warning, reaction).stderr)
+        hints:
+          - "Residual standard error s = √(SSE ÷ (n − 2)) = √(538.6 ÷ 8) = 8.2."
+          - "SE(a) = s ÷ √S_xx, and then t = a ÷ SE(a)."
+        solution:
+          working: |
+            - H₀: a = 0 (the gradient is zero); H₁: a ≠ 0. Two-tailed, α = 0.05.
+            - Residual standard error s = √(538.6 ÷ 8) = 8.2
+            - SE(a) = 8.2 ÷ √107702.5 = 0.0250
+            - t = 0.164 ÷ 0.0250 = **6.56**
+
+            Note the degrees of freedom: n − 2, not n − 1, because two
+            coefficients were estimated from the data.
+          excel: "Use the Regression Coeff T sheet of the workbench, or =LINEST(y,x,TRUE,TRUE)"
+          r: "summary(lm(reaction ~ warning))   # gives t and p directly"
+          python: "scipy.stats.linregress(w, r)   # .slope / .stderr"
+
+      - kind: decision
+        ask: What do you conclude about the gradient?
+        answer: reject
+        reasons:
+          - value: t = 6.56 exceeds the critical value T.INV(0.975, 8) = 2.306
+            correct: true
+          - value: R² is high, at 0.84
+            feedback: |
+              A high R² and a significant gradient usually travel together, but
+              they answer different questions. R² measures how much variation
+              the model explains; the t-test asks whether the gradient could
+              plausibly be zero. The decision here rests on the t statistic.
+          - value: The gradient is positive
+            feedback: |
+              The sign tells you the *direction* of the relationship, not
+              whether it is distinguishable from no relationship at all. A tiny
+              positive gradient with a large standard error would not be
+              significant.
+        solution:
+          working: |
+            t = 6.56, critical value = 2.306. Since 6.56 > 2.306, **reject H₀**.
+
+            The gradient is significantly different from zero at 95% confidence:
+            warning distance really does predict reaction distance.
+
+            Remember what this does *not* license. The relationship is real
+            within 50–400 m. It says nothing about 1200 m, and it does not by
+            itself establish causation.

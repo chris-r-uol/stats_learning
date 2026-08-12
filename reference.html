@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Function reference — Transport Statistics</title>
+<meta name="description" content="Excel, R and Python function reference for the transport statistics tutorials, including the tail-direction traps.">
+<link rel="stylesheet" href="assets/css/site.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>📊</text></svg>">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="masthead">
+  <div class="wrap">
+    <a class="brand" href="index.html">Transport Statistics Tutorials</a>
+    <nav aria-label="Main">
+      <a href="tutorial.html?t=1">1</a>
+      <a href="tutorial.html?t=2">2</a>
+      <a href="tutorial.html?t=3">3</a>
+      <a href="tutorial.html?t=4">4</a>
+      <a href="tutorial.html?t=5">5</a>
+      <a href="methodology.html">Methods</a>
+      <a href="reference.html">Reference</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <div class="wrap">
+
+    <div class="page-head">
+      <div class="eyebrow">Support material</div>
+      <h1>Function reference</h1>
+      <p class="lede">
+        Excel first, with the R and Python equivalents beside it. The section on
+        tail directions is where most wrong answers in this course come from —
+        it is worth reading even if you think you know it.
+      </p>
+    </div>
+
+    <!-- ========================================================== -->
+    <section class="card">
+      <h2 id="tails">Tail directions: the traps</h2>
+      <p>
+        Nearly every function below has a sibling that returns a different part
+        of the distribution. Picking the wrong one gives a plausible number
+        rather than an obvious error, which is exactly what makes it dangerous.
+      </p>
+
+      <div class="note warn">
+        <span class="note-title">T.INV versus T.INV.2T</span>
+        <p><code>T.INV(p, df)</code> is a plain <strong>left-tail</strong>
+          lookup: it returns the value with probability p below it.</p>
+        <p><code>T.INV.2T(α, df)</code> is <strong>two-tailed</strong> and
+          splits α between the tails <em>for you</em>.</p>
+        <p style="margin-bottom:0">So <code>T.INV.2T(0.05, 29)</code> equals
+          <code>T.INV(0.975, 29)</code> = 2.045. It does <strong>not</strong>
+          equal <code>T.INV(0.95, 29)</code> = 1.699. Passing α/2 to
+          <code>T.INV.2T</code> halves it twice.</p>
+      </div>
+
+      <div class="note warn">
+        <span class="note-title">CHISQ.INV versus CHISQ.INV.RT</span>
+        <p><code>CHISQ.INV.RT(α, df)</code> gives the <strong>right</strong>-tail
+          critical value, which is the one you almost always want — a χ²
+          statistic cannot be negative, so there is no left tail to reject in.</p>
+        <p style="margin-bottom:0"><code>CHISQ.INV.RT(0.05, 2)</code> =
+          <code>CHISQ.INV(0.95, 2)</code> = 5.99. There is no function called
+          <code>CHI.INV.RT</code>.</p>
+      </div>
+
+      <figure style="max-width:26rem">
+        <img src="assets/img/chi-squared-tail.svg"
+             alt="A chi-squared distribution, with only the right-hand tail shaded as the rejection region.">
+        <figcaption>χ² rejects only in the right tail. Small values mean
+          observed and expected counts agree — evidence <em>for</em> H₀.</figcaption>
+      </figure>
+
+      <div class="note warn">
+        <span class="note-title">Discrete boundaries</span>
+        <p>For continuous distributions P(X &lt; 10) and P(X ≤ 10) are the same.
+          For counts they are not, because 10 has a probability of its own.</p>
+        <p style="margin-bottom:0">
+          P(X &lt; 10) → <code>BINOM.DIST(9, …, TRUE)</code><br>
+          P(X &gt; 15) → <code>1 - BINOM.DIST(15, …, TRUE)</code><br>
+          P(X = 8) → <code>BINOM.DIST(8, …, FALSE)</code>
+        </p>
+      </div>
+
+      <div class="note">
+        <span class="note-title">The cumulative flag</span>
+        <code>TRUE</code> gives the area under the curve up to your value — a
+        probability, and almost always what you want. <code>FALSE</code> gives
+        the height of the curve at that point, which is only meaningful for
+        discrete distributions where it is the probability of that exact
+        outcome.
+      </div>
+    </section>
+
+    <!-- ========================================================== -->
+    <section class="card">
+      <h2>Descriptive statistics</h2>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>Quantity</th><th>Excel</th><th>R</th><th>Python</th></tr></thead>
+          <tbody>
+            <tr><td>Count</td><td><code>COUNT(r)</code></td><td><code>length(x)</code></td><td><code>len(x)</code></td></tr>
+            <tr><td>Mean</td><td><code>AVERAGE(r)</code></td><td><code>mean(x)</code></td><td><code>x.mean()</code></td></tr>
+            <tr><td>Median</td><td><code>MEDIAN(r)</code></td><td><code>median(x)</code></td><td><code>x.median()</code></td></tr>
+            <tr><td>Mode</td><td><code>MODE.SNGL(r)</code></td><td><code>—</code></td><td><code>x.mode()[0]</code></td></tr>
+            <tr><td>Sample sd</td><td><code>STDEV.S(r)</code></td><td><code>sd(x)</code></td><td><code>x.std()</code></td></tr>
+            <tr><td>Population sd</td><td><code>STDEV.P(r)</code></td><td><code>—</code></td><td><code>x.std(ddof=0)</code></td></tr>
+            <tr><td>Sample variance</td><td><code>VAR.S(r)</code></td><td><code>var(x)</code></td><td><code>x.var()</code></td></tr>
+            <tr><td>Skewness</td><td><code>SKEW(r)</code></td><td><code>e1071::skewness(x, type=2)</code></td><td><code>x.skew()</code></td></tr>
+            <tr><td>Quartiles</td><td><code>QUARTILE.INC(r, n)</code></td><td><code>quantile(x, p)</code></td><td><code>x.quantile(p)</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="note">
+        <span class="note-title">Sample versus population, across three tools</span>
+        <p>Excel makes you choose: <code>STDEV.S</code> divides by n−1,
+          <code>STDEV.P</code> by n. A survey is a sample, so it is nearly
+          always <code>.S</code>.</p>
+        <p style="margin-bottom:0">R's <code>sd()</code> and pandas'
+          <code>.std()</code> both default to n−1. <strong>NumPy does not</strong>
+          — <code>np.std(x)</code> divides by n, so you need
+          <code>np.std(x, ddof=1)</code> to match Excel. This catches people out
+          constantly.</p>
+      </div>
+    </section>
+
+    <!-- ========================================================== -->
+    <section class="card">
+      <h2>Distributions</h2>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>Task</th><th>Excel</th><th>R</th><th>Python (scipy.stats)</th></tr></thead>
+          <tbody>
+            <tr><td>Normal, value → probability</td>
+                <td><code>NORM.DIST(x, μ, σ, TRUE)</code></td>
+                <td><code>pnorm(x, μ, σ)</code></td>
+                <td><code>norm.cdf(x, μ, σ)</code></td></tr>
+            <tr><td>Normal, probability → value</td>
+                <td><code>NORM.INV(p, μ, σ)</code></td>
+                <td><code>qnorm(p, μ, σ)</code></td>
+                <td><code>norm.ppf(p, μ, σ)</code></td></tr>
+            <tr><td>Standard normal → probability</td>
+                <td><code>NORM.S.DIST(z, TRUE)</code></td>
+                <td><code>pnorm(z)</code></td>
+                <td><code>norm.cdf(z)</code></td></tr>
+            <tr><td>Standard normal → value</td>
+                <td><code>NORM.S.INV(p)</code></td>
+                <td><code>qnorm(p)</code></td>
+                <td><code>norm.ppf(p)</code></td></tr>
+            <tr><td>Binomial, cumulative</td>
+                <td><code>BINOM.DIST(k, n, p, TRUE)</code></td>
+                <td><code>pbinom(k, n, p)</code></td>
+                <td><code>binom.cdf(k, n, p)</code></td></tr>
+            <tr><td>Binomial, exact</td>
+                <td><code>BINOM.DIST(k, n, p, FALSE)</code></td>
+                <td><code>dbinom(k, n, p)</code></td>
+                <td><code>binom.pmf(k, n, p)</code></td></tr>
+            <tr><td>Poisson, cumulative</td>
+                <td><code>POISSON.DIST(k, λ, TRUE)</code></td>
+                <td><code>ppois(k, λ)</code></td>
+                <td><code>poisson.cdf(k, λ)</code></td></tr>
+            <tr><td>Poisson, exact</td>
+                <td><code>POISSON.DIST(k, λ, FALSE)</code></td>
+                <td><code>dpois(k, λ)</code></td>
+                <td><code>poisson.pmf(k, λ)</code></td></tr>
+            <tr><td>Poisson, inverse</td>
+                <td class="muted">none — step k up by hand</td>
+                <td><code>qpois(p, λ)</code></td>
+                <td><code>poisson.ppf(p, λ)</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="small muted" style="margin-bottom:0">
+        R and Python both offer a direct upper tail — <code>lower.tail = FALSE</code>
+        and <code>.sf()</code> — which saves the <code>1 - …</code> rearrangement.
+        Excel has no equivalent, so in Excel you always subtract from 1.
+      </p>
+    </section>
+
+    <!-- ========================================================== -->
+    <section class="card">
+      <h2>Hypothesis testing</h2>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>Task</th><th>Excel</th><th>R</th><th>Python (scipy.stats)</th></tr></thead>
+          <tbody>
+            <tr><td>Critical z, one-tailed</td>
+                <td><code>NORM.S.INV(1-α)</code></td>
+                <td><code>qnorm(1-α)</code></td>
+                <td><code>norm.ppf(1-α)</code></td></tr>
+            <tr><td>Critical z, two-tailed</td>
+                <td><code>NORM.S.INV(1-α/2)</code></td>
+                <td><code>qnorm(1-α/2)</code></td>
+                <td><code>norm.ppf(1-α/2)</code></td></tr>
+            <tr><td>Critical t, two-tailed</td>
+                <td><code>T.INV.2T(α, df)</code></td>
+                <td><code>qt(1-α/2, df)</code></td>
+                <td><code>t.ppf(1-α/2, df)</code></td></tr>
+            <tr><td>Critical t, one-tailed</td>
+                <td><code>T.INV(1-α, df)</code></td>
+                <td><code>qt(1-α, df)</code></td>
+                <td><code>t.ppf(1-α, df)</code></td></tr>
+            <tr><td>p from t, two-tailed</td>
+                <td><code>T.DIST.2T(|t|, df)</code></td>
+                <td><code>2*pt(-|t|, df)</code></td>
+                <td><code>2*t.sf(|t|, df)</code></td></tr>
+            <tr><td>p from t, one-tailed</td>
+                <td><code>T.DIST.RT(t, df)</code></td>
+                <td><code>pt(t, df, lower.tail=FALSE)</code></td>
+                <td><code>t.sf(t, df)</code></td></tr>
+            <tr><td>Paired/2-sample t from raw data</td>
+                <td><code>T.TEST(r1, r2, tails, type)</code></td>
+                <td><code>t.test(x, y, paired=TRUE)</code></td>
+                <td><code>ttest_rel(x, y)</code></td></tr>
+            <tr><td>t from summary statistics</td>
+                <td class="muted">none — use the workbench</td>
+                <td><code>BSDA::tsum.test(...)</code></td>
+                <td><code>ttest_ind_from_stats(...)</code></td></tr>
+            <tr><td>Critical χ²</td>
+                <td><code>CHISQ.INV.RT(α, df)</code></td>
+                <td><code>qchisq(1-α, df)</code></td>
+                <td><code>chi2.isf(α, df)</code></td></tr>
+            <tr><td>p from χ²</td>
+                <td><code>CHISQ.DIST.RT(x, df)</code></td>
+                <td><code>pchisq(x, df, lower.tail=FALSE)</code></td>
+                <td><code>chi2.sf(x, df)</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="note warn">
+        <span class="note-title">Where the three tools genuinely disagree</span>
+        <p><strong>Summary statistics.</strong> Excel has no function that runs
+          a test from n, the mean and the standard deviation — nor does base R
+          (<code>t.test</code> wants raw data; you need
+          <code>BSDA::tsum.test</code>). SciPy does, via
+          <code>ttest_ind_from_stats</code>. This is why the
+          <a href="workbooks/hypothesis-test-workbench.xlsx">workbench</a>
+          exists.</p>
+        <p style="margin-bottom:0"><strong>Yates' correction.</strong> R's
+          <code>chisq.test()</code> applies a continuity correction to 2×2
+          tables <em>by default</em>, so it will disagree with your hand
+          calculation and with Excel. Pass <code>correct = FALSE</code> to match.
+          SciPy's <code>chi2_contingency</code> does the same — pass
+          <code>correction=False</code>.</p>
+      </div>
+    </section>
+
+    <!-- ========================================================== -->
+    <section class="card">
+      <h2>Regression</h2>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>Quantity</th><th>Excel</th><th>R</th><th>Python</th></tr></thead>
+          <tbody>
+            <tr><td>Gradient</td><td><code>SLOPE(y, x)</code></td><td><code>coef(lm(y~x))[2]</code></td><td><code>linregress(x,y).slope</code></td></tr>
+            <tr><td>Intercept</td><td><code>INTERCEPT(y, x)</code></td><td><code>coef(lm(y~x))[1]</code></td><td><code>linregress(x,y).intercept</code></td></tr>
+            <tr><td>R²</td><td><code>RSQ(y, x)</code></td><td><code>summary(lm(y~x))$r.squared</code></td><td><code>linregress(x,y).rvalue**2</code></td></tr>
+            <tr><td>Everything at once</td><td><code>LINEST(y, x, TRUE, TRUE)</code></td><td><code>summary(lm(y~x))</code></td><td><code>linregress(x, y)</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="small muted" style="margin-bottom:0">
+        <code>LINEST</code> returns the gradient <em>first</em> and the intercept
+        second — the opposite order to how you write the equation.
+        <code>SLOPE</code> and <code>INTERCEPT</code> are harder to mix up.
+      </p>
+    </section>
+
+    <!-- ========================================================== -->
+    <section class="card">
+      <h2>Excel version differences</h2>
+      <ul>
+        <li><strong>Analysis ToolPak.</strong> Available on Windows and, since
+          Excel 2016, on macOS — but not in Excel for the web. Everything in
+          these tutorials can be done without it.</li>
+        <li><strong>Dynamic arrays.</strong> In Microsoft 365 and Excel 2021,
+          <code>LINEST</code> spills its results across cells automatically. In
+          older versions you must select the output range and confirm with
+          Ctrl+Shift+Enter.</li>
+        <li><strong>Legacy function names.</strong> <code>STDEV</code>,
+          <code>VAR</code>, <code>MODE</code>, <code>NORMDIST</code>,
+          <code>TINV</code> and <code>CHIINV</code> still work for backwards
+          compatibility. Use the current dotted names — they are clearer about
+          which tail and which divisor you are getting.</li>
+        <li><strong>List separators.</strong> Some regional settings use a
+          semicolon instead of a comma between arguments. If
+          <code>=NORM.DIST(15,25,12,TRUE)</code> errors, try semicolons.</li>
+      </ul>
+    </section>
+
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <p>Practice material for the Transport Data Collection and Analysis module.</p>
+    <p class="noprint"><span data-theme-toggle></span></p>
+  </div>
+</footer>
+
+<script src="assets/js/progress.js"></script>
+<script src="assets/js/chrome.js"></script>
+</body>
+</html>

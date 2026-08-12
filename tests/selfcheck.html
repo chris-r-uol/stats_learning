@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Self-check — Transport Statistics</title>
+<link rel="stylesheet" href="../assets/css/site.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>🧪</text></svg>">
+</head>
+<body>
+<header class="masthead">
+  <div class="wrap"><a class="brand" href="../index.html">Transport Statistics Tutorials</a></div>
+</header>
+
+<main>
+<div class="wrap wrap-narrow">
+  <div class="page-head">
+    <div class="eyebrow">Maintenance</div>
+    <h1>Answer-checking self-test</h1>
+    <p class="lede">
+      Runs the browser's checking logic over every step of every tutorial. For
+      each one it confirms the correct answer is accepted, and that every
+      declared trap and distractor returns <em>its own</em> explanation rather
+      than falling through to the generic message.
+    </p>
+    <p class="small muted">
+      This complements <code>tools/verify_answers.py</code>, which checks that
+      the answers are numerically <em>right</em>. This page checks that the
+      feedback machinery <em>fires</em>. Serve the site over HTTP and reload to
+      re-run.
+    </p>
+  </div>
+  <div id="out" class="card"><p class="muted">Running…</p></div>
+</div>
+</main>
+
+<script src="../assets/js/vendor/js-yaml.min.js"></script>
+<script>
+// Load the checking logic with a cache-buster. A stale cached copy here would
+// be worse than useless: the page would report on code that is no longer what
+// the site actually runs.
+(function () {
+  const stamp = Date.now();
+  function load(src) {
+    return new Promise((resolve, reject) => {
+      const s = document.createElement('script');
+      s.src = src + '?v=' + stamp;
+      s.onload = resolve;
+      s.onerror = () => reject(new Error('could not load ' + src));
+      document.head.appendChild(s);
+    });
+  }
+  load('../assets/js/check.js')
+    .then(() => load('selfcheck.js'))
+    .catch(err => {
+      document.getElementById('out').innerHTML =
+        '<div class="verdict bad"><strong>Could not run</strong>' +
+        '<span class="why">' + err.message + '</span></div>';
+    });
+})();
+</script>
+</body>
+</html>
