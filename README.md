@@ -106,7 +106,7 @@ Then open <http://localhost:8791>. It must be served over HTTP — opening
 ### Regenerating data and workbooks
 
 ```bash
-python3 -m venv .venv && .venv/bin/pip install numpy scipy openpyxl pyyaml
+python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
 .venv/bin/python tools/generate_data.py      # ~70s, deterministic
 .venv/bin/python tools/build_workbooks.py
 .venv/bin/python tools/make_figures.py

@@ -1,0 +1,6 @@
+# Tooling only. The site itself is static and needs none of this — these are
+# for generating the datasets and workbooks, and for verifying the answers.
+numpy>=1.26
+scipy>=1.11
+openpyxl>=3.1
+PyYAML>=6.0
