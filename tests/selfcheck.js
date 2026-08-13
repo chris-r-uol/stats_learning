@@ -67,6 +67,32 @@
                        '", expected "' + want + '"');
           }
 
+          // Alternates must genuinely be accepted. It is easy to list an
+          // also_accept value that sits outside the step's tolerance, and the
+          // symptom is a student's correct answer being marked wrong.
+          for (const alt of s.also_accept || []) {
+            correctChecks++;
+            const resp = s.kind === 'formula' ? { value: alt } : { value: String(alt) };
+            const av = Check.run(s, resp);
+            if (av.state !== 'ok') {
+              fails.push(where + ': also_accept ' + alt + ' was scored "' +
+                         av.state + '" — it falls outside the tolerance');
+            }
+          }
+          for (const c of s.cells || []) {
+            for (const alt of c.also_accept || []) {
+              correctChecks++;
+              const values = {};
+              s.cells.forEach(x => { values[x.key] = String(x.answer); });
+              values[c.key] = String(alt);
+              const av = Check.run(s, { values });
+              if (av.state !== 'ok') {
+                fails.push(where + ': cell ' + c.key + ' also_accept ' + alt +
+                           ' was scored "' + av.state + '" — outside the tolerance');
+              }
+            }
+          }
+
           for (const t of s.traps || []) {
             if (t.value == null) continue;
             trapChecks++;

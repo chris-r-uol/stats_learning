@@ -798,18 +798,35 @@ questions:
         columns: ["w = 90", "w = 150", "w = 500", "w = 1200"]
         rows: ["Predicted r (m)"]
         cells:
-          - {key: p90, row: 0, col: 0, answer: 50.90}
-          - {key: p150, row: 0, col: 1, answer: 60.74}
-          - {key: p500, row: 0, col: 2, answer: 118.14}
-          - {key: p1200, row: 0, col: 3, answer: 232.94}
-        verify: "[0.164*90+36.138, 0.164*150+36.138, 0.164*500+36.138, 0.164*1200+36.138]"
+          - {key: p90,   row: 0, col: 0, answer: 50.92,  also_accept: [50.90]}
+          - {key: p150,  row: 0, col: 1, answer: 60.77,  also_accept: [60.74]}
+          - {key: p500,  row: 0, col: 2, answer: 118.24, also_accept: [118.14]}
+          - {key: p1200, row: 0, col: 3, answer: 233.18, also_accept: [232.94]}
+        verify: |
+          [float(stats.linregress(warning, reaction).slope * wi
+                 + stats.linregress(warning, reaction).intercept)
+           for wi in (90, 150, 500, 1200)]
         solution:
+          working: |
+            Substituting into **r = 0.1642w + 36.1376**:
+
+            | w (m) | 90 | 150 | 500 | 1200 |
+            |---|---|---|---|---|
+            | Predicted r (m) | 50.92 | 60.77 | 118.24 | 233.18 |
+
+            These use the coefficients at full precision, which is what
+            `SLOPE`, `INTERCEPT` and `LINEST` give you.
           note: |
-            If you carried the gradient at full precision (0.1642077) rather
-            than rounding to 0.164, you will get 233.18 at w = 1200 instead of
-            232.94 — a difference of nearly a quarter of a metre from rounding
-            one coefficient at the third decimal place. Both are accepted here.
-            The lesson is to round at the *end*, not in the middle.
+            **Watch what rounding the gradient costs you.** If you round a to
+            0.164 before predicting, you get 232.94 at w = 1200 rather than
+            233.18 — the two answers drift apart by nearly a quarter of a metre,
+            from a change in the *fourth* decimal place of one coefficient.
+
+            Both are accepted here, and the gap is the point: it is invisible at
+            w = 90 (0.02 m) and grows steadily with w, because the rounding
+            error in the gradient gets multiplied by w. **Round at the end of a
+            calculation, not in the middle** — keep the full precision in your
+            cells and let Excel display fewer digits if you want a tidy table.
 
       - kind: multi
         ask: |

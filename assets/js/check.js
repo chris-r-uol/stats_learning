@@ -270,7 +270,8 @@
       if (Number.isNaN(v)) { detail[cell.key] = 'empty'; continue; }
       filled++;
       const tol = cell.tol != null ? cell.tol : step.tol;
-      if (withinTol(v, Number(cell.answer), tol)) {
+      const accepted = [cell.answer].concat(cell.also_accept || []);
+      if (accepted.some(a => a != null && withinTol(v, Number(a), tol))) {
         correct++; detail[cell.key] = 'ok';
       } else {
         detail[cell.key] = 'bad';
