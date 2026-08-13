@@ -23,23 +23,29 @@
   }
 
   // A student who works in R should see R everywhere, not have to click a tab
-  // on every single step.
+  // on every single step. A page may carry several picker slots (one in view
+  // at the top, one in the footer); they all stay in sync.
   function mountLangPicker() {
-    const slot = document.querySelector('[data-lang-picker]');
-    if (!slot) return;
-    const sel = document.createElement('select');
-    sel.setAttribute('aria-label', 'Preferred tool for worked solutions');
-    [['excel', 'Excel'], ['r', 'R'], ['python', 'Python']].forEach(([v, t]) => {
-      const o = document.createElement('option');
-      o.value = v; o.textContent = t;
-      sel.appendChild(o);
+    const slots = document.querySelectorAll('[data-lang-picker]');
+    if (!slots.length) return;
+    const selects = [];
+    slots.forEach(slot => {
+      const sel = document.createElement('select');
+      sel.setAttribute('aria-label', 'Preferred tool for worked solutions');
+      [['excel', 'Excel'], ['r', 'R'], ['python', 'Python']].forEach(([v, t]) => {
+        const o = document.createElement('option');
+        o.value = v; o.textContent = t;
+        sel.appendChild(o);
+      });
+      sel.value = Progress.lang();
+      sel.addEventListener('change', () => {
+        selects.forEach(s => { s.value = sel.value; });
+        if (window.Engine) window.Engine.setLang(sel.value);
+        else Progress.setLang(sel.value);
+      });
+      selects.push(sel);
+      slot.appendChild(sel);
     });
-    sel.value = Progress.lang();
-    sel.addEventListener('change', () => {
-      if (window.Engine) window.Engine.setLang(sel.value);
-      else Progress.setLang(sel.value);
-    });
-    slot.appendChild(sel);
   }
 
   function markCurrentNav() {

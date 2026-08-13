@@ -37,6 +37,18 @@ supplementary: |
 
   ### Which case applies?
 
+  Deciding the case comes down to **two questions**:
+
+  1. **Do I know the population standard deviation?** If yes, use σ. If no,
+     estimate it from the sample and use S.
+  2. **Can I justify the normal distribution?** If yes — either because the
+     population is normal, or because the sample is large enough for the
+     central limit theorem — use the inverse normal. Otherwise use the
+     inverse t.
+
+  The table formalises the combinations, and the questions here quote it by
+  case number:
+
   | Case | Population normal? | Population variance known? | Sample size | Use | Statistic |
   |---|---|---|---|---|---|
   | **1** | Yes | Yes | any | Inverse Normal | (X̄ − μ) ÷ (σ/√n) ~ Nor(0,1) |
@@ -44,12 +56,6 @@ supplementary: |
   | **3** | Yes | No | any | Inverse t | (X̄ − μ) ÷ (S/√n) ~ t(n−1) |
   | **4** | No | No | n ≥ 30 | Inverse Normal | (X̄ − μ) ÷ (S/√n) ~ Nor(0,1) |
   | **4** | Roughly normal | No | n ≥ 20 | Inverse t | (X̄ − μ) ÷ (S/√n) ~ t(n−1) |
-
-  Read it as two questions. *Do I know the population standard deviation?* If
-  yes, use σ; if no, use the sample S. *Can I justify the normal distribution?*
-  If yes — either because the population is normal or because the sample is
-  large enough for the central limit theorem — use the inverse normal;
-  otherwise use the inverse t.
 
 questions:
 

@@ -28,7 +28,9 @@ supplementary: |
   using P(X > c) = 1 − P(X ≤ c).
 
   There is a full list of the functions and their tail directions on the
-  [reference page](reference.html).
+  [reference page](reference.html) — and if any of the notation here is
+  unfamiliar (P(X < c), μ, σ), the
+  [symbols glossary](reference.html#symbols) decodes it.
 
 questions:
 
@@ -297,6 +299,12 @@ questions:
     steps:
       - kind: numeric
         ask: How many combinations of outcomes are possible if the researcher asks everyone on the train?
+        body: |
+          *This part is a why-bother question rather than a technique you will
+          reuse: the point is to see how quickly the possibilities explode, and
+          therefore why a distribution function is needed at all. If it feels
+          abstract, work it, note the answer, and move on — the practical tools
+          start in the next part.*
         answer: 3.87e+25
         tol: {rel: 0.02}
         placeholder: e.g. 1.23e45

@@ -648,6 +648,47 @@ questions:
 
       Fit a model of the form **r = aw + b** by least squares.
     steps:
+      - kind: choice
+        prose: true
+        ask: |
+          Before any arithmetic: plot reaction distance against warning
+          distance as a scatter chart. What does the relationship look like?
+        options:
+          - value: Roughly linear — reaction distance rises steadily as warning distance grows
+            correct: true
+            feedback: |
+              Right — the points climb together convincingly enough that
+              fitting a straight line is a reasonable thing to do. That look at
+              the plot *is* the justification for everything that follows: if
+              the cloud had no shape, computing regression coefficients would
+              just be decorating noise.
+          - value: No visible relationship — the points look like a random cloud
+            feedback: |
+              Look again — the sites with short warning distances all sit at
+              the bottom left and the long ones at the top right. The upward
+              drift is fairly strong. (If a scatter really did look like a
+              random cloud, the right response would be to stop, not to fit a
+              line anyway.)
+          - value: Strongly curved — a straight line clearly cannot describe it
+            feedback: |
+              There is a *hint* of flattening at the far right — hold that
+              thought, because it matters for the prediction part later — but
+              through the bulk of the data the trend is close enough to
+              straight for a linear model to be a sensible starting point.
+        solution:
+          working: |
+            In Excel: select both data columns, then **Insert → Scatter** (the
+            first, markers-only option). Put warning distance on the
+            horizontal axis — it is the variable we control, so it is the
+            natural predictor.
+
+            Always plot before you fit. The chart tells you whether a linear
+            model is even worth computing, and it is also where you will spot
+            the flattening beyond ~300 m that becomes important when we
+            extrapolate later in this question.
+          r: "plot(warning, reaction)"
+          python: "df.plot.scatter(x='warning_distance_m', y='reaction_distance_m')"
+
       - kind: table
         ask: Calculate the summary quantities.
         tol: {abs: 1.0}

@@ -32,6 +32,10 @@ supplementary: |
   is for. One sheet per test, yellow cells for your inputs, and both routes to
   the answer computed side by side. Download it before you start.
 
+  When it opens, click **Enable Editing** in the yellow bar at the top — Excel
+  opens downloaded files read-only until you do, so typing into the input
+  cells will appear to do nothing.
+
   ### Which test?
 
   | Situation | Test |

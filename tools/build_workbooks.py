@@ -88,6 +88,9 @@ def build_data_workbook() -> None:
     ws["A1"].font = TITLE_FONT
     notes = [
         "",
+        "If there is a yellow 'PROTECTED VIEW' bar at the top of this window, click",
+        "Enable Editing - Excel opens downloaded files read-only until you do.",
+        "",
         "One sheet per dataset. The sheet name tells you which tutorial uses it.",
         "",
         "Sheet                     Used by",
@@ -289,6 +292,10 @@ def build_workbench() -> None:
     ws["A1"] = "Hypothesis Test Workbench"
     ws["A1"].font = TITLE_FONT
     lines = [
+        "",
+        "FIRST: if there is a yellow 'PROTECTED VIEW' bar at the top of this window,",
+        "click Enable Editing. Excel opens downloaded files read-only, and the",
+        "input cells will not accept anything until you do.",
         "",
         "Excel has no function that runs a hypothesis test from summary statistics.",
         "T.TEST needs two ranges of raw data, and so does the Analysis ToolPak. When a",

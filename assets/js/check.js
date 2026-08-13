@@ -73,6 +73,27 @@
     const trap = matchTrap(value, step.traps, step.tol);
     if (trap) return { state: 'bad', feedback: trap.feedback, trapped: true };
 
+    // Percentage-for-proportion: Excel often *displays* 0.2316 as 23.16%, and
+    // a student reading their own screen will type 23.16. Only diagnosed on
+    // probability-shaped questions, so a genuine quantity that happens to be
+    // 100x the answer is never mislabelled a percentage.
+    if (step.answer != null) {
+      const ans = Number(step.answer);
+      const probLike = /probab|proportion|p-value|relative frequency/i
+        .test(step.ask || '');
+      if (probLike && ans > 0 && ans <= 1 &&
+          withinTol(value / 100, ans, step.tol)) {
+        return {
+          state: 'bad', trapped: true,
+          feedback: 'That is the right number, but expressed as a ' +
+                    'percentage — your Excel cell is probably formatted to ' +
+                    'show it that way. This question wants the proportion ' +
+                    'between 0 and 1, so either divide by 100 or type the % ' +
+                    'sign and it will be converted for you.'
+        };
+      }
+    }
+
     // Sign slips are common enough (z-scores, paired differences) to be worth
     // catching generically when the question has not named them explicitly.
     if (step.answer != null && withinTol(-value, Number(step.answer), step.tol)) {

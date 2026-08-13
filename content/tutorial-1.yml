@@ -37,6 +37,14 @@ questions:
       Data can be classified as **continuous**, **discrete**, **grouped**,
       **ordinal** or **nominal**. Classify each example below.
 
+      As a reminder from lectures:
+
+      - **Continuous** — can take any value in a range, including fractions (rainfall in mm)
+      - **Discrete** — whole-number counts only (number of bicycles sold)
+      - **Grouped** — numerical data collapsed into bands (income of £20–30k)
+      - **Ordinal** — categories with a meaningful order (a poor/fair/good rating)
+      - **Nominal** — categories with no order (paint colours)
+
       The distinction that catches people out is *ordinal* versus *nominal*:
       both are categories, but ordinal categories have a meaningful ranking.
     steps:
@@ -509,7 +517,9 @@ questions:
         **To plot it in Excel:** select the relative frequency density column,
         hold Ctrl (Cmd on a Mac) and also select the bin label column, then
         Insert → Column chart → 2-D column. Set the gap width to zero so the
-        bars touch, which is what makes it a histogram rather than a bar chart.
+        bars touch, which is what makes it a histogram rather than a bar chart
+        — right-click any bar, choose **Format Data Series**, and set
+        **Gap Width** to 0%.
       excel: "=B4/SUM($B$4:$B$16)   then  =C4/5   then  =SUM($C$4:C4)"
       r: |
         h <- hist(travel_time, breaks = seq(0, 65, 5), plot = FALSE)
@@ -674,10 +684,21 @@ questions:
         tol: {abs: 0.02}
         unit: minutes
         verify: float(travel_no_outlier.mean())
+        hints:
+          - |
+            The data is in survey order, so the 61 is buried somewhere in the
+            middle of the column. Try copying the column to a spare part of the
+            sheet and **sorting the copy** — the outlier drops to the bottom,
+            and a range that excludes it becomes easy to select.
         solution:
-          excel: "=AVERAGE(B4:B58) on the reduced range, or =(SUM(B4:B58)-61)/54"
+          excel: "=AVERAGE(D4:D57) on a sorted copy, or =(SUM(B4:B58)-61)/54 without one"
           r: "mean(travel_time[travel_time < 61])"
           python: "df.travel_time[df.travel_time < 61].mean()"
+          note: |
+            To sort a copy in Excel: copy B4:B58 into column D, select it, then
+            **Data → Sort Smallest to Largest**. The 61 lands in D58, so
+            D4:D57 is the data without the outlier. Sort the *copy*, not the
+            original — keeping the raw data untouched is a good habit.
 
       - kind: numeric
         ask: Standard deviation, with the outlier removed.
@@ -690,6 +711,10 @@ questions:
             feedback: |
               That is still the full data set. Make sure your range excludes
               the 61.
+        solution:
+          excel: "=STDEV.S(D4:D57) on the sorted copy"
+          r: "sd(travel_time[travel_time < 61])"
+          python: "df.travel_time[df.travel_time < 61].std()"
 
       - kind: numeric
         ask: Skewness, with the outlier removed.
@@ -697,6 +722,10 @@ questions:
         also_accept: [0.69]
         tol: {abs: 0.03}
         verify: skew_excel(travel_no_outlier)
+        solution:
+          excel: "=SKEW(D4:D57) on the sorted copy"
+          r: "e1071::skewness(travel_time[travel_time < 61], type = 2)"
+          python: "df.travel_time[df.travel_time < 61].skew()"
 
       - kind: choice
         ask: Which statistic was affected *most* by removing a single observation?

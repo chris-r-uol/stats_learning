@@ -35,7 +35,8 @@
       <p class="lede">
         Excel first, with the R and Python equivalents beside it. The section on
         tail directions is where most wrong answers in this course come from —
-        it is worth reading even if you think you know it.
+        it is worth reading even if you think you know it. There is also a
+        <a href="#symbols">symbols glossary</a> for decoding the notation.
       </p>
     </div>
 
@@ -95,6 +96,41 @@
         the height of the curve at that point, which is only meaningful for
         discrete distributions where it is the probability of that exact
         outcome.
+      </div>
+    </section>
+
+    <!-- ========================================================== -->
+    <section class="card" id="symbols">
+      <h2>Symbols and notation</h2>
+      <p>
+        The lectures define all of these properly; this table is for the moment
+        mid-question when you cannot remember which Greek letter is which.
+      </p>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>Symbol</th><th>Say it</th><th>What it means</th></tr></thead>
+          <tbody>
+            <tr><td>μ</td><td>"mew"</td><td>The <strong>population</strong> mean — the true average over everything, which you usually cannot measure directly</td></tr>
+            <tr><td>x̄</td><td>"x bar"</td><td>The <strong>sample</strong> mean — the average of the data you actually collected</td></tr>
+            <tr><td>σ</td><td>"sigma"</td><td>Population standard deviation; σ² is the population variance</td></tr>
+            <tr><td>s (or S)</td><td></td><td>Sample standard deviation — what <code>STDEV.S</code> returns; s² is the sample variance</td></tr>
+            <tr><td>n</td><td></td><td>Sample size — how many observations you have. √n is its square root (<code>SQRT(n)</code>)</td></tr>
+            <tr><td>σ/√n, s/√n</td><td></td><td>The <strong>standard error</strong> — how much the sample mean would wobble if you repeated the survey</td></tr>
+            <tr><td>P(X &lt; c)</td><td></td><td>"The probability that the quantity X comes out less than the value c." P(X &gt; c) is greater than; P(a &lt; X &lt; b) is between a and b</td></tr>
+            <tr><td>α</td><td>"alpha"</td><td>The significance level — the false-alarm risk you accept. α = 0.05 corresponds to 95% confidence</td></tr>
+            <tr><td>H₀, H₁</td><td>"H nought", "H one"</td><td>The null hypothesis (nothing changed) and the alternative (something did)</td></tr>
+            <tr><td>z</td><td></td><td>A z-score: how many standard deviations a value sits from the mean — and the test statistic of z-tests</td></tr>
+            <tr><td>t</td><td></td><td>The test statistic of t-tests; follows the t-distribution, a slightly fatter-tailed normal</td></tr>
+            <tr><td>χ²</td><td>"kai squared"</td><td>The chi-squared test statistic, for comparing observed against expected counts</td></tr>
+            <tr><td>df</td><td></td><td>Degrees of freedom — the "size" parameter of the t and χ² distributions</td></tr>
+            <tr><td>λ</td><td>"lambda"</td><td>The average event rate in the Poisson distribution (e.g. 4 calls per minute)</td></tr>
+            <tr><td>Σ</td><td>capital "sigma"</td><td>"Add up all of the following" — Σx² means square each value, then sum them</td></tr>
+            <tr><td>~</td><td>"is distributed as"</td><td>X ~ Nor(0,1) means "X follows a normal distribution with mean 0 and sd 1"</td></tr>
+            <tr><td>R²</td><td>"R squared"</td><td>The share of variation a regression explains, from 0 to 1</td></tr>
+            <tr><td>±</td><td>"plus or minus"</td><td>An interval's half-width: 25 ± 0.39 means from 24.61 to 25.39</td></tr>
+            <tr><td>≠, ≤, ≥</td><td></td><td>Not equal to; at most; at least</td></tr>
+          </tbody>
+        </table>
       </div>
     </section>
 

@@ -490,6 +490,14 @@ figcaption { font-size: .87rem; color: var(--text-soft); margin-top: .4rem; }
 .opt.is-ok:has(input:checked) { border-color: var(--ok-border); background: var(--ok-soft); }
 .opt.is-bad:has(input:checked) { border-color: var(--bad-border); background: var(--bad-soft); }
 
+/* Language picker row at the top of tutorial pages. */
+.lang-toolbar {
+  display: flex; justify-content: flex-end; align-items: center;
+  margin-bottom: .75rem;
+}
+.lang-toolbar label { display: inline-flex; align-items: center; }
+.lang-toolbar select { font-size: .88rem; padding: .25rem .45rem; }
+
 /* How precisely an answer is wanted. */
 .precision {
   margin: .45rem 0 0;
