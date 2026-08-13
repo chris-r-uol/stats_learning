@@ -279,8 +279,9 @@ questions:
           r: "qnorm(0.95, mean = 25, sd = 12)"
           python: "scipy.stats.norm.ppf(0.95, 25, 12)"
           note: |
-            The original handout gives 44.73. The exact value is 44.7382, which
-            rounds to 44.74; both are accepted here.
+            The exact value is 44.7382, which rounds to 44.74. You will
+            sometimes see this quoted as 44.73, from truncating rather than
+            rounding — both are accepted here.
 
   # ----------------------------------------------------------- Question 3
   - id: t2-q3
@@ -315,9 +316,11 @@ questions:
           r: "2^85"
           python: "2**85"
           note: |
-            The handout builds this up as the sum of `COMBIN(85, k)` for k = 0 to
-            85, which is a nice illustration of where the total comes from. It
-            sums to exactly 2⁸⁵, so `=2^85` gets you there directly.
+            You can also build this up as the sum of `COMBIN(85, k)` for k = 0
+            to 85 — the number of ways to get exactly k season-ticket holders,
+            added over every possible k. That is a good illustration of where
+            the total comes from, and it sums to exactly 2⁸⁵, so `=2^85` gets
+            you the same answer directly.
 
       - kind: numeric
         ask: What is the probability that fewer than 10 people on the train have a season ticket?
@@ -525,11 +528,10 @@ questions:
             - If you read it as "the smallest n that guarantees at least 95%
               coverage", the answer is **8**.
 
-            Both are accepted. The handout gives 7. In practice, if you were
-            sizing a call centre you would want 8, because you would want to
-            cover *at least* 95% of minutes — which is a good illustration of
-            why the wording of a specification matters as much as the
-            arithmetic.
+            Both are accepted here. In practice, if you were sizing a call
+            centre you would want 8, because you would want to cover *at least*
+            95% of minutes — a good illustration of why the wording of a
+            specification matters as much as the arithmetic.
           excel: "=POISSON.DIST(7,4,TRUE)   then try 8, and so on"
           r: "qpois(0.95, lambda = 4)    # returns 8"
           python: "scipy.stats.poisson.ppf(0.95, 4)   # returns 8.0"

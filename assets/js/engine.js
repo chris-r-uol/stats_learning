@@ -120,11 +120,111 @@
     return wrap;
   }
 
-  function solutionBox(solution, label) {
-    if (!solution) return null;
+  /* The correct answer, stated plainly, derived from the step itself.
+   *
+   * Most steps have no hand-written `solution:` block, and without this the
+   * "Show me the answer" button would open an empty box -- or nothing at all.
+   * Deriving it here means every step can always reveal its answer, and stays
+   * that way as new questions are added. */
+  function answerSummary(step) {
+    const lead = s => '**Answer:** ' + s;
+    const opt = o => o.value || o.caption || '';
+
+    switch (step.kind) {
+      case 'numeric': {
+        if (step.answer == null) return null;
+        let s = '`' + step.answer + '`' + (step.unit ? ' ' + step.unit : '');
+        if (step.also_accept && step.also_accept.length) {
+          s += ' — `' + step.also_accept.join('`, `') + '` also accepted';
+        }
+        return lead(s);
+      }
+      case 'interval':
+        return lead('`' + step.lower + '` to `' + step.upper + '`' +
+                    (step.unit ? ' ' + step.unit : ''));
+      case 'formula':
+        return lead('`' + step.answer + '`');
+      case 'choice':
+      case 'sketch': {
+        const o = (step.options || []).find(x => x.correct);
+        return o ? lead(opt(o)) : null;
+      }
+      case 'multi': {
+        const os = (step.options || []).filter(x => x.correct).map(opt);
+        return os.length ? lead(os.join(' · ')) : null;
+      }
+      case 'decision': {
+        const label = step.answer === 'reject' ? 'Reject H₀' : 'Do not reject H₀';
+        const r = (step.reasons || []).find(x => x.correct);
+        return lead(label + (r ? ', because ' + r.value.charAt(0).toLowerCase() +
+                                  r.value.slice(1) : ''));
+      }
+      case 'hypothesis': {
+        const lines = (step.parts || []).map(p => {
+          const o = p.options.find(x => x.correct);
+          return '- **' + p.label + ':** ' + (o ? o.value : '');
+        });
+        return lines.length ? '**Answer**\n\n' + lines.join('\n') : null;
+      }
+      case 'table': {
+        if (!step.columns || !step.rows) return null;
+        const head = '| |' + step.columns.map(c => ' ' + c + ' |').join('');
+        const sep = '|---|' + step.columns.map(() => '---|').join('');
+        const body = step.rows.map((r, ri) => '| ' + r + ' |' +
+          step.columns.map((_c, ci) => {
+            const cell = (step.cells || []).find(x => x.row === ri && x.col === ci);
+            if (cell) return ' **' + cell.answer + '** |';
+            const given = (step.given || {})[ri + ',' + ci];
+            return ' ' + (given != null ? given : '') + ' |';
+          }).join('')).join('\n');
+        return '**Answers**\n\n' + head + '\n' + sep + '\n' + body;
+      }
+      default:
+        return null;                 // freetext reveals its model answer instead
+    }
+  }
+
+  /* How precisely we want the answer given. Derived from the answer's own
+   * decimal places, so it is never less precise than the tolerance requires.
+   * A step can override it with `precision:`, or suppress it with
+   * `precision: false`. */
+  function precisionHint(step) {
+    if (step.precision === false) return null;
+    if (step.precision) return step.precision;
+    if (!['numeric', 'interval', 'table'].includes(step.kind)) return null;
+
+    let values;
+    if (step.kind === 'interval') values = [step.lower, step.upper];
+    else if (step.kind === 'table') values = (step.cells || []).map(c => c.answer);
+    else values = [step.answer];
+    values = values.filter(v => typeof v === 'number' && isFinite(v));
+    if (!values.length) return null;
+
+    const biggest = Math.max.apply(null, values.map(Math.abs));
+    const subject = step.kind === 'interval' ? 'both bounds'
+      : step.kind === 'table' ? 'each value' : 'your answer';
+
+    if (biggest !== 0 && (biggest >= 1e6 || biggest < 1e-4)) {
+      return 'Give ' + subject + ' in scientific notation, to 3 significant figures.';
+    }
+    const decimals = v => {
+      const s = String(v);
+      const i = s.indexOf('.');
+      return i === -1 ? 0 : s.length - i - 1;
+    };
+    const dp = Math.max.apply(null, values.map(decimals));
+    if (dp === 0) return 'Give ' + subject + ' as a whole number.';
+    return 'Give ' + subject + ' to ' + dp +
+           ' decimal place' + (dp === 1 ? '' : 's') + '.';
+  }
+
+  function solutionBox(solution, label, summary) {
+    if (!solution && !summary) return null;
+    solution = solution || {};
     const box = el('details', { class: 'solution' });
     box.appendChild(el('summary', { text: label || 'Show the worked solution' }));
     const body = el('div', { class: 'sol-body' });
+    if (summary) body.appendChild(htmlBlock(summary, 'prose answer-summary'));
     if (solution.working) body.appendChild(htmlBlock(solution.working));
     const tabs = langTabs(solution);
     if (tabs) body.appendChild(tabs);
@@ -373,19 +473,29 @@
     sketch(step, id) {
       const box = el('div', { class: 'sketchopts' });
       const opts = [];
+
+      // The radio itself is off-screen, so without an explicit selected state
+      // there is nothing to tell the student which diagram they picked.
+      function paintSelection() {
+        opts.forEach(x => x.label.classList.toggle('is-picked', x.input.checked));
+      }
+
       step.options.forEach((opt, i) => {
         const input = el('input', {
           type: 'radio', name: id, value: String(i),
-          class: 'visually-hidden', style: 'position:absolute;opacity:0;'
+          onchange: paintSelection
         });
+        input.style.cssText = 'position:absolute;opacity:0;pointer-events:none;';
         const label = el('label', { class: 'sketchopt' }, [
           input,
+          el('span', { class: 'tick', 'aria-hidden': 'true' }),
           el('div', { html: opt.svg || '' }),
           el('div', { class: 'cap', text: opt.caption || ('Option ' + (i + 1)) })
         ]);
         opts.push({ input, label });
         box.appendChild(label);
       });
+
       return {
         node: box,
         read: () => {
@@ -426,6 +536,9 @@
     const ui = builder(step, stepId);
     wrap.appendChild(ui.node);
 
+    const prec = precisionHint(step);
+    if (prec) wrap.appendChild(el('p', { class: 'precision', text: prec }));
+
     const verdict = el('div', { class: 'verdict', hidden: true, 'aria-live': 'polite' });
     wrap.appendChild(verdict);
 
@@ -454,7 +567,8 @@
     wrap.appendChild(hintBox);
 
     const solution = solutionBox(step.solution,
-      isSelf ? 'Model answer and self-check' : undefined);
+      isSelf ? 'Model answer and self-check' : undefined,
+      answerSummary(step));
     if (solution) {
       solution.hidden = true;
       wrap.appendChild(solution);
@@ -523,7 +637,17 @@
     }
 
     revealBtn.addEventListener('click', () => {
-      if (solution) { solution.hidden = false; solution.open = true; }
+      if (solution) {
+        solution.hidden = false;
+        solution.open = true;
+        solution.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      } else {
+        // Should not happen -- answerSummary covers every gradable kind -- but
+        // silently doing nothing is the one behaviour to rule out.
+        verdict.hidden = false;
+        verdict.className = 'verdict hint';
+        verdict.innerHTML = '<strong>No answer is recorded for this step.</strong>';
+      }
       if (rubric) rubric.hidden = false;
       if (!isSelf) {
         Progress.record(stepId, 'revealed');

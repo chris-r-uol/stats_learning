@@ -82,6 +82,8 @@ appear.
   also_accept: [22.6]            # optional alternates, same tolerance
   tol: {abs: 0.02}               # or {rel: 0.01}, or both, or a bare number
   unit: minutes                  # optional suffix beside the box
+  precision: |                   # optional; see "Precision" below
+    Give your answer to 4 decimal places, or in scientific notation.
   traps:
     - value: 19
       tol: {abs: 0.02}           # optional; defaults to the step's tolerance
@@ -265,6 +267,41 @@ Pick the diagram matching a statement. Figures come from
 ```
 
 ---
+
+## Precision
+
+Every `numeric`, `interval` and `table` step displays a line telling the
+student how precisely to answer — *"Give your answer to 2 decimal places."*
+
+**You do not normally need to write it.** It is derived from the decimal places
+in your `answer`, so it is never less precise than the tolerance requires.
+Integers give "as a whole number"; very large or very small values give
+"in scientific notation, to 3 significant figures".
+
+Override it when the derived wording reads badly:
+
+```yaml
+precision: Give your answer to 4 decimal places, or in scientific notation.
+precision: false      # suppress the line entirely
+```
+
+A p-value of `0.00084` derives "to 5 decimal places", which is technically
+right but odd — that is the kind of case worth overriding.
+
+## Revealing the answer
+
+**Every gradable step can reveal its answer, whether or not you wrote a
+`solution:` block.** If there is no block, the engine derives an *Answer:* line
+from the step — the correct option, the numeric answer, both interval bounds, a
+filled-in table, and so on.
+
+So a `solution:` block is for the *working* — the reasoning, the Excel/R/Python
+formulas, the caveat. You never have to add one just so the button does
+something.
+
+The one exception is `freetext`, which has no derivable answer: give those a
+`solution.working` containing the model answer, or the student has nothing to
+mark themselves against.
 
 ## `verify:` — how CI checks your answer
 

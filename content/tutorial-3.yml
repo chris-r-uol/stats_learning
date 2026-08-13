@@ -246,6 +246,25 @@ questions:
               sample size.
         hints:
           - Standard error = σ ÷ √n.
+        solution:
+          working: |
+            Standard error = σ ÷ √n = 1.3 ÷ √27 = **0.25**
+          note: |
+            **This is where Excel's labelling trips people up.** In the next
+            part you will type this 0.25 into `NORM.INV`, whose third argument
+            Excel calls **`standard_dev`** — so it looks as though you are
+            putting a standard error where a standard deviation is wanted.
+
+            You are not making a mistake. `NORM.INV` wants the standard
+            deviation *of whichever distribution you are describing*. Here that
+            distribution is not the fuel consumption of individual cars — it is
+            the distribution of **sample means**, and the standard deviation of
+            that distribution is exactly what "standard error" means.
+
+            So a standard error **is** a standard deviation. It is just the
+            standard deviation of a different thing: not how much cars vary,
+            but how much your estimate of the average would vary if you
+            repeated the survey.
 
       - kind: interval
         ask: Estimate a 95% confidence interval for the population mean fuel consumption.
@@ -273,10 +292,19 @@ questions:
           r: "mean(x) + c(-1,1) * qnorm(0.975) * 1.3 / sqrt(27)"
           python: "df.x.mean() + np.array([-1,1]) * scipy.stats.norm.ppf(.975) * 1.3/np.sqrt(27)"
           note: |
-            Excel also has `CONFIDENCE.NORM(alpha, sigma, n)`, which returns the
-            half-width directly — `=CONFIDENCE.NORM(0.05, 1.3, 27)` gives 0.49.
-            Worth knowing, though building it from `NORM.INV` makes the
-            machinery visible.
+            **Excel labels that third argument `standard_dev`, and you are
+            passing it the standard error (0.25), not the standard deviation
+            (1.3). That is correct.** `NORM.INV` wants the standard deviation
+            of the distribution you are describing, and here that is the
+            distribution of sample means — whose standard deviation is the
+            standard error. If you pass 1.3 you get the range covering
+            individual *cars*, which is a different and much wider thing.
+
+            Excel also has `CONFIDENCE.NORM(alpha, sigma, n)`, which takes σ and
+            n separately and does the √n for you — `=CONFIDENCE.NORM(0.05, 1.3,
+            27)` returns the half-width 0.49 directly. It sidesteps the
+            labelling confusion, but building the interval from `NORM.INV`
+            keeps the machinery visible.
 
       - kind: choice
         ask: What happens to the 95% confidence interval if you increase the sample size?
@@ -435,8 +463,10 @@ questions:
           - value: Case 4
             feedback: |
               Case 4 is for an unknown population variance. You have been given
-              it as 64. (The original handout labels this question Case 4 — that
-              is a copy-and-paste slip from Question 4; see the errata.)
+              it as 64, so you are in a stronger position than Case 4 assumes.
+              The arithmetic happens to be identical — both use the inverse
+              normal — but the justification you write down should be the
+              stronger one.
           - value: Case 3
             feedback: |
               Case 3 is for a normal population with **unknown** variance. Here
@@ -460,10 +490,11 @@ questions:
 
             **22.29 ± 2.54 tonnes.**
           note: |
-            The handout's solution says "we do not know the underlying
-            distribution or variance" here, which contradicts the question — it
-            was copied from Question 4 and not updated. The numbers are right;
-            the justification is not. See `ERRATA.md`.
+            Compare this with Question 4, where the same `NORM.INV` call was
+            justified by the central limit theorem and a sample estimate of the
+            spread. Here it is justified by a stated normal population and a
+            known σ. Same function, same shape of answer, quite different
+            grounds — and it is the grounds you would have to defend.
 
       - kind: freetext
         ask: |
@@ -508,9 +539,10 @@ questions:
       A study of driving speed on a motorway sampled 100 vehicles. The average
       speed was **64 mph** and the variance was **9 mph²**.
     note: |
-      The handout writes the variance as "9mph". Variance is in *squared* units,
-      so it should read 9 mph² — which matters, because it is what tells you
-      that the standard deviation is 3 mph rather than 9.
+      Note the units. Variance is in **squared** units, so 9 mph² — and that is
+      exactly what tells you the standard deviation is 3 mph rather than 9. If
+      you ever see a variance quoted in plain mph, treat it as a warning sign
+      and check which quantity is actually meant.
     steps:
       - kind: numeric
         ask: What is the standard deviation?

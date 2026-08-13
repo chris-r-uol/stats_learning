@@ -451,14 +451,60 @@ figcaption { font-size: .87rem; color: var(--text-soft); margin-top: .4rem; }
 .sketchopts { display: grid; gap: .7rem; }
 @media (min-width: 40rem) { .sketchopts { grid-template-columns: 1fr 1fr; } }
 .sketchopt {
+  position: relative;
   border: 2px solid var(--border); border-radius: 8px; padding: .5rem;
   cursor: pointer; background: var(--surface); text-align: center;
+  /* No transition here on purpose. Transitioning border-color/background made
+     the selected state fail to paint at all in testing, and selection feedback
+     should be instant regardless. */
 }
-.sketchopt:hover { border-color: var(--brand); }
-.sketchopt.is-ok { border-color: var(--ok); background: var(--ok-soft); }
-.sketchopt.is-bad { border-color: var(--bad); background: var(--bad-soft); }
-.sketchopt svg { width: 100%; height: auto; }
+.sketchopt:hover { border-color: var(--brand-text); }
+.sketchopt:focus-within { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* The radio is off-screen, so selection needs to be unmistakable on the card. */
+.sketchopt .tick {
+  position: absolute; top: .45rem; right: .45rem;
+  width: 1.25rem; height: 1.25rem; border-radius: 50%;
+  border: 2px solid var(--border-strong); background: var(--surface);
+}
+.sketchopt.is-picked {
+  border-color: var(--brand); background: var(--brand-soft);
+  box-shadow: 0 0 0 3px var(--brand-soft);
+}
+.sketchopt.is-picked .tick { border-color: var(--brand); background: var(--brand); }
+.sketchopt.is-picked .tick::after {
+  content: ""; position: absolute; left: .34rem; top: .12rem;
+  width: .3rem; height: .6rem;
+  border: solid var(--on-brand); border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+.sketchopt.is-ok { border-color: var(--ok); background: var(--ok-soft); box-shadow: none; }
+.sketchopt.is-ok .tick { border-color: var(--ok); background: var(--ok); }
+.sketchopt.is-bad { border-color: var(--bad); background: var(--bad-soft); box-shadow: none; }
+.sketchopt.is-bad .tick { border-color: var(--bad); background: var(--bad); }
+.sketchopt img, .sketchopt svg { width: 100%; height: auto; }
 .sketchopt .cap { font-size: .84rem; color: var(--text-soft); margin-top: .3rem; }
+
+/* Selected state for ordinary radio/checkbox options too. */
+.opt:has(input:checked) { border-color: var(--border-strong); background: var(--bg-soft); }
+.opt.is-ok:has(input:checked) { border-color: var(--ok-border); background: var(--ok-soft); }
+.opt.is-bad:has(input:checked) { border-color: var(--bad-border); background: var(--bad-soft); }
+
+/* How precisely an answer is wanted. */
+.precision {
+  margin: .45rem 0 0;
+  font-size: .85rem;
+  color: var(--text-soft);
+}
+.precision::before { content: "→ "; color: var(--text-faint); }
+
+.answer-summary {
+  padding: .55rem .8rem; margin-bottom: .8rem;
+  background: var(--surface); border: 1px solid var(--border);
+  border-left: 3px solid var(--ok); border-radius: 0 6px 6px 0;
+}
+.answer-summary > :last-child { margin-bottom: 0; }
+.answer-summary table { margin-bottom: 0; }
 
 /* --------------------------------------------------------------- misc */
 

@@ -128,6 +128,23 @@
         an interval √n times too wide.
       </div>
 
+      <div class="note">
+        <span class="note-title">Why Excel calls it <code>standard_dev</code></span>
+        <p>
+          <code>NORM.INV</code>'s third argument is labelled
+          <code>standard_dev</code>, so passing it a standard <em>error</em>
+          looks like a mistake. It is not.
+        </p>
+        <p style="margin-bottom:0">
+          The argument wants the standard deviation of <em>whichever
+          distribution you are describing</em>. For a confidence interval that
+          distribution is not your data — it is the distribution of
+          <strong>sample means</strong>, and its standard deviation is exactly
+          what "standard error" means. A standard error <em>is</em> a standard
+          deviation; it is just the standard deviation of a different thing.
+        </p>
+      </div>
+
       <h3>Which case applies?</h3>
       <div class="table-scroll">
         <table>
@@ -201,11 +218,12 @@
           95% confidence that the mean speed of vehicles passing this site is
           between 24.61 and 25.39 mph.</p>
           <div class="note small">
-            The version of this example in the original handout uses the
-            standard deviation (2) rather than the standard error (0.2), giving
-            25 ± 3.92 mph. That is the width of the interval covering individual
-            <em>vehicles</em>, not the precision of the <em>mean</em>. The
-            corrected figures are above; see <code>ERRATA.md</code>.
+            <span class="note-title">Check you used the standard error</span>
+            If you get 25 ± 3.92 mph here, you have used the standard deviation
+            (2) as the spread parameter rather than the standard error (0.2).
+            That answers a different question — it is roughly the range covering
+            individual <em>vehicles</em>, not the precision of the
+            <em>mean</em> — and it comes out √n = 10 times too wide.
           </div>
         </div>
       </details>

@@ -231,10 +231,11 @@ questions:
             tol: {abs: 0.002}
             feedback: |
               You have divided by the employed row total (151), which answers
-              "what proportion of employed people are carless". Read the phrasing
-              carefully: "of carless people" makes the carless column total
-              (291) the denominator. *(The original handout makes exactly this
-              slip and prints 0.139 — see the errata.)*
+              "what proportion of employed people are carless" — a different
+              question with a different answer. Read the phrasing carefully:
+              "of carless people" makes the carless column total (291) the
+              denominator. This pair of questions is easy to swap, so it is
+              worth slowing down on.
         hints:
           - The group you are taking a proportion *of* is the denominator. Which group is that here?
         solution:
@@ -245,8 +246,13 @@ questions:
             thing that varies is the denominator. The phrase after "of" names
             the group you are inside.
           note: |
-            The handout computes 21 ÷ 151 = 0.139 here, using the employed total.
-            That answers the reverse question. See `ERRATA.md`.
+            Contrast the two directions, because they are easy to confuse:
+
+            - "Of carless people, what proportion are employed?" → 21 ÷ 291 = 0.072
+            - "Of employed people, what proportion are carless?" → 21 ÷ 151 = 0.139
+
+            Same cell on top, different totals underneath, and answers that
+            differ by a factor of nearly two.
 
       - kind: hypothesis
         ask: Set up the test for whether car ownership is independent of employment status.
@@ -361,11 +367,11 @@ questions:
           r: "chisq.test(m)$statistic"
           python: "scipy.stats.chi2_contingency(m).statistic"
           note: |
-            The handout's text says 140.7 while its table sums to 140.07. The
-            table is right. Note also that R's `chisq.test` applies Yates'
-            continuity correction to 2×2 tables by default — not an issue here
-            with a 6×2 table, but it will make R disagree with your hand
-            calculation on Question 3 unless you pass `correct = FALSE`.
+            R's `chisq.test` applies Yates' continuity correction to 2×2 tables
+            by default. That is not an issue here with a 6×2 table, but it will
+            make R disagree with your hand calculation on a 2×2 unless you pass
+            `correct = FALSE`. SciPy's `chi2_contingency` does the same — pass
+            `correction=False` to match.
 
       - kind: numeric
         ask: How many degrees of freedom does this table have?
@@ -409,9 +415,10 @@ questions:
           r: "qchisq(0.01, df = 5, lower.tail = FALSE)"
           python: "scipy.stats.chi2.isf(0.01, 5)"
           note: |
-            The handout writes `CHI.INV.RT` here. That function does not exist —
-            the correct name is `CHISQ.INV.RT`, which the handout itself uses
-            correctly in Question 3.
+            Watch the name. It is **`CHISQ.INV.RT`** — there is no function
+            called `CHI.INV.RT`, and typing that gets you `#NAME?`. The `.RT`
+            matters too: it gives the right-hand tail, which is the one χ²
+            rejects in.
 
       - kind: decision
         ask: What do you conclude at 1% significance?
@@ -671,9 +678,9 @@ questions:
             tol: {abs: 0.05}
             feedback: |
               That is the **intercept** b, not the gradient. S_xy ÷ S_xx gives
-              the gradient. *(The original handout labels these the wrong way
-              round in its derivation — see the errata — although its final
-              model is correct.)*
+              the gradient a. A quick sanity check: the gradient has to be
+              small here, because reaction distance rises by only tens of
+              metres while warning distance rises by hundreds.
           - value: 6.09
             tol: {abs: 0.1}
             feedback: |

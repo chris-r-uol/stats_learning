@@ -295,9 +295,9 @@ questions:
             (n−1). NumPy does **not** — `np.std(x)` divides by n, so you need
             `np.std(x, ddof=1)` to match Excel's `STDEV.S`.
           working: |
-            The original handout prints 10.67. The exact value is √113.99 =
-            10.6766, which rounds to 10.68; both are accepted here. See the
-            errata note in the repository.
+            The exact value is √113.99 = 10.6766, which displays as 10.68 at two
+            decimal places. You will sometimes see this quoted as 10.67, from
+            truncating rather than rounding — both are accepted here.
 
       - kind: numeric
         ask: What is the variance?
@@ -308,9 +308,8 @@ questions:
           - value: 111.92
             feedback: |
               That is `VAR.P`, the population variance. Use `VAR.S` for a
-              sample. (If you are comparing against the handout's Question 6
-              table, note that the table used the population versions by
-              mistake — that is why its numbers differ.)
+              sample. The two differ by a factor of n/(n−1) — small here, but
+              the reasoning is what matters.
           - value: 10.68
             tol: {abs: 0.05}
             feedback: |
@@ -761,8 +760,8 @@ questions:
         | 2nd quartile | 18.50 | 19.00 | 0.50 |
         | 3rd quartile | 30.00 | 30.50 | 0.50 |
       note: |
-        The equivalent table in the original handout shows 10.58 and 111.92 in
-        the "with outlier" column. Those are the *population* figures
-        (`STDEV.P`, `VAR.P`), which is inconsistent with Question 2 and with
-        the rest of that same table. The sample values are used here. See
-        `ERRATA.md` in the repository.
+        Every figure here uses the **sample** formulas (`STDEV.S`, `VAR.S`),
+        consistently with Question 2. If your "with outlier" column shows 10.58
+        and 111.92 instead, you have used `STDEV.P` and `VAR.P` — the population
+        versions. Mixing the two within a single comparison table is an easy
+        mistake to make and makes the differences meaningless.

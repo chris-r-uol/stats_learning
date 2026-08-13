@@ -145,10 +145,10 @@ questions:
                 correct: true
               - value: "μ_50 ≠ μ_70  (two-tailed)"
                 feedback: |
-                  Defensible, and the handout offers it as an option. But the
-                  statement makes a *directional* claim — that the reduction
-                  *reduces* accidents — so a one-tailed test matches the
-                  question being asked and has more power to detect it.
+                  Defensible, and not wrong. But the statement makes a
+                  *directional* claim — that the reduction *reduces* accidents —
+                  so a one-tailed test matches the question being asked and has
+                  more power to detect it.
               - value: "μ_50 > μ_70"
                 feedback: |
                   That is the wrong direction. The claim is that the lower speed
@@ -399,6 +399,7 @@ questions:
         ask: What is the p-value?
         answer: 0.00084
         tol: {abs: 0.0002}
+        precision: Give your answer to 4 decimal places, or in scientific notation.
         verify: NORM_S_DIST(-3.14, True)
         traps:
           - value: 0.9992
@@ -604,13 +605,16 @@ questions:
             but not overwhelming evidence — quite unlike Question 3's 0.0008. A
             p-value is worth reading as a quantity, not just as a pass/fail.
           note: |
-            The handout uses a **z**-test here even though the population
+            This question is set up as a **z**-test even though the population
             standard deviations are unknown and only estimated from the samples.
             That is defensible at n = 50 and 40 — the central limit theorem is
             doing the work — but a two-sample **t**-test is the more standard
-            choice. Try it in the workbench's Two-Sample T sheet: with 88
-            degrees of freedom the critical value is 1.987 rather than 1.96, and
-            the conclusion is unchanged.
+            choice when you have had to estimate the spread.
+
+            Try it in the workbench's Two-Sample T sheet: with 88 degrees of
+            freedom the critical value is 1.987 rather than 1.96, and the
+            conclusion is unchanged. If you reached for a t-test here, you were
+            not wrong.
 
   # ----------------------------------------------------------- Question 5
   - id: t4-q5

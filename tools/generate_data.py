@@ -176,6 +176,13 @@ def generate_travel_times(seed: int = 0) -> list[int]:
             break
 
     x = sorted(v for g in best.values() for v in g)
+
+    # Ship the survey in a shuffled order. Real survey responses do not arrive
+    # sorted, and handing students a sorted column gives away the median, the
+    # quartiles and the outlier before they have done any work. The shuffle is
+    # seeded so the file is reproducible, and every statistic asked for is
+    # order-independent.
+    rng.shuffle(x)
     return x
 
 
@@ -307,6 +314,7 @@ def main() -> None:
     print(f"  travel times: n={len(x)} mean={x.mean():.4f} median={np.median(x):.1f} "
           f"var={var_s(x):.4f} sd={stdev_s(x):.4f} skew={skew_excel(x):.4f} "
           f"Q1={quartile_inc(x,.25)} Q3={quartile_inc(x,.75)}")
+    print(f"     shipped unsorted, first ten: {travel[:10]}")
     write_csv("travel-times.csv", ["observation", "travel_time_min"],
               [[i + 1, v] for i, v in enumerate(travel)])
 
