@@ -529,7 +529,7 @@
     const builder = BUILDERS[step.kind];
     if (!builder) {
       wrap.appendChild(el('div', {
-        class: 'verdict bad', text: 'Unsupported question type: ' + step.kind
+        class: 'verdict bad', text: 'This question type is not supported: ' + step.kind
       }));
       return wrap;
     }
@@ -558,7 +558,7 @@
     const isSelf = step.kind === 'freetext';
     const revealBtn = el('button', {
       class: 'btn quiet small', type: 'button',
-      text: isSelf ? 'Show the model answer' : 'Show me the answer'
+      text: isSelf ? 'Show the model answer' : 'Show the answer'
     });
     actions.appendChild(revealBtn);
     wrap.appendChild(actions);
@@ -583,7 +583,7 @@
         v.state === 'ok' ? 'ok' : v.state === 'empty' ? 'hint' : 'bad');
       const head = v.state === 'ok' ? 'Correct.'
         : v.state === 'empty' ? ''
-        : v.trapped ? 'Not quite — and this is a common one.' : 'Not quite.';
+        : v.trapped ? 'Not correct. This is a common mistake.' : 'Not correct.';
       verdict.innerHTML =
         (head ? '<strong>' + head + '</strong>' : '') +
         (v.feedback ? '<span class="why">' + md(v.feedback) + '</span>' : '');
@@ -646,7 +646,7 @@
         // silently doing nothing is the one behaviour to rule out.
         verdict.hidden = false;
         verdict.className = 'verdict hint';
-        verdict.innerHTML = '<strong>No answer is recorded for this step.</strong>';
+        verdict.innerHTML = '<strong>There is no recorded answer for this step.</strong>';
       }
       if (rubric) rubric.hidden = false;
       if (!isSelf) {
@@ -662,7 +662,7 @@
       verdict.hidden = false;
       verdict.className = 'verdict ok';
       verdict.innerHTML = '<strong>' + (saved.status === 'self'
-        ? 'Marked as reviewed in an earlier session.'
+        ? 'You marked this as reviewed in an earlier session.'
         : 'You answered this correctly in an earlier session.') + '</strong>';
       if (solution) solution.hidden = false;
       if (rubric) rubric.hidden = false;
@@ -680,7 +680,7 @@
     }));
     box.appendChild(el('p', {
       class: 'small muted',
-      text: 'Compare what you wrote with the model answer. Tick each point you covered.'
+      text: 'Compare your answer with the model answer. Tick each point you included.'
     }));
     const list = el('ul', { class: 'rubric' });
     step.rubric.forEach((point, i) => {
@@ -752,15 +752,15 @@
       doc = jsyaml.load(await res.text());
     } catch (err) {
       mount.appendChild(el('div', { class: 'card' }, [
-        el('h2', { text: 'Could not load this tutorial' }),
+        el('h2', { text: 'This tutorial could not be loaded' }),
         el('p', {
-          text: 'Tried to fetch ' + url + ' and got: ' + err.message
+          text: 'The file ' + url + ' returned: ' + err.message
         }),
         el('p', {
           class: 'small muted',
-          text: 'If you opened this file directly from your computer, your ' +
-                'browser will block the request. Serve the folder over HTTP ' +
-                'instead, or use the published site.'
+          text: 'If you opened this file directly from your computer, the ' +
+                'browser blocks the request. Use the published web address ' +
+                'instead.'
         })
       ]));
       return null;
@@ -780,7 +780,7 @@
 
     if (doc.learning_outcomes && doc.learning_outcomes.length) {
       const card = el('div', { class: 'card' });
-      card.appendChild(el('h2', { text: 'What you should be able to do afterwards' }));
+      card.appendChild(el('h2', { text: 'After this tutorial you will be able to' }));
       const ul = el('ul');
       doc.learning_outcomes.forEach(o => ul.appendChild(el('li', { html: mdInline(o) })));
       card.appendChild(ul);
@@ -792,8 +792,8 @@
       card.appendChild(el('h2', { text: 'Data for this tutorial' }));
       card.appendChild(el('p', {
         class: 'small muted',
-        text: 'The workbook has one sheet per dataset. CSV copies are there for ' +
-              'R and Python users.'
+        text: 'The workbook has one sheet per dataset. CSV files are also ' +
+              'available, for R and Python.'
       }));
       const chips = el('div', { class: 'chiplist' });
       chips.appendChild(el('a', {
@@ -855,7 +855,7 @@
         class: 'btn quiet small', type: 'button', text: 'Reset this tutorial',
         style: 'margin-top:1rem',
         onclick: () => {
-          if (confirm('Clear your saved answers for this tutorial? This cannot be undone.')) {
+          if (confirm('Delete your saved answers for this tutorial? This cannot be undone.')) {
             Progress.reset(allStepIds);
             location.reload();
           }
@@ -885,9 +885,9 @@
       root.insertBefore(el('div', {
         class: 'note warn',
         html: '<span class="note-title">Progress will not be saved</span>' +
-              'Your browser is blocking local storage, probably because you are ' +
-              'in private browsing. Everything still works — but ticks will be ' +
-              'gone when you close the tab.'
+              'Your browser is blocking local storage. This usually happens in ' +
+              'private browsing. Everything still works, but your answers will ' +
+              'be lost when you close the tab.'
       }), container);
     }
 

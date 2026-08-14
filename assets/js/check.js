@@ -56,12 +56,12 @@
     return null;
   }
 
-  const GENERIC = 'Not quite. Check the numbers you fed into the formula, ' +
-                  'then try the hint below.';
+  const GENERIC = 'Not correct. Check the numbers you used in the formula. ' +
+                  'The hint below may help.';
 
   function numericVerdict(value, step) {
     if (Number.isNaN(value)) {
-      return { state: 'empty', feedback: 'Enter a number to check your answer.' };
+      return { state: 'empty', feedback: 'Enter a number to check it.' };
     }
     const accepted = [step.answer].concat(step.also_accept || []);
     for (const a of accepted) {
@@ -85,11 +85,10 @@
           withinTol(value / 100, ans, step.tol)) {
         return {
           state: 'bad', trapped: true,
-          feedback: 'That is the right number, but expressed as a ' +
-                    'percentage — your Excel cell is probably formatted to ' +
-                    'show it that way. This question wants the proportion ' +
-                    'between 0 and 1, so either divide by 100 or type the % ' +
-                    'sign and it will be converted for you.'
+          feedback: 'This is the right number, written as a percentage. ' +
+                    'Your Excel cell is probably formatted to show a ' +
+                    'percentage. This question needs a value between 0 and 1. ' +
+                    'Divide by 100, or add a % sign to your answer.'
         };
       }
     }
@@ -99,8 +98,8 @@
     if (step.answer != null && withinTol(-value, Number(step.answer), step.tol)) {
       return {
         state: 'bad', trapped: true,
-        feedback: 'Right magnitude, wrong sign. Check which value you ' +
-                  'subtracted from which -- the order matters.'
+        feedback: 'The size is correct but the sign is wrong. Check which ' +
+                  'value you subtracted from which. The order matters.'
       };
     }
     return { state: 'bad', feedback: step.on_wrong || GENERIC };
@@ -118,7 +117,7 @@
     const lo = parseNumber(response.lower);
     const hi = parseNumber(response.upper);
     if (Number.isNaN(lo) || Number.isNaN(hi)) {
-      return { state: 'empty', feedback: 'Enter both bounds to check your answer.' };
+      return { state: 'empty', feedback: 'Enter both bounds to check them.' };
     }
     const okLo = withinTol(lo, Number(step.lower), step.tol);
     const okHi = withinTol(hi, Number(step.upper), step.tol);
@@ -134,9 +133,9 @@
     if (lo > hi) {
       return {
         state: 'bad', trapped: true,
-        feedback: 'Your lower bound is above your upper bound -- they are the ' +
-                  'wrong way round. The lower bound uses the smaller ' +
-                  'probability (for a 95% interval, 0.025).'
+        feedback: 'Your lower bound is larger than your upper bound. They ' +
+                  'are the wrong way round. The lower bound uses the smaller ' +
+                  'probability. For a 95% interval, that is 0.025.'
       };
     }
 
@@ -150,18 +149,18 @@
         gotHalf > wantHalf * 1.8 && step.n) {
       return {
         state: 'bad', trapped: true,
-        feedback: 'Your interval is centred correctly but far too wide. You have ' +
-                  'almost certainly used the standard deviation where you need ' +
-                  'the **standard error** -- divide it by the square root of n ' +
-                  '(√' + step.n + ') before using it as the spread parameter.'
+        feedback: 'The centre of your interval is correct, but it is far too ' +
+                  'wide. You have used the standard deviation. Use the ' +
+                  '**standard error**: divide the standard deviation by √' +
+                  step.n + ' first.'
       };
     }
     return {
       state: 'bad',
       feedback: step.on_wrong || (okLo
-        ? 'Your lower bound is right but the upper bound is not.'
+        ? 'The lower bound is correct. The upper bound is not.'
         : okHi
-          ? 'Your upper bound is right but the lower bound is not.'
+          ? 'The upper bound is correct. The lower bound is not.'
           : GENERIC),
       detail: { okLo, okHi }
     };
@@ -171,7 +170,7 @@
 
   function checkChoice(step, response) {
     if (response.value == null || response.value === '') {
-      return { state: 'empty', feedback: 'Select an option to check your answer.' };
+      return { state: 'empty', feedback: 'Select an option to check it.' };
     }
     const picked = step.options[Number(response.value)];
     if (!picked) return { state: 'empty', feedback: 'Select an option.' };
@@ -197,8 +196,8 @@
     }
     return {
       state: 'bad',
-      feedback: 'You have the right idea but the selection is incomplete -- ' +
-                'there ' + (missed.length === 1 ? 'is one more option' :
+      feedback: 'Your selection is correct so far, but incomplete. There ' +
+                (missed.length === 1 ? 'is one more option' :
                 'are ' + missed.length + ' more options') + ' that also applies.'
     };
   }
@@ -241,17 +240,17 @@
     if (wantFn && gotFn === wantFn) {
       return {
         state: 'bad',
-        feedback: 'The right function, but the arguments are not right yet. ' +
-                  'Check their order, and whether the cumulative flag should ' +
-                  'be TRUE or FALSE.'
+        feedback: 'The function is correct, but the arguments are not. ' +
+                  'Check their order, and check whether the cumulative flag ' +
+                  'should be TRUE or FALSE.'
       };
     }
     if (gotFn && wantFn && gotFn !== wantFn) {
       return {
         state: 'bad',
-        feedback: 'You have used `' + gotFn + '`, which is not the function ' +
-                  'this question needs. Look again at whether you are going ' +
-                  'from a value to a probability, or the other way round.'
+        feedback: 'You have used `' + gotFn + '`. That is not the right ' +
+                  'function here. Check whether you need to go from a value ' +
+                  'to a probability, or from a probability to a value.'
       };
     }
     return { state: 'bad', feedback: step.on_wrong || GENERIC };
@@ -278,7 +277,7 @@
       }
     }
     if (!filled) {
-      return { state: 'empty', feedback: 'Fill in the table to check it.', detail };
+      return { state: 'empty', feedback: 'Complete the table to check it.', detail };
     }
     if (correct === cells.length) {
       return { state: 'ok', feedback: step.on_correct || null, detail };
@@ -315,9 +314,9 @@
     const blanks = cells.length - filled;
     return {
       state: 'bad', detail,
-      feedback: correct + ' of ' + cells.length + ' cells are right' +
-                (blanks ? ' (' + blanks + ' still blank)' : '') +
-                '. The wrong ones are outlined in red.'
+      feedback: correct + ' of ' + cells.length + ' cells are correct' +
+                (blanks ? '. ' + blanks + ' are still empty' : '') +
+                '. The incorrect cells have a red border.'
     };
   }
 
@@ -331,7 +330,7 @@
       return { state: 'empty', feedback: 'Choose whether to reject the null hypothesis.' };
     }
     if (step.reasons && !response.reason) {
-      return { state: 'empty', feedback: 'Also choose the reason for your decision.' };
+      return { state: 'empty', feedback: 'Now choose the reason for your decision.' };
     }
     const decisionOk = response.value === step.answer;
     const reason = step.reasons ? step.reasons[Number(response.reason)] : null;
@@ -342,15 +341,15 @@
       return {
         state: 'bad', trapped: true,
         feedback: (reason && reason.feedback) ||
-          'The right decision, but not for the right reason. Which comparison ' +
-          'actually justifies it?'
+          'The decision is correct, but the reason is not. Which comparison ' +
+          'supports it?'
       };
     }
     const wrongFb = step.answer === 'reject'
-      ? 'The evidence here is strong enough to reject H₀. Compare your test ' +
-        'statistic with the critical value again, and your p-value with α.'
-      : 'There is not enough evidence to reject H₀ here. Remember that failing ' +
-        'to reject is not the same as showing H₀ is true.';
+      ? 'The evidence is strong enough to reject H₀. Compare your test ' +
+        'statistic with the critical value, and your p-value with α.'
+      : 'There is not enough evidence to reject H₀. Note that failing to ' +
+        'reject H₀ does not prove that H₀ is true.';
     return { state: 'bad', feedback: step.on_wrong || wrongFb };
   }
 
@@ -361,7 +360,7 @@
     const parts = step.parts || [];
     const missing = parts.filter(p => !response.values || !response.values[p.key]);
     if (missing.length) {
-      return { state: 'empty', feedback: 'Answer all parts to check this step.' };
+      return { state: 'empty', feedback: 'Answer every part to check this step.' };
     }
     const wrong = [];
     for (const part of parts) {
@@ -373,7 +372,7 @@
     return {
       state: 'bad', trapped: !!(first.picked && first.picked.feedback),
       feedback: (first.picked && first.picked.feedback) ||
-        'The ' + first.part.label.toLowerCase() + ' is not right yet.'
+        'The ' + first.part.label.toLowerCase() + ' is not correct.'
     };
   }
 
@@ -384,8 +383,8 @@
     if (text.length < (step.min_length || 20)) {
       return {
         state: 'empty',
-        feedback: 'Write your answer in full sentences first -- then reveal the ' +
-                  'model answer and mark yourself against it.'
+        feedback: 'Write your answer in full sentences. Then open the model ' +
+                  'answer and compare it with yours.'
       };
     }
     return { state: 'self', feedback: null };
@@ -393,14 +392,14 @@
 
   function checkSketch(step, response) {
     if (response.value == null || response.value === '') {
-      return { state: 'empty', feedback: 'Pick the diagram that matches the statement.' };
+      return { state: 'empty', feedback: 'Choose the diagram that matches the statement.' };
     }
     const picked = step.options[Number(response.value)];
     if (picked && picked.correct) return { state: 'ok', feedback: step.on_correct || null };
     return {
       state: 'bad', trapped: !!(picked && picked.feedback),
       feedback: (picked && picked.feedback) ||
-        'Not that one. Look at which side of the line is shaded.'
+        'Not this one. Look at which side of the line is shaded.'
     };
   }
 

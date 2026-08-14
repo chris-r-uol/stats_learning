@@ -2,9 +2,8 @@ tutorial: 4
 title: Hypothesis Testing
 
 intro: |
-  Hypothesis testing is the machinery behind almost every statistical claim you
-  will make professionally: *did this intervention actually change anything, or
-  could we be looking at noise?* Everything in Tutorial 5 rests on it too.
+  A hypothesis test answers one question: did something really change, or is
+  this just random variation? Tutorial 5 uses these methods throughout.
 
 learning_outcomes:
   - Explain hypothesis testing including null and alternative hypotheses, p-values, and Type 1 and Type 2 errors.
@@ -20,21 +19,20 @@ datasets:
 supplementary: |
   ![The six steps of the hypothesis testing method](assets/img/method-hypothesis.svg)
 
-  ### Excel cannot do this in one function, and that is worth knowing up front
+  ### Excel has no single function for this
 
-  `T.TEST` needs two ranges of raw data. So does the Analysis ToolPak. But
-  Questions 3 and 4 give you only n, the mean and the standard deviation — and
-  **no Excel function takes summary statistics**. You have to build the test out
-  of cell arithmetic.
+  `T.TEST` needs two ranges of raw data, and so does the Analysis ToolPak.
+  Questions 3 and 4 give you only n, the mean and the standard deviation. **No
+  Excel function accepts summary statistics.** You must build the test from
+  separate cell formulas.
 
-  That is what the
-  [**Hypothesis Test Workbench**](workbooks/hypothesis-test-workbench.xlsx)
-  is for. One sheet per test, yellow cells for your inputs, and both routes to
-  the answer computed side by side. Download it before you start.
+  The [**Hypothesis Test Workbench**](workbooks/hypothesis-test-workbench.xlsx)
+  does this for you. It has one sheet per test, yellow cells for your inputs,
+  and both routes to the answer side by side. Download it before you start.
 
-  When it opens, click **Enable Editing** in the yellow bar at the top — Excel
-  opens downloaded files read-only until you do, so typing into the input
-  cells will appear to do nothing.
+  When it opens, click **Enable Editing** in the yellow bar at the top. Excel
+  opens downloaded files read-only, so until you do, typing into the input
+  cells has no effect.
 
   ### Which test?
 
@@ -48,15 +46,14 @@ supplementary: |
   | Two categorical variables | Chi-squared |
   | More than two independent groups | ANOVA |
 
-  ### Two routes, one answer
+  ### Two routes to the same answer
 
-  Every question here asks you for **both** the critical value and the p-value.
-  That is deliberate. They are two ways of asking the same question, they always
-  agree, and having both means you can catch your own mistakes:
+  Each question asks for **both** the critical value and the p-value. They give
+  the same result, so you can use one to check the other.
 
-  - **Critical value route:** reject H₀ if the test statistic is further from
-    zero than the critical value.
-  - **p-value route:** reject H₀ if p < α.
+  - **Critical value:** reject H₀ if the test statistic is further from zero
+    than the critical value.
+  - **p-value:** reject H₀ if p < α.
 
 questions:
 
@@ -64,14 +61,13 @@ questions:
   - id: t4-q1
     title: Question 1 — Stating hypotheses
     prompt: |
-      For each statement, identify a null and an alternative hypothesis.
+      For each statement, choose a null and an alternative hypothesis.
 
-      The convention that does the work: **H₀ is always the position of no
-      change and no effect.** You assume nothing is happening until the data
-      gives you a reason to think otherwise.
+      **H₀ always states that nothing has changed.** You assume there is no
+      effect until the data gives you reason to think otherwise.
 
-      *Worked example:* "In the US there are 1.9 vehicles per household" gives
-      H₀: μ = 1.9 and H₁: μ ≠ 1.9, where μ is the mean number of vehicles per
+      *Example:* "In the US there are 1.9 vehicles per household" gives
+      H₀: μ = 1.9 and H₁: μ ≠ 1.9. Here μ is the mean number of vehicles per
       household.
     steps:
       - kind: hypothesis
@@ -84,13 +80,12 @@ questions:
                 correct: true
               - value: "μ_arrival ≠ μ_schedule ± 5"
                 feedback: |
-                  That is the alternative. H₀ states the position of no
-                  difference — that services are running within the stated
-                  tolerance.
+                  This is the alternative. H₀ states that there is no
+                  difference: services run within the stated limit.
               - value: "μ_arrival > μ_schedule"
                 feedback: |
-                  The claim being tested is about being *within* 5 minutes, in
-                  either direction, not about running late specifically.
+                  The statement is about being *within* 5 minutes, in either
+                  direction. It is not only about running late.
           - key: tails
             label: Test type
             options:
@@ -98,10 +93,8 @@ questions:
                 correct: true
               - value: One-tailed
                 feedback: |
-                  A service can miss the window by being early as well as late,
-                  and the statement does not privilege one direction. When you
-                  care about a difference in either direction, use a two-tailed
-                  test.
+                  A service can be early or late. The statement does not choose
+                  a direction, so use a two-tailed test.
 
       - kind: hypothesis
         ask: "The average fuel consumption of hybrid vehicles is the same as for internal-combustion vehicles."
@@ -113,11 +106,11 @@ questions:
                 correct: true
               - value: "μ_hybrid < μ_ice"
                 feedback: |
-                  That is a directional alternative. The null is always the
-                  no-difference position: the two means are equal.
+                  This is an alternative hypothesis with a direction. H₀ states
+                  that the two means are equal.
               - value: "μ_hybrid ≠ μ_ice"
                 feedback: |
-                  That is H₁. H₀ asserts they are the same.
+                  This is H₁. H₀ states that the two means are the same.
           - key: tails
             label: Test type
             options:
@@ -125,9 +118,9 @@ questions:
                 correct: true
               - value: One-tailed
                 feedback: |
-                  The statement asks whether they are "the same", without
-                  claiming a direction, so a difference either way is of
-                  interest. That makes it two-tailed.
+                  The statement asks whether the two are "the same". It does not
+                  choose a direction, so a difference either way matters. Use a
+                  two-tailed test.
 
       - kind: hypothesis
         ask: "Reducing the motorway speed limit from 70 mph to 50 mph reduces accident frequency."
@@ -139,9 +132,8 @@ questions:
                 correct: true
               - value: "μ_50 < μ_70"
                 feedback: |
-                  That is the alternative — it is the very claim being tested.
-                  H₀ has to be the sceptical position: the speed limit made no
-                  difference.
+                  This is the alternative. It is the claim being tested. H₀ must
+                  state that the speed limit made no difference.
           - key: h1
             label: Alternative hypothesis
             options:
@@ -149,25 +141,25 @@ questions:
                 correct: true
               - value: "μ_50 ≠ μ_70  (two-tailed)"
                 feedback: |
-                  Defensible, and not wrong. But the statement makes a
-                  *directional* claim — that the reduction *reduces* accidents —
-                  so a one-tailed test matches the question being asked and has
-                  more power to detect it.
+                  This is not wrong. But the statement claims a direction: the
+                  lower limit *reduces* accidents. A one-tailed test matches
+                  that claim and detects it more easily.
               - value: "μ_50 > μ_70"
                 feedback: |
-                  That is the wrong direction. The claim is that the lower speed
-                  limit *reduces* accidents.
+                  This is the wrong direction. The claim is that the lower speed
+                  limit reduces accidents.
         solution:
           working: |
-            This is the one case here with a genuine direction to it, and it
-            shows the trade-off. A one-tailed test is more powerful in the
-            direction you care about, but it cannot detect an effect the other
-            way — if the lower limit somehow *increased* accidents, a one-tailed
-            test would simply fail to reject H₀ and you would never find out.
+            Only this statement has a direction, and it shows the trade-off.
 
-            **Decide the direction before you look at the data.** Choosing
-            one-tailed after seeing which way the result went is a way of
-            manufacturing significance.
+            A one-tailed test detects an effect more easily in the direction you
+            choose. It cannot detect an effect in the other direction. If the
+            lower speed limit increased accidents, a one-tailed test would fail
+            to reject H₀ and you would not find out.
+
+            **Choose the direction before you look at the data.** Choosing
+            one-tailed after seeing the result is a way of creating false
+            significance.
 
   # ----------------------------------------------------------- Question 2
   - id: t4-q2
@@ -175,12 +167,12 @@ questions:
     prompt: |
       For each statement in Question 1, state the Type 1 and Type 2 errors.
 
-      *Worked example (vehicles per household):*
+      *Example (vehicles per household):*
 
-      - **Type 1:** we REJECT H₀ when in reality it is true. We conclude the
-        mean is not 1.9 when in fact it is.
-      - **Type 2:** we DO NOT REJECT H₀ when in reality it is false. We conclude
-        the mean is 1.9 when in fact it is not.
+      - **Type 1:** we REJECT H₀ when it is true. We conclude the mean is not
+        1.9 when it is.
+      - **Type 2:** we DO NOT REJECT H₀ when it is false. We conclude the mean
+        is 1.9 when it is not.
     steps:
       - kind: choice
         prose: true
@@ -189,125 +181,118 @@ questions:
           - value: Rejecting the null hypothesis when it is actually true
             correct: true
             feedback: |
-              Yes — a false alarm. You announce an effect that is not there. The
-              significance level α *is* the probability of doing this: at
-              α = 0.05 you accept a 5% risk of it.
+              Correct. This is a false alarm. You report an effect that does not
+              exist. The significance level α is the probability of this
+              happening. At α = 0.05 you accept a 5% risk.
           - value: Failing to reject the null hypothesis when it is actually false
             feedback: |
-              That is a Type 2 error — a missed detection. Type 1 is the
-              opposite: claiming an effect that does not exist.
+              This is a Type 2 error, a missed effect. A Type 1 error is the
+              opposite: reporting an effect that does not exist.
           - value: Choosing the wrong statistical test
             feedback: |
-              That is a mistake, but not what "Type 1 error" means. Type 1 and
-              Type 2 errors are about the *conclusion* being wrong even when the
-              method is applied correctly.
+              This is a mistake, but not a Type 1 error. Type 1 and Type 2
+              errors describe a wrong conclusion from a correct method.
           - value: Using the wrong significance level
             feedback: |
-              The significance level is a choice, not an error. What α controls
-              is the *probability* of a Type 1 error.
+              The significance level is a choice, not an error. α sets the
+              probability of a Type 1 error.
 
       - kind: choice
         prose: true
         ask: |
-          For the speed limit study — H₀: the reduction to 50 mph made no
-          difference to accident frequency — which is the Type 2 error?
+          For the speed limit study, H₀ states that the change to 50 mph made no
+          difference to accident frequency. Which is the Type 2 error?
         options:
           - value: We conclude the speed limit made no difference, when in reality it reduced accidents
             correct: true
             feedback: |
-              Right. A real safety benefit exists and the study fails to find
-              it. Consider the consequence: an effective intervention gets
-              scrapped as useless.
+              Correct. A real safety benefit exists, and the study does not find
+              it. The consequence is that a measure that works is removed.
           - value: We conclude the speed limit reduced accidents, when in reality it made no difference
             feedback: |
-              That is the Type 1 error — a false positive. Type 2 is failing to
-              detect a real effect.
+              This is the Type 1 error, a false positive. A Type 2 error is
+              failing to detect a real effect.
           - value: We conclude the speed limit increased accidents
             feedback: |
-              That is not one of the two error types; it is a claim in the wrong
-              direction entirely. Type 1 and Type 2 are defined purely by
-              whether you rejected H₀ and whether H₀ was actually true.
+              This is neither error type. Type 1 and Type 2 depend only on
+              whether you rejected H₀ and whether H₀ was true.
           - value: The sample was too small to detect the effect
             feedback: |
-              A small sample makes a Type 2 error *more likely*, but it is a
-              cause rather than the error itself. The error is the wrong
-              conclusion that results.
+              A small sample makes a Type 2 error more likely. It is a cause,
+              not the error. The error is the wrong conclusion.
 
       - kind: choice
         prose: true
         ask: |
-          You reduce α from 0.05 to 0.01, keeping everything else the same. What
-          happens to the two error rates?
+          You reduce α from 0.05 to 0.01 and change nothing else. What happens to
+          the two error rates?
         options:
           - value: Type 1 errors become less likely, Type 2 errors more likely
             correct: true
             feedback: |
-              Exactly — and this trade-off is the heart of choosing a
-              significance level. Demanding stronger evidence before you claim
-              an effect means you will miss more real effects. The only way to
-              improve both at once is to collect more data.
+              Correct. Requiring stronger evidence means you report fewer
+              effects that do not exist, and miss more that do. To reduce both
+              at once, collect more data.
           - value: Both become less likely
             feedback: |
-              If only. For a fixed sample size the two trade off against each
-              other: making it harder to reject H₀ reduces false positives but
-              increases missed detections.
+              With a fixed sample size, the two work against each other. Making
+              H₀ harder to reject reduces false positives and increases missed
+              effects.
           - value: Type 1 errors become more likely, Type 2 errors less likely
             feedback: |
-              The other way round. A smaller α means you need *stronger*
-              evidence to reject H₀, so false positives get rarer and missed
-              detections more common.
+              A smaller α requires stronger evidence to reject H₀. False
+              positives become rarer, and missed effects more common.
           - value: Neither changes
             feedback: |
-              α is by definition the Type 1 error rate, so changing it changes
-              that rate directly — and pulls the Type 2 rate the other way.
+              α is the Type 1 error rate. Changing it changes that rate, and
+              moves the Type 2 rate the other way.
 
       - kind: freetext
         ask: |
-          For the hybrid fuel consumption study, write out both error types as
-          complete sentences, and say which would worry you more if you were
-          advising a transport authority on fleet purchasing.
+          For the hybrid fuel consumption study, write both error types as full
+          sentences. Then say which would concern you more if you were advising
+          a transport authority about buying vehicles.
         min_length: 100
         rubric:
-          - States the Type 1 error — concluding the consumptions differ when they do not.
-          - States the Type 2 error — concluding they are the same when they differ.
-          - Says which matters more *in this context*, with a reason tied to the consequences.
-          - Written as complete sentences, understandable to a non-statistician.
+          - States the Type 1 error. Concluding the two differ when they do not.
+          - States the Type 2 error. Concluding the two are the same when they differ.
+          - Says which matters more here, and gives a reason based on the consequences.
+          - Uses full sentences that a non-specialist can follow.
         solution:
           working: |
             **Model answer.** A Type 1 error would mean concluding that hybrid
-            and internal-combustion vehicles differ in fuel consumption when in
-            reality they do not — the authority might spend heavily on
-            replacing its fleet for a saving that never materialises. A Type 2
-            error would mean concluding that the two are the same when hybrids
-            really are more efficient, so a genuine opportunity to cut fuel
-            costs and emissions is missed.
+            and internal-combustion vehicles use different amounts of fuel when
+            they do not. The authority might then spend a large sum replacing
+            its fleet for a saving that never appears. A Type 2 error would mean
+            concluding that the two are the same when hybrids really do use less
+            fuel. The authority would then miss a chance to cut fuel costs and
+            emissions.
 
-            Which matters more depends on what the decision costs. Given that
-            fleet replacement is expensive and hard to reverse, I would be more
-            worried about the Type 1 error here — but I would also want to
-            check the study was large enough to have a decent chance of
-            detecting a real difference, because a Type 2 error caused by an
-            underpowered study is easy to mistake for evidence of no effect.
+            Which error matters more depends on the cost of the decision.
+            Replacing a fleet is expensive and hard to reverse, so I would be
+            more concerned about the Type 1 error. I would also check that the
+            study was large enough to detect a real difference, because a Type 2
+            error from a small study looks like evidence of no difference.
           note: |
-            There is no single right answer to the last part. What is being
-            marked is whether you tied the choice to the *consequences* of each
-            error rather than treating 0.05 as a law of nature.
+            The last part has no single correct answer. Link your choice to the
+            consequences of each error.
 
   # ----------------------------------------------------------- Question 3
   - id: t4-q3
     title: Question 3 — One-sample z-test
     prompt: |
-      The national rail authority knows from years of data that delays on the
-      Cross Country Express line have a **population standard deviation of 3.5
-      minutes**. Historically the average delay has been **12 minutes**. After a
-      signalling upgrade they monitor **100 journeys** and find a sample mean of
-      **10.9 minutes**.
+      Years of data show that delays on the Cross Country Express line have a
+      **population standard deviation of 3.5 minutes**. The average delay has
+      been **12 minutes**.
 
-      Using α = 0.05, is there enough evidence to conclude that the upgrade has
-      significantly reduced the average delay?
+      After a signalling upgrade, the rail authority measures **100 journeys**.
+      The sample mean is **10.9 minutes**.
+
+      Using α = 0.05, is there enough evidence that the upgrade reduced the
+      average delay?
     note: |
-      Use the **One-Sample Z** sheet of the workbench to check your arithmetic
-      once you have worked it through by hand.
+      Work through the calculation by hand. Then check it on the **One-Sample Z**
+      sheet of the workbench.
     steps:
       - kind: hypothesis
         ask: Set up the test.
@@ -319,13 +304,12 @@ questions:
                 correct: true
               - value: "μ = 10.9"
                 feedback: |
-                  10.9 is the *sample* mean — what you measured. H₀ is about the
-                  population, and states that nothing has changed from the
-                  historical 12 minutes.
+                  10.9 is the sample mean, the value you measured. H₀ describes
+                  the population. It states that the delay is still 12 minutes.
               - value: "μ < 12"
                 feedback: |
-                  That is the alternative hypothesis. H₀ is always the
-                  no-change position, stated as an equality.
+                  This is the alternative hypothesis. H₀ states no change, using
+                  an equals sign.
           - key: h1
             label: Alternative hypothesis
             options:
@@ -333,13 +317,13 @@ questions:
                 correct: true
               - value: "μ ≠ 12"
                 feedback: |
-                  Not wrong exactly, but the question asks specifically whether
-                  the delay has *decreased*. That is a directional claim, so a
-                  one-tailed alternative matches it.
+                  This is not wrong, but the question asks whether the delay has
+                  *decreased*. That is a direction, so use a one-tailed
+                  alternative.
               - value: "μ > 12"
                 feedback: |
-                  Wrong direction — an upgrade that made delays worse is not
-                  what is being tested.
+                  This is the wrong direction. The question asks whether delays
+                  became shorter.
           - key: test
             label: Which test
             options:
@@ -347,19 +331,17 @@ questions:
                 correct: true
               - value: One-sample t-test
                 feedback: |
-                  You would use t if you had to estimate the standard deviation
-                  from your sample. Here the *population* standard deviation is
-                  given (3.5, from years of data), so z is available and
-                  preferable.
+                  Use t when you estimate the standard deviation from the
+                  sample. Here the population standard deviation is given as
+                  3.5, so use z.
               - value: Two-sample z-test
                 feedback: |
-                  There is only one sample here — 100 journeys — compared
-                  against a known historical value, not against a second sample.
+                  There is one sample of 100 journeys, compared with a known
+                  historical value. There is no second sample.
               - value: Paired t-test
                 feedback: |
                   A paired test needs the same subjects measured twice. These
-                  are 100 newly sampled journeys, not the same journeys before
-                  and after.
+                  are 100 new journeys, not the same journeys before and after.
         hints:
           - Do you know the population standard deviation, or are you estimating it from the sample?
 
@@ -371,12 +353,12 @@ questions:
         traps:
           - value: 3.5
             feedback: |
-              That is the population standard deviation. The standard error
-              divides it by √n: 3.5 ÷ 10.
+              This is the population standard deviation. Divide it by √n:
+              3.5 ÷ 10.
           - value: 0.035
             tol: {abs: 0.005}
             feedback: |
-              You have divided by n (100) rather than √n (10).
+              You have divided by n, which is 100. Divide by √n, which is 10.
 
       - kind: numeric
         ask: What is the z test statistic?
@@ -387,17 +369,15 @@ questions:
           - value: -0.314
             tol: {abs: 0.02}
             feedback: |
-              You have divided by 3.5 instead of by the standard error 0.35 —
-              the √n is missing.
+              You have divided by 3.5. Divide by the standard error, 0.35.
         hints:
           - "z = (sample mean − population mean) ÷ standard error."
         solution:
           working: |
             z = (10.9 − 12) ÷ (3.5 ÷ 10) = −1.1 ÷ 0.35 = **−3.14**
 
-            The negative sign is meaningful and worth keeping: it says the new
-            mean is *below* the old one, which is the direction the upgrade was
-            supposed to move it.
+            Keep the minus sign. It shows the new mean is below the old one,
+            which is the direction the upgrade was meant to produce.
 
       - kind: numeric
         ask: What is the p-value?
@@ -409,22 +389,21 @@ questions:
           - value: 0.9992
             tol: {abs: 0.001}
             feedback: |
-              You have the area to the *right* of your z-score. This is a
-              left-tailed test, so you want the area to the left — use the
-              negative z directly.
+              This is the area to the *right* of your z-score. This is a
+              left-tailed test, so use the negative z directly to get the left
+              area.
           - value: 0.0017
             tol: {abs: 0.0003}
             feedback: |
-              You have doubled the tail, which is what a two-tailed test needs.
-              This one is directional, so use a single tail.
+              You have doubled the tail area, which a two-tailed test needs.
+              This test has one direction, so use a single tail.
         solution:
           excel: "=NORM.S.DIST(-3.14,TRUE)"
           r: "pnorm(-3.14)"
           python: "scipy.stats.norm.cdf(-3.14)"
           note: |
             `NORM.S.DIST` needs the second argument. Without `TRUE` it returns
-            the height of the curve rather than the area, which is not a
-            p-value.
+            the height of the curve, which is not a p-value.
 
       - kind: decision
         ask: What do you conclude at α = 0.05?
@@ -434,36 +413,34 @@ questions:
             correct: true
           - value: The z-score is negative
             feedback: |
-              A negative z only tells you the direction of the difference, not
-              whether it is large enough to be significant. A z of −0.2 would
-              also be negative and would not come close.
+              A negative z shows the direction of the difference, not its size.
+              A z of −0.2 is also negative but not significant.
           - value: The sample mean (10.9) is lower than 12
             feedback: |
-              That is the observation that prompted the test, not evidence in
-              itself. Any sample of 100 journeys would differ from 12 by
-              *something* — the test asks whether the difference is bigger than
-              chance would comfortably produce.
+              This is the observation that led to the test. Any sample of 100
+              journeys would differ from 12 by some amount. The test decides
+              whether that difference is larger than chance would produce.
         solution:
           working: |
-            p = 0.0008, which is far below α = 0.05, so **reject H₀**.
+            p = 0.0008, which is well below α = 0.05, so **reject H₀**.
 
-            Equivalently, by the critical value route: the critical z for a
-            one-tailed test at α = 0.05 is −1.645, and −3.14 is well beyond it.
-            Both routes agree, as they always will.
+            The critical value route gives the same result. The critical z for a
+            one-tailed test at α = 0.05 is −1.645, and −3.14 is beyond it.
 
             **In plain language:** there is strong evidence that the signalling
-            upgrade has genuinely reduced average delays on this line. A drop
-            this large would occur by chance less than once in a thousand times
-            if nothing had actually changed.
+            upgrade reduced average delays. If nothing had changed, a fall this
+            large would occur less than once in a thousand studies.
 
   # ----------------------------------------------------------- Question 4
   - id: t4-q4
     title: Question 4 — Comparing two independent samples
     prompt: |
-      A study of train reliability on the Leeds–Ilkley line in **2016** examined
-      **50 trains**: mean lateness **3.9 minutes**, standard deviation **2.1
-      minutes**. A follow-up in **2017** sampled **40 trains**: mean lateness
-      **4.8 minutes**, standard deviation **1.9 minutes**.
+      A study of train reliability on the Leeds–Ilkley line in **2016** measured
+      **50 trains**. The mean lateness was **3.9 minutes**, with a standard
+      deviation of **2.1 minutes**.
+
+      A second study in **2017** measured **40 trains**. The mean lateness was
+      **4.8 minutes**, with a standard deviation of **1.9 minutes**.
 
       Is this evidence of a significant change in lateness?
 
@@ -472,8 +449,8 @@ questions:
       | 2016 | 3.9 | 2.1 | 50 |
       | 2017 | 4.8 | 1.9 | 40 |
     note: |
-      Use the **Two-Sample Z** sheet of the workbench. No significance level is
-      given, so choose one and say so — 95% (α = 0.05) is the usual default.
+      Use the **Two-Sample Z** sheet of the workbench. The question gives no
+      significance level, so choose one and state it. Use 95%, so α = 0.05.
     steps:
       - kind: hypothesis
         ask: Set up the test.
@@ -485,13 +462,12 @@ questions:
                 correct: true
               - value: "μ₁ < μ₂"
                 feedback: |
-                  The question asks about a "change", without specifying a
-                  direction, so a difference either way is of interest. That
-                  makes it two-tailed.
+                  The question asks about a "change" and gives no direction. A
+                  difference either way matters, so use a two-tailed test.
               - value: "μ₁ = μ₂"
                 feedback: |
-                  That is H₀. The alternative is what you conclude if the
-                  evidence is strong enough to abandon it.
+                  This is H₀. The alternative is what you conclude if the
+                  evidence is strong enough to reject H₀.
           - key: paired
             label: Paired or independent?
             options:
@@ -499,13 +475,12 @@ questions:
                 correct: true
               - value: Paired samples
                 feedback: |
-                  A paired test needs each observation in one group matched to a
-                  specific observation in the other. These are two separate
-                  samples of different sizes — 50 trains and then 40 different
-                  trains — so they cannot be paired. The unequal sample sizes
-                  are the giveaway.
+                  A paired test needs each value in one group matched to a value
+                  in the other. These are two separate groups of different
+                  sizes, 50 trains and 40 different trains. The different sizes
+                  show they cannot be paired.
         hints:
-          - Could you match up train 1 in 2016 with train 1 in 2017? What do the different sample sizes tell you?
+          - Can you match train 1 in 2016 to train 1 in 2017? What do the different sample sizes tell you?
 
       - kind: numeric
         ask: What is the standard error of the difference between the means?
@@ -516,14 +491,13 @@ questions:
           - value: 0.2
             tol: {abs: 0.01}
             feedback: |
-              You appear to have subtracted the standard deviations. Standard
-              errors combine through their squares:
-              √(s₁²/n₁ + s₂²/n₂).
+              You have subtracted the standard deviations. Combine them with
+              their squares: √(s₁²/n₁ + s₂²/n₂).
           - value: 4.0
             tol: {abs: 0.05}
             feedback: |
-              You have added the standard deviations. The formula combines
-              *variances divided by sample sizes*, then takes the square root.
+              You have added the standard deviations. Divide each variance by
+              its sample size, add the results, then take the square root.
         hints:
           - "s = √(s₁²/n₁ + s₂²/n₂)"
         solution:
@@ -540,8 +514,8 @@ questions:
           working: |
             z = (4.8 − 3.9) ÷ 0.422 = 0.9 ÷ 0.422 = **2.13**
 
-            The sign depends on which group you subtract from which; for a
-            two-tailed test only the magnitude matters.
+            The sign depends on which mean you subtract from which. For a
+            two-tailed test, only the size matters.
 
       - kind: numeric
         ask: What is the critical z value at α = 0.05?
@@ -552,11 +526,11 @@ questions:
           - value: 1.645
             tol: {abs: 0.01}
             feedback: |
-              That is the one-tailed critical value. This is a two-tailed test,
-              so α is split between the tails: use `NORM.S.INV(1 − 0.05/2)` =
-              `NORM.S.INV(0.975)` = 1.96.
+              This is the one-tailed value. This test is two-tailed, so α is
+              divided between the tails. Use `NORM.S.INV(0.975)`, which gives
+              1.96.
         hints:
-          - Two-tailed means each tail gets α/2 = 0.025.
+          - In a two-tailed test each tail holds α/2 = 0.025.
 
       - kind: numeric
         ask: What is the p-value?
@@ -567,15 +541,15 @@ questions:
           - value: 0.0166
             tol: {abs: 0.002}
             feedback: |
-              That is the one-tailed p-value. For a two-tailed test you double
-              it, because a difference of this size in *either* direction counts
-              as evidence against H₀.
+              This is the one-tailed p-value. Double it for a two-tailed test,
+              because a difference this large in either direction counts as
+              evidence against H₀.
           - value: 0.9834
             tol: {abs: 0.002}
             feedback: |
-              That is the area to the left of your z. The p-value is the
-              probability of a result *at least this extreme*, so you want the
-              tail area — here, both tails.
+              This is the area to the left of your z. The p-value is the
+              probability of a result at least this extreme, so use the tail
+              areas.
         solution:
           excel: "=2*(1-NORM.S.DIST(2.13,TRUE))"
           r: "2 * pnorm(2.13, lower.tail = FALSE)"
@@ -589,77 +563,74 @@ questions:
             correct: true
           - value: The 2017 mean is higher than the 2016 mean
             feedback: |
-              True but not sufficient. Two samples will essentially always have
-              different means; the test asks whether the difference is larger
-              than sampling variation would comfortably explain.
+              Two samples almost always have different means. The test decides
+              whether the difference is larger than sampling variation would
+              produce.
           - value: The samples are large enough for the central limit theorem
             feedback: |
-              That justifies *using* a z-test, but it is not the reason for the
+              This allows you to use a z-test. It is not the reason for the
               decision. The decision comes from comparing the statistic with the
               critical value, or p with α.
         solution:
           working: |
             |z| = 2.13 > 1.96, and p = 0.033 < 0.05, so **reject H₀**.
 
-            There is evidence that lateness on the Leeds–Ilkley line changed
-            significantly between 2016 and 2017 — and it got worse, by about
-            0.9 minutes on average.
+            Lateness on the Leeds–Ilkley line changed significantly between 2016
+            and 2017. It became worse, by about 0.9 minutes on average.
 
-            Note that p = 0.033 is not far below 0.05. This is real evidence,
-            but not overwhelming evidence — quite unlike Question 3's 0.0008. A
-            p-value is worth reading as a quantity, not just as a pass/fail.
+            Note that p = 0.033 is only a little below 0.05. This is real
+            evidence, but it is much weaker than the 0.0008 in Question 3. Read
+            a p-value as a quantity, not only as pass or fail.
           note: |
-            This question is set up as a **z**-test even though the population
-            standard deviations are unknown and only estimated from the samples.
-            That is defensible at n = 50 and 40 — the central limit theorem is
-            doing the work — but a two-sample **t**-test is the more standard
-            choice when you have had to estimate the spread.
+            This question uses a **z**-test, although the population standard
+            deviations are unknown and estimated from the samples. This is
+            acceptable at n = 50 and 40, because the central limit theorem
+            applies. A two-sample **t**-test is the more usual choice when you
+            estimate the spread.
 
-            Try it in the workbench's Two-Sample T sheet: with 88 degrees of
-            freedom the critical value is 1.987 rather than 1.96, and the
-            conclusion is unchanged. If you reached for a t-test here, you were
-            not wrong.
+            Try the Two-Sample T sheet of the workbench. With 88 degrees of
+            freedom the critical value is 1.987 instead of 1.96, and the
+            conclusion does not change. A t-test here is also correct.
 
   # ----------------------------------------------------------- Question 5
   - id: t4-q5
     title: Question 5 — Paired samples
     dataset_label: T4 Junction Waiting
     prompt: |
-      Waiting time at a junction was assessed **before and after** a development
-      project. The data is on the **T4 Junction Waiting** sheet. Determine
-      whether there is a significant change in waiting time.
+      Waiting time at a junction was measured **before and after** a development
+      project. The data is on the **T4 Junction Waiting** sheet. Decide whether
+      the waiting time changed significantly.
 
-      Unlike Question 4, here you have the raw data — so you can cross-check
-      your result a second way.
+      This question gives you the raw data, so you can check your answer a
+      second way.
     note: |
-      Because each row is the *same location* measured twice, this is paired
-      data. Start by adding a column of differences.
+      Each row is the same location measured twice, so the data is paired. Start
+      by adding a column of differences.
     steps:
       - kind: choice
         ask: Why is a paired test the right choice here?
         prose: true
         options:
-          - value: Each observation before is matched to a specific observation after
+          - value: Each "before" value is matched to a specific "after" value
             correct: true
             feedback: |
-              Right. Pairing removes the variation *between* locations and
-              focuses on the change *within* each one, which makes the test much
-              more sensitive. Treating this data as independent would throw that
-              advantage away.
+              Correct. Pairing removes the variation between locations and
+              measures the change at each one. This makes the test more
+              sensitive. Treating the data as independent would lose that
+              advantage.
           - value: The two samples are the same size
             feedback: |
-              Equal sizes are necessary for pairing but not sufficient — two
-              unrelated samples could happen to be the same size. What matters
-              is that each pair refers to the same location.
+              Paired samples are always the same size, but two unrelated samples
+              can be too. What matters is that each pair is the same location.
           - value: The data is normally distributed
             feedback: |
-              The paired t-test does assume the *differences* are roughly
-              normal, but that is a condition for validity, not the reason for
-              choosing paired over independent. The reason is the matching.
+              A paired t-test does assume the differences are roughly normal.
+              That is a condition for the test to be valid, not the reason for
+              choosing it. The reason is the matching.
           - value: There are more than 30 observations
             feedback: |
-              Sample size affects which distribution you can justify, not
-              whether the data is paired.
+              Sample size affects which distribution you can use. It does not
+              decide whether the data is paired.
 
       - kind: numeric
         ask: What is the mean of the differences (after − before)?
@@ -671,9 +642,9 @@ questions:
           - value: 8.4
             tol: {abs: 0.05}
             feedback: |
-              Right magnitude, wrong sign. Taking "after − before" gives a
-              negative value here, meaning waiting times went *down*. Either
-              order works as long as you are consistent and interpret the sign
+              The size is correct but the sign is wrong. "After − before" gives
+              a negative value, which means waiting times fell. Either order
+              works, as long as you keep it consistent and read the sign
               correctly at the end.
         solution:
           excel: "=AVERAGE(D2:D31)   where column D is =C2-B2 copied down"
@@ -690,12 +661,11 @@ questions:
           - value: 9.0
             tol: {abs: 1.5}
             feedback: |
-              That looks like the standard deviation of one of the original
-              columns rather than of the differences. A paired test works
-              entirely on the difference column — build it first, then summarise
-              it.
+              This is the standard deviation of one of the original columns. A
+              paired test uses the difference column only. Create that column
+              first, then summarise it.
         hints:
-          - "Use STDEV.S on your difference column, not on the before or after columns."
+          - "Use STDEV.S on the difference column, not on the before or after columns."
 
       - kind: numeric
         ask: What is the t test statistic?
@@ -706,17 +676,17 @@ questions:
           - value: -1.68
             tol: {abs: 0.1}
             feedback: |
-              You have divided by the standard deviation rather than the
-              standard error. Divide 4.99 by √30 first.
+              You have divided by the standard deviation. Divide 4.99 by √30
+              first to get the standard error, then divide by that.
         hints:
-          - "t = mean difference ÷ (sd of differences ÷ √n)."
+          - "t = mean difference ÷ (standard deviation of differences ÷ √n)."
         solution:
           working: |
             t = −8.4 ÷ (4.99 ÷ √30) = −8.4 ÷ 0.911 = **−9.22**
 
-            That is an enormous test statistic. Values beyond about ±3 are
-            already unusual; −9.2 means the observed change is roughly nine
-            standard errors away from "no change at all".
+            This is a very large test statistic. Values beyond about ±3 are
+            already unusual. A value of −9.2 means the change is about nine
+            standard errors away from no change.
 
       - kind: numeric
         ask: How many degrees of freedom?
@@ -726,13 +696,12 @@ questions:
         traps:
           - value: 30
             feedback: |
-              Degrees of freedom for a paired test are n − 1, where n is the
-              number of *pairs*.
+              A paired test has n − 1 degrees of freedom, where n is the number
+              of pairs.
           - value: 58
             feedback: |
-              That is n₁ + n₂ − 2, the formula for an *independent* two-sample
-              test. A paired test collapses the two columns into one column of
-              30 differences, so df = 29.
+              This is n₁ + n₂ − 2, the formula for an independent two-sample
+              test. A paired test uses one column of 30 differences, so df = 29.
 
       - kind: numeric
         ask: What is the critical t value at α = 0.05, two-tailed?
@@ -743,25 +712,29 @@ questions:
           - value: 1.699
             tol: {abs: 0.005}
             feedback: |
-              That is `T.INV(0.95, 29)`, the one-tailed value. For a two-tailed
-              test use `T.INV.2T(0.05, 29)` — or equivalently
-              `T.INV(0.975, 29)`.
+              This is `T.INV(0.95, 29)`, the one-tailed value. For a two-tailed
+              test use `T.INV.2T(0.05, 29)`, or `T.INV(0.975, 29)`.
           - value: 2.462
             tol: {abs: 0.01}
             feedback: |
-              You have halved α *and* used the two-tailed function, so α has
-              been halved twice. `T.INV.2T` expects the full α — pass 0.05, not
-              0.025.
+              You have divided α by 2 and also used the two-tailed function, so
+              α has been halved twice. `T.INV.2T` takes the full α. Enter 0.05,
+              not 0.025.
         solution:
           excel: "=T.INV.2T(0.05,29)"
           r: "qt(0.975, df = 29)"
           python: "scipy.stats.t.ppf(0.975, 29)"
           note: |
-            This pair of functions causes more errors than any other in the
-            course. `T.INV.2T(α, df)` takes the **full** α and splits it for
-            you. `T.INV(p, df)` is a plain left-tail lookup, so for a two-tailed
-            test you pass 1 − α/2. `T.INV.2T(0.05, 29)` and `T.INV(0.975, 29)`
-            are the same number; `T.INV(0.95, 29)` is not.
+            These two functions are easy to confuse.
+
+            `T.INV.2T(α, df)` takes the **full** α and divides it between the
+            tails for you.
+
+            `T.INV(p, df)` measures from the left only. For a two-tailed test,
+            pass 1 − α/2.
+
+            `T.INV.2T(0.05, 29)` and `T.INV(0.975, 29)` give the same value.
+            `T.INV(0.95, 29)` does not.
 
       - kind: choice
         ask: Which is closest to the p-value?
@@ -769,65 +742,57 @@ questions:
           - value: "4 × 10⁻¹⁰"
             correct: true
             feedback: |
-              Yes — vanishingly small. If the development had made no difference
-              at all, you would see a change this large about once in two and a
-              half billion studies.
+              Correct. If the development had made no difference, a change this
+              large would appear about once in two and a half billion studies.
           - value: "0.04"
             feedback: |
               Too large. A t of −9.2 with 29 degrees of freedom is far more
-              extreme than that; 0.04 would correspond to a t of about −2.1.
+              extreme. A p-value of 0.04 matches a t of about −2.1.
           - value: "0.4"
             feedback: |
-              Nowhere near. A p-value of 0.4 would mean the data was entirely
-              consistent with no change, which a t of −9.2 plainly is not.
+              A p-value of 0.4 would mean the data agrees with no change. A t of
+              −9.2 does not.
           - value: "0.96"
             feedback: |
-              That is close to 1 − p. The p-value is the probability of a result
-              *at least this extreme*, so it is the small number, not the large
-              one.
+              This is close to 1 − p. The p-value is the probability of a result
+              at least this extreme, so it is the small number.
 
       - kind: decision
         ask: What do you conclude?
         answer: reject
         reasons:
-          - value: "|t| = 9.22 far exceeds the critical value of 2.045, and p ≪ 0.05"
+          - value: "|t| = 9.22 far exceeds the critical value of 2.045, and p is far below 0.05"
             correct: true
           - value: The waiting times are lower after the project
             feedback: |
-              That is the observation, not the justification. The test is what
-              tells you the drop is larger than random variation would produce.
+              This is the observation. The test is what shows the fall is larger
+              than random variation would produce.
           - value: The data is paired
             feedback: |
-              Pairing determined *which test* to use. It does not tell you what
-              the test concluded.
+              Pairing decided which test to use. It does not give the result of
+              the test.
         solution:
           working: |
             |t| = 9.22 > 2.045, and p ≈ 4 × 10⁻¹⁰ < 0.05, so **reject H₀**.
 
             **In plain language:** waiting times at the junction fell by about
-            8.4 seconds on average after the development, and a change this
-            large is far too big to be a coincidence. The project measurably
-            improved things.
+            8.4 seconds on average after the development. A change this large is
+            too big to be chance. The project improved the junction.
 
-            ### Cross-check it a different way
+            ### Check the result a second way
 
-            Because you have the raw data, you can test this a second way
-            without going through the statistic at all:
+            You have the raw data, so you can test it directly:
 
             `=T.TEST(before_range, after_range, 2, 1)`
 
-            where `2` means two-tailed and `1` means paired. It returns the
-            p-value directly — the same 4 × 10⁻¹⁰.
+            The `2` means two-tailed and the `1` means paired. This returns the
+            p-value, the same 4 × 10⁻¹⁰.
 
-            It is worth doing this whenever you can. **A result you can reach by
-            two independent routes is more trustworthy than one you can only
-            reach by one.** If a result only appears under a single method, it
-            may be a consequence of the method rather than a fact about the
-            world.
+            Use two methods whenever you can. A result you can reach two ways is
+            more reliable than one you can reach only one way.
           excel: "=T.TEST(B2:B31,C2:C31,2,1)"
           r: "t.test(after, before, paired = TRUE)"
           python: "scipy.stats.ttest_rel(df.after_s, df.before_s)"
           note: |
-            R's `t.test(..., paired = TRUE)` and Python's `ttest_rel` both give
-            the statistic and p-value in one call, and both agree with the Excel
-            route to full precision.
+            R's `t.test(..., paired = TRUE)` and Python's `ttest_rel` return the
+            statistic and the p-value together. Both match the Excel result.

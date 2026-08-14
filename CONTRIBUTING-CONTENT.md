@@ -348,18 +348,52 @@ Builtins are restricted to a small safe set (`abs`, `float`, `int`, `len`,
 
 ---
 
+## House style
+
+Many students on this module do not have English as a first language, and the
+statistics is already demanding. Every word should do work.
+
+**Rules**
+
+1. **Short sentences.** One idea each. Split a long sentence into two.
+2. **Simple words.** Write "use", not "utilise". Write "so", not "hence".
+   Write "but", not "however". Write "enough", not "sufficient".
+3. **No idioms.** "Trips people up", "the giveaway", "bear in mind" and similar
+   phrases do not translate. Say what you mean directly.
+4. **No commentary on the material.** Do not write "this question is designed
+   to…", "the point of asking is…", "worth being clear about why". Teach the
+   content; do not describe the teaching.
+5. **State instructions as steps.** If a task has four actions in Excel,
+   number them. Do not bury them in a paragraph.
+6. **Cut filler.** "It is worth noting that", "in practice", "of course",
+   "genuinely", "simply", "just", "actually" almost always delete cleanly.
+7. **Prefer a full stop to a dash.** Long sentences held together by dashes are
+   the main thing to avoid.
+
+**Example**
+
+Before:
+
+> `STDEV.P` treats these 55 observations as the entire population of journeys
+> ever made between these two points. It is a survey, so it is a sample: use
+> `STDEV.S`. The difference here is small (10.58 against 10.68) but the
+> reasoning matters, and it is the single most common slip in this tutorial.
+
+After:
+
+> `STDEV.P` treats the 55 values as every journey ever made on this route. A
+> survey is a sample, so use `STDEV.S`.
+
 ## Writing good feedback
 
 The feedback is the teaching. Some things that make it work:
 
-- **Name the mistake, do not just deny the answer.** "That is `STDEV.P`, the
-  population formula" beats "incorrect".
-- **Say why it matters**, not only what to type. The student needs the concept,
-  not a keystroke correction.
-- **Recognise near-misses generously.** A student who used the right method and
-  rounded differently should not be treated the same as one who used the wrong
-  function.
-- **Use `on_correct` for the insight**, not for praise. "Correct" is already
-  shown; the space is better spent on *notice that the mean and median
-  disagree — the data is skewed*.
-- **Do not moralise.** Point at the mathematics.
+- **Name the mistake. Do not only say the answer is wrong.** "This is
+  `STDEV.P`, the population formula" is better than "incorrect".
+- **Say why it matters**, not only what to type. The student needs the idea,
+  not just a correction.
+- **Treat near-misses differently from wrong methods.** A student who rounded
+  differently has not made the same mistake as one who used the wrong function.
+- **Use `on_correct` to add something.** The word "Correct" is already shown.
+  Use the space for a point the student can take forward.
+- **Point at the mathematics.** Do not lecture the student.

@@ -2,9 +2,9 @@ tutorial: 2
 title: Parametric Distributions and Probability Modelling
 
 intro: |
-  Most of the hard work in these questions is not the arithmetic — Excel does
-  that in one line. It is deciding *which* distribution applies and rearranging
-  the probability you want into the probability your tool can actually give you.
+  Excel calculates these probabilities in one line. The difficult part is
+  choosing the right distribution, then rewriting the probability you want into
+  a form the function can calculate.
 
 learning_outcomes:
   - Determine and visualise probability intervals on the normal distribution.
@@ -15,22 +15,21 @@ learning_outcomes:
 supplementary: |
   ![The five steps of the probability interval method](assets/img/method-probability.svg)
 
-  Two ideas do nearly all the work in this tutorial.
+  Two ideas are used throughout this tutorial.
 
-  **A probability is an area.** When you ask for the probability that a value
-  falls between two limits, you are asking for the area under the probability
-  density curve between them. The total area is 1, because every possible value
-  is somewhere under the curve.
+  **A probability is an area.** The probability that a value falls between two
+  limits is the area under the curve between them. The total area is 1, because
+  every possible value lies somewhere under the curve.
 
-  **Excel always works from the left.** `NORM.DIST` and the cumulative forms of
-  `BINOM.DIST` and `POISSON.DIST` all return the area from −∞ up to your value.
-  When a question asks for something else, you rearrange it into that form
-  using P(X > c) = 1 − P(X ≤ c).
+  **Excel measures area from the left.** `NORM.DIST`, and the cumulative forms
+  of `BINOM.DIST` and `POISSON.DIST`, all return the area from the far left up
+  to your value. If a question asks for a different area, rewrite it using:
 
-  There is a full list of the functions and their tail directions on the
-  [reference page](reference.html) — and if any of the notation here is
-  unfamiliar (P(X < c), μ, σ), the
-  [symbols glossary](reference.html#symbols) decodes it.
+  P(X > c) = 1 − P(X ≤ c)
+
+  The [reference page](reference.html) lists the functions and the area each
+  one returns. The [symbols glossary](reference.html#symbols) explains the
+  notation.
 
 questions:
 
@@ -38,13 +37,9 @@ questions:
   - id: t2-q1
     title: Question 1 — Visualising probability intervals
     prompt: |
-      Consider X, a normal distribution with mean 0 and standard deviation 1.
-      For each statement, sketch the probability density curve and shade the
-      area it describes.
-
-      Sketch each one on paper first — the point is to build the habit of
-      drawing the area before you reach for a function. Then pick the diagram
-      below that matches what you drew.
+      X is a normal distribution with mean 0 and standard deviation 1. For each
+      statement below, sketch the curve on paper and shade the area described.
+      Then choose the diagram that matches your sketch.
     steps:
       - kind: sketch
         ask: "**1 − P(X > c)**, where c may be any number."
@@ -55,29 +50,27 @@ questions:
           - caption: Area to the right of c
             svg: '<img src="assets/img/normal-right-tail.svg" alt="Normal curve with the area to the right of c shaded">'
             feedback: |
-              That is P(X > c) itself. The statement asks for **1 minus** that —
-              everything under the curve *except* the right-hand region, which
-              is the area to the left of c.
+              This is P(X > c). The statement asks for **1 minus** this. That
+              leaves everything except the right area, which is the area to the
+              left of c.
           - caption: Both outer tails
             svg: '<img src="assets/img/normal-two-tails.svg" alt="Normal curve with both outer tails shaded">'
             feedback: |
-              Only one boundary, c, appears in this statement, so only one
-              region can be involved. Two shaded tails would need two limits.
+              The statement has one limit, c. Two shaded tails need two limits.
           - caption: The area between two points
             svg: '<img src="assets/img/normal-middle.svg" alt="Normal curve with the area between a and b shaded">'
             feedback: |
-              A band between two values needs two limits. This statement has
+              An area between two values needs two limits. This statement has
               only c.
         solution:
           working: |
-            Because the total area under the curve is 1, subtracting the area to
-            the right of c leaves everything to its left:
+            The total area under the curve is 1. Removing the area to the right
+            of c leaves the area to the left of c:
 
             **1 − P(X > c) = P(X ≤ c)**
 
-            This is the single most useful rearrangement in the whole tutorial.
-            Excel gives you left-hand areas, so whenever a question asks for a
-            right-hand one, this is how you convert it.
+            Excel returns left-hand areas. Use this rule whenever a question
+            asks for a right-hand area.
 
       - kind: sketch
         ask: "**P(X < −c) = P(X > c)**, where c > 0."
@@ -88,26 +81,26 @@ questions:
           - caption: Area to the left of c
             svg: '<img src="assets/img/normal-left-tail.svg" alt="Normal curve with the area to the left of c shaded">'
             feedback: |
-              This statement names two points, −c and c, and asserts that the
-              areas beyond them are equal. Both regions need to be shown.
+              The statement names two points, −c and c. It says the areas beyond
+              them are equal, so both areas must be shaded.
           - caption: The area between two points
             svg: '<img src="assets/img/normal-middle.svg" alt="Normal curve with the area between a and b shaded">'
             feedback: |
-              That is the region *between* −c and c. The statement is about the
+              This is the area *between* −c and c. The statement is about the
               areas *beyond* them.
           - caption: Area to the right of c
             svg: '<img src="assets/img/normal-right-tail.svg" alt="Normal curve with the area to the right of c shaded">'
             feedback: |
-              Half right — that is P(X > c). The statement also refers to
-              P(X < −c), so both tails belong in the sketch.
+              This is P(X > c) only. The statement also describes P(X < −c), so
+              shade both tails.
         solution:
           working: |
-            The two shaded tails are mirror images, because the normal
-            distribution is symmetric about its mean.
+            The two tails are mirror images, because the normal distribution is
+            symmetric about its mean.
 
-            This is why a two-tailed test at α = 0.05 uses 0.025 in each tail,
-            and why you will keep seeing 1.96 rather than 1.645. Get comfortable
-            with this picture now — it reappears in Tutorials 3 and 4.
+            This is why a two-tailed test with α = 0.05 puts 0.025 in each tail,
+            and why the critical value is 1.96 rather than 1.645. The same
+            picture returns in Tutorials 3 and 4.
 
       - kind: sketch
         ask: "**P(a < X < b)**, where a < b."
@@ -118,37 +111,36 @@ questions:
           - caption: Both outer tails
             svg: '<img src="assets/img/normal-two-tails.svg" alt="Normal curve with both outer tails shaded">'
             feedback: |
-              That is the complement — the area *outside* the two limits. Useful,
-              but the reverse of what is being asked.
+              This is the area *outside* the two limits. The statement asks for
+              the area between them.
           - caption: Area to the left of c
             svg: '<img src="assets/img/normal-left-tail.svg" alt="Normal curve with the area to the left of c shaded">'
             feedback: |
-              A single left-hand region has one boundary. This statement has two.
+              A single left area has one limit. This statement has two.
           - caption: Area to the right of c
             svg: '<img src="assets/img/normal-right-tail.svg" alt="Normal curve with the area to the right of c shaded">'
             feedback: |
-              A single right-hand region has one boundary. This statement has two.
+              A single right area has one limit. This statement has two.
         solution:
           working: |
-            To evaluate a band like this you take the cumulative area up to b and
-            subtract the cumulative area up to a:
+            Take the area up to b, then subtract the area up to a:
 
             **P(a < X < b) = P(X < b) − P(X < a)**
 
-            In Excel that is `=NORM.DIST(b, mean, sd, TRUE) - NORM.DIST(a, mean, sd, TRUE)`.
+            In Excel:
+            `=NORM.DIST(b, mean, sd, TRUE) - NORM.DIST(a, mean, sd, TRUE)`
     solution:
       note: |
-        The accuracy of your sketch is not what is being assessed. What matters
-        is that you can turn a probability statement into a picture, and the
-        picture into a subtraction that Excel can do.
+        Your sketch does not need to be accurate. It needs to show the correct
+        area, so you can turn that area into a subtraction Excel can calculate.
 
   # ----------------------------------------------------------- Question 2
   - id: t2-q2
     title: Question 2 — The normal distribution
     prompt: |
       The time to walk between Leeds train station and the University of Leeds
-      campus follows a normal distribution with a **mean of 25 minutes** and a
-      **standard deviation of 12 minutes**. One traveller took exactly 15
+      campus follows a normal distribution. The **mean is 25 minutes** and the
+      **standard deviation is 12 minutes**. One traveller took exactly 15
       minutes.
     steps:
       - kind: numeric
@@ -160,22 +152,21 @@ questions:
         traps:
           - value: 10
             feedback: |
-              That is the raw difference in minutes (25 − 15). To express it in
-              standard deviations you need to divide by the standard deviation.
+              This is the difference in minutes, 25 − 15. Divide it by the
+              standard deviation to convert it into standard deviations.
           - value: -1.2
             tol: {abs: 0.01}
             feedback: |
-              You have divided the wrong way round — 12 ÷ 10 rather than
-              10 ÷ 12. The z-score is (value − mean) ÷ standard deviation.
+              You have divided 12 by 10. The z-score is
+              (value − mean) ÷ standard deviation, so divide 10 by 12.
         hints:
           - "z = (value − mean) ÷ standard deviation."
         solution:
           working: |
             z = (15 − 25) ÷ 12 = −0.833
 
-            The journey is 0.833 standard deviations **below** the mean. The
-            negative sign carries real information — it tells you the traveller
-            was faster than average — so it is worth keeping.
+            The journey is 0.833 standard deviations **below** the mean. Keep
+            the minus sign. It shows the traveller was faster than average.
           excel: "=(15-25)/12    or  =STANDARDIZE(15,25,12)"
           r: "(15 - 25) / 12"
           python: "(15 - 25) / 12"
@@ -186,23 +177,23 @@ questions:
           - value: NORM.DIST
             correct: true
             feedback: |
-              Right — you have a value and you want a probability, which is the
-              direction `NORM.DIST` works in.
+              Correct. You have a value and want a probability. `NORM.DIST`
+              works in that direction.
           - value: NORM.INV
             feedback: |
-              `NORM.INV` goes the other way: you give it a probability and it
-              returns the value. Here you already have the value (15) and want
-              the probability, so you need `NORM.DIST`.
+              `NORM.INV` works the other way. You give it a probability and it
+              returns a value. Here you have the value, 15, and want the
+              probability.
           - value: NORM.S.DIST
             feedback: |
-              `NORM.S.DIST` works on the *standard* normal (mean 0, sd 1). You
-              could use it — with the z-score of −0.833 you calculated — but
-              `NORM.DIST` lets you pass the real mean and standard deviation
-              directly, with less to go wrong.
+              `NORM.S.DIST` works on the standard normal, with mean 0 and
+              standard deviation 1. You could use it with the z-score of −0.833.
+              `NORM.DIST` accepts the real mean and standard deviation, so there
+              is less to go wrong.
           - value: STANDARDIZE
             feedback: |
-              `STANDARDIZE` converts a value to a z-score. That is a useful
-              intermediate step, but it does not give you a probability.
+              `STANDARDIZE` converts a value into a z-score. It does not return
+              a probability.
         hints:
           - Are you going from a value to a probability, or from a probability to a value?
 
@@ -215,32 +206,30 @@ questions:
           - value: 0.798
             tol: {abs: 0.002}
             feedback: |
-              That is the probability of taking **more** than 15 minutes — you
-              have the complement. The question asks for less than 15, which is
-              the left-hand area, so no inversion is needed here.
+              This is the probability of taking **more** than 15 minutes. The
+              question asks for less than 15. That is the left area, so no
+              rearranging is needed.
           - value: 0.0332
             tol: {abs: 0.002}
             feedback: |
-              That looks like the probability *density* rather than the
-              cumulative probability. Set the last argument of `NORM.DIST` to
-              `TRUE` to get the area under the curve.
+              This is the height of the curve, not the area. Set the last
+              argument of `NORM.DIST` to `TRUE`.
         solution:
           working: |
-            The interval is P(X < 15). No rearrangement is needed, because Excel
-            already works from the left.
+            The interval is P(X < 15). Excel measures from the left, so no
+            rearranging is needed.
 
             `=NORM.DIST(15, 25, 12, TRUE)` = 0.2023
 
-            About 20% of journeys are faster than 15 minutes — so this traveller
-            was quicker than roughly 80% of people making the same trip.
+            About 20% of journeys take less than 15 minutes. This traveller was
+            faster than about 80% of people on the same route.
           excel: "=NORM.DIST(15,25,12,TRUE)"
           r: "pnorm(15, mean = 25, sd = 12)"
           python: "scipy.stats.norm.cdf(15, 25, 12)"
           note: |
             The fourth argument of `NORM.DIST` is the cumulative flag. `TRUE`
-            gives the area up to your value (almost always what you want);
-            `FALSE` gives the height of the curve at that point, which is
-            almost never what you want for a continuous variable.
+            gives the area up to your value, which is what you normally want.
+            `FALSE` gives the height of the curve at that point.
 
       - kind: numeric
         ask: What is the lowest travel time that would still put a traveller in the slowest 5% of journeys?
@@ -253,24 +242,22 @@ questions:
           - value: 5.26
             tol: {abs: 0.05}
             feedback: |
-              You have used 0.05 rather than 0.95. Excel works from the left, so
-              "the slowest 5%" — the top of the distribution — is everything
-              above the 95th percentile.
+              You have used 0.05. Excel measures from the left. The slowest 5%
+              sits at the top of the distribution, above the 95% point, so use
+              0.95.
           - value: 1.645
             tol: {abs: 0.01}
             feedback: |
-              That is the z-score for the 95th percentile of the *standard*
-              normal. You still need to convert it back into minutes:
-              25 + 1.645 × 12.
+              This is the z-score for the 95% point of the standard normal.
+              Convert it into minutes: 25 + 1.645 × 12.
         hints:
-          - You have a probability and want a value, so this is the inverse function.
-          - "\"Slowest 5%\" means the top 5%. Rewrite P(X ≥ T) = 0.05 as P(X < T) = 0.95."
+          - You have a probability and want a value, so use the inverse function.
+          - "\"Slowest 5%\" is the top 5%. Rewrite P(X ≥ T) = 0.05 as P(X < T) = 0.95."
         solution:
           working: |
-            We want the travel time T with P(X ≥ T) = 0.05.
+            You need the travel time T where P(X ≥ T) = 0.05.
 
-            Excel works from the left, so rearrange using the fact that the
-            total area is 1:
+            Excel measures from the left, so rewrite it. The total area is 1:
 
             P(X < T) = 1 − 0.05 = 0.95
 
@@ -281,54 +268,44 @@ questions:
           r: "qnorm(0.95, mean = 25, sd = 12)"
           python: "scipy.stats.norm.ppf(0.95, 25, 12)"
           note: |
-            The exact value is 44.7382, which rounds to 44.74. You will
-            sometimes see this quoted as 44.73, from truncating rather than
-            rounding — both are accepted here.
+            The exact value is 44.7382, which rounds to 44.74. Some sources cut
+            the digits instead of rounding and print 44.73. Either value is
+            correct here.
 
   # ----------------------------------------------------------- Question 3
   - id: t2-q3
     title: Question 3 — The binomial distribution
     prompt: |
-      A transport researcher is surveying train passengers to see whether they
-      hold a season ticket. The rail company says **14%** of passengers have
-      one, and there are **85 passengers** on the train.
+      A researcher asks train passengers whether they hold a season ticket. The
+      rail company says **14%** of passengers have one. There are **85
+      passengers** on the train.
 
-      The binomial distribution applies when you have a fixed number of
-      independent trials, each with the same probability of success — which is
-      exactly this situation.
+      Use the binomial distribution when you have a fixed number of independent
+      trials, and each trial has the same probability of success.
     steps:
       - kind: numeric
         ask: How many combinations of outcomes are possible if the researcher asks everyone on the train?
-        body: |
-          *This part is a why-bother question rather than a technique you will
-          reuse: the point is to see how quickly the possibilities explode, and
-          therefore why a distribution function is needed at all. If it feels
-          abstract, work it, note the answer, and move on — the practical tools
-          start in the next part.*
         answer: 3.87e+25
         tol: {rel: 0.02}
         placeholder: e.g. 1.23e45
         verify: 2 ** 85
         hints:
-          - Each passenger independently answers yes or no.
-          - With 2 outcomes each and 85 people, the total is 2 multiplied by itself 85 times.
+          - Each passenger answers yes or no, independently of the others.
+          - With 2 answers each and 85 passengers, multiply 2 by itself 85 times.
         solution:
           working: |
-            Each of the 85 passengers answers yes or no independently, so the
-            number of possible outcomes is 2⁸⁵ ≈ 3.87 × 10²⁵.
+            Each of the 85 passengers answers yes or no. The number of possible
+            outcomes is 2⁸⁵, which is about 3.87 × 10²⁵.
 
-            The point of asking is to show you *why* you need a distribution.
-            That number is far too large to work with by enumerating cases —
-            `BINOM.DIST` collapses the whole calculation into one function.
+            That number is too large to list case by case. `BINOM.DIST`
+            calculates the probability you need without listing them.
           excel: "=2^85    or  =1+SUMPRODUCT(COMBIN(85,ROW(INDIRECT(\"1:85\"))))"
           r: "2^85"
           python: "2**85"
           note: |
-            You can also build this up as the sum of `COMBIN(85, k)` for k = 0
-            to 85 — the number of ways to get exactly k season-ticket holders,
-            added over every possible k. That is a good illustration of where
-            the total comes from, and it sums to exactly 2⁸⁵, so `=2^85` gets
-            you the same answer directly.
+            You can also add up `COMBIN(85, k)` for every k from 0 to 85. Each
+            term counts the ways to get exactly k season-ticket holders. The
+            total is 2⁸⁵, so `=2^85` gives the same answer.
 
       - kind: numeric
         ask: What is the probability that fewer than 10 people on the train have a season ticket?
@@ -339,26 +316,25 @@ questions:
           - value: 0.3216
             tol: {abs: 0.003}
             feedback: |
-              You have used 10 as the argument, giving P(X ≤ 10). "Fewer than
-              10" excludes 10 itself, so the argument is 9.
+              You have used 10, which gives P(X ≤ 10). "Fewer than 10" does not
+              include 10, so use 9.
           - value: 0.0459
             tol: {abs: 0.003}
             feedback: |
-              That is P(X = 9) exactly — the cumulative flag is set to `FALSE`.
-              "Fewer than 10" covers 0, 1, 2 … 9, so you want the cumulative
-              form with `TRUE`.
+              This is P(X = 9), with the cumulative flag set to `FALSE`. "Fewer
+              than 10" covers 0 to 9, so set the flag to `TRUE`.
         hints:
-          - "\"Fewer than 10\" means 9 or fewer. Which number goes in the function?"
+          - "\"Fewer than 10\" means 9 or fewer. Which number goes into the function?"
         solution:
           working: |
-            The interval is P(X < 10), and because the count is a whole number
-            that is the same as P(X ≤ 9).
+            The interval is P(X < 10). The count is a whole number, so this is
+            the same as P(X ≤ 9).
 
             `=BINOM.DIST(9, 85, 0.14, TRUE)` = 0.2316
 
-            This off-by-one is the classic discrete-distribution trap. With
-            continuous data P(X < 10) and P(X ≤ 10) are the same thing; with
-            counts they are not, because 10 has a real probability of its own.
+            Take care with this boundary. For continuous data, P(X < 10) and
+            P(X ≤ 10) are the same. For counts they are not, because 10 has a
+            probability of its own.
           excel: "=BINOM.DIST(9,85,0.14,TRUE)"
           r: "pbinom(9, size = 85, prob = 0.14)"
           python: "scipy.stats.binom.cdf(9, 85, 0.14)"
@@ -372,20 +348,19 @@ questions:
           - value: 0.868
             tol: {abs: 0.003}
             feedback: |
-              That is P(X ≤ 15) — you have found the right cumulative
-              probability but not inverted it. The question asks for *more*
-              than 15, so subtract from 1.
+              This is P(X ≤ 15). The question asks for *more* than 15, so
+              subtract this from 1.
           - value: 0.0776
             tol: {abs: 0.004}
             feedback: |
               You have used 1 − P(X ≤ 14), which is P(X ≥ 15). "More than 15"
-              excludes 15 itself, so you want 1 − P(X ≤ 15).
+              does not include 15, so use 1 − P(X ≤ 15).
         hints:
-          - Excel works from the left, so start by writing this as 1 minus something.
+          - Excel measures from the left. Write this as 1 minus something.
           - "P(X > 15) = 1 − P(X ≤ 15)."
         solution:
           working: |
-            Rearrange into the form Excel can evaluate:
+            Rewrite the interval so Excel can calculate it:
 
             P(X > 15) = 1 − P(X ≤ 15)
 
@@ -396,10 +371,9 @@ questions:
           r: "pbinom(15, 85, 0.14, lower.tail = FALSE)"
           python: "scipy.stats.binom.sf(15, 85, 0.14)"
           note: |
-            R and Python both offer a direct "upper tail" form — `lower.tail =
-            FALSE` and `.sf()` respectively — which avoids the subtraction.
-            Excel has no equivalent for the binomial, so the 1 − … rearrangement
-            is unavoidable there.
+            R and Python can return the upper area directly, with
+            `lower.tail = FALSE` and `.sf()`. Excel has no equivalent for the
+            binomial, so you must subtract from 1.
 
       - kind: numeric
         ask: What is the probability that exactly 8 people on the train have a season ticket?
@@ -410,35 +384,35 @@ questions:
           - value: 0.1379
             tol: {abs: 0.003}
             feedback: |
-              That is P(X ≤ 8), the cumulative probability. The word "exactly"
-              means you want just the one value, so set the cumulative flag to
-              `FALSE`.
+              This is P(X ≤ 8), the cumulative probability. "Exactly" means one
+              value only, so set the cumulative flag to `FALSE`.
         hints:
-          - "\"Exactly\" is the word that decides the cumulative flag."
+          - The word "exactly" decides the cumulative flag.
         solution:
           working: |
             `=BINOM.DIST(8, 85, 0.14, FALSE)` = 0.0642
 
-            About a 6.4% chance of finding exactly 8 season-ticket holders.
+            There is a 6.4% chance of finding exactly 8 season-ticket holders.
 
-            Setting the flag to `FALSE` returns the probability of that single
-            outcome rather than of everything up to it.
+            With the flag set to `FALSE`, the function returns the probability
+            of that one outcome instead of everything up to it.
           excel: "=BINOM.DIST(8,85,0.14,FALSE)"
           r: "dbinom(8, 85, 0.14)"
           python: "scipy.stats.binom.pmf(8, 85, 0.14)"
           note: |
-            The naming is worth noticing: in R and Python the `d` (density) and
-            `p` (probability) prefixes make the distinction that Excel handles
-            with a `TRUE`/`FALSE` flag.
+            In R and Python, the `d` prefix gives one outcome and the `p` prefix
+            gives the cumulative total. Excel uses the `TRUE`/`FALSE` flag for
+            the same purpose.
 
   # ----------------------------------------------------------- Question 4
   - id: t2-q4
     title: Question 4 — The Poisson distribution
     prompt: |
-      The Poisson distribution describes counts of events in a fixed window of
-      time or space, when you know the average rate. Unlike the binomial there
-      is no fixed number of trials — there is no upper limit on how many cars
-      could pass a detector in an hour.
+      The Poisson distribution counts events in a fixed period of time or
+      space, when you know the average rate.
+
+      The binomial has a fixed number of trials. The Poisson does not. There is
+      no upper limit on how many cars can pass a detector in an hour.
     steps:
       - kind: numeric
         ask: |
@@ -452,14 +426,14 @@ questions:
           - value: 0.1991
             tol: {abs: 0.002}
             feedback: |
-              That is P(X ≤ 1) — the cumulative probability of one or fewer.
-              "Exactly 1" needs the cumulative flag set to `FALSE`.
+              This is P(X ≤ 1), the probability of one or fewer. "Exactly 1"
+              needs the cumulative flag set to `FALSE`.
         solution:
           working: |
             `=POISSON.DIST(1, 3, FALSE)` = 0.1494
 
-            The arguments are (value, mean, cumulative). Because the question
-            says "exactly", the cumulative flag is `FALSE`.
+            The arguments are (value, mean, cumulative). The question says
+            "exactly", so the cumulative flag is `FALSE`.
           excel: "=POISSON.DIST(1,3,FALSE)"
           r: "dpois(1, lambda = 3)"
           python: "scipy.stats.poisson.pmf(1, 3)"
@@ -475,21 +449,21 @@ questions:
           - value: 0.9015
             tol: {abs: 0.002}
             feedback: |
-              That is P(X ≤ 10). The question asks for *more* than 10, so
-              subtract it from 1.
+              This is P(X ≤ 10). The question asks for *more* than 10, so
+              subtract this from 1.
           - value: 0.1420
             tol: {abs: 0.003}
             feedback: |
               You have used 1 − P(X ≤ 9), which is P(X ≥ 10). "More than 10"
-              excludes 10 itself, so the argument stays at 10.
+              does not include 10, so keep the argument at 10.
         solution:
           working: |
             P(X > 10) = 1 − P(X ≤ 10)
 
             `=1-POISSON.DIST(10, 7, TRUE)` = 0.0985
 
-            Just under a 10% chance of seeing more than 10 cars in an hour when
-            the average is 7.
+            When the average is 7 per hour, there is just under a 10% chance of
+            seeing more than 10 cars.
           excel: "=1-POISSON.DIST(10,7,TRUE)"
           r: "ppois(10, 7, lower.tail = FALSE)"
           python: "scipy.stats.poisson.sf(10, 7)"
@@ -507,19 +481,17 @@ questions:
         traps:
           - value: 4
             feedback: |
-              That is the average rate, not a 95% bound. You need the count n
-              for which the cumulative probability first reaches about 95%.
+              This is the average rate. You need the count n where the
+              cumulative probability first reaches about 95%.
           - value: 6
             feedback: |
-              Close. P(X ≤ 6) = 0.889, which is not yet 95%. Try the next value
-              up.
+              P(X ≤ 6) = 0.889, which is below 95%. Try the next value.
         hints:
-          - There is no inverse Poisson function in Excel — step n up one at a time.
-          - "Compute POISSON.DIST(n, 4, TRUE) for n = 0, 1, 2 … and watch for where it crosses 0.95."
+          - Excel has no inverse Poisson function. Increase n one step at a time.
+          - "Calculate POISSON.DIST(n, 4, TRUE) for n = 0, 1, 2 and so on. Watch for the value that passes 0.95."
         solution:
           working: |
-            Excel has no inverse Poisson function, so you build a small table and
-            read off the answer:
+            Excel has no inverse Poisson function, so build a short table:
 
             | n | P(X ≤ n) |
             |---|---|
@@ -527,24 +499,19 @@ questions:
             | 7 | 0.9489 |
             | 8 | 0.9786 |
 
-            **This question is genuinely ambiguous, and it is worth being clear
-            about why.** P(X ≤ 7) = 94.89%, which is just short of 95%. P(X ≤ 8)
-            = 97.86%, which is comfortably past it.
+            Two answers are possible, because the wording can be read two ways.
+            P(X ≤ 7) = 94.89%, just below 95%. P(X ≤ 8) = 97.86%, above 95%.
 
-            - If you read it as "the largest n that still sits within 95%", the
-              answer is **7**.
-            - If you read it as "the smallest n that guarantees at least 95%
-              coverage", the answer is **8**.
+            - The largest n that stays within 95% is **7**.
+            - The smallest n that reaches at least 95% is **8**.
 
-            Both are accepted here. In practice, if you were sizing a call
-            centre you would want 8, because you would want to cover *at least*
-            95% of minutes — a good illustration of why the wording of a
-            specification matters as much as the arithmetic.
+            Either value is correct here. To plan staff for a call centre you
+            would choose 8, because you need to cover at least 95% of minutes.
+            The exact wording of a specification changes the answer.
           excel: "=POISSON.DIST(7,4,TRUE)   then try 8, and so on"
           r: "qpois(0.95, lambda = 4)    # returns 8"
           python: "scipy.stats.poisson.ppf(0.95, 4)   # returns 8.0"
           note: |
-            R and Python *do* have an inverse Poisson (`qpois`, `.ppf`), and
-            both return **8** — they use the "at least 95%" convention. If you
-            solve this in R or Python and get a different answer from your
-            classmate working in Excel, this is why.
+            R and Python have an inverse Poisson: `qpois` and `.ppf`. Both
+            return **8**, because they use the "at least 95%" rule. This is why
+            an answer from R may differ from an answer from Excel.

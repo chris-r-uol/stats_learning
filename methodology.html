@@ -31,11 +31,10 @@
 
     <div class="page-head">
       <div class="eyebrow">Support material</div>
-      <h1>Three methods that cover almost everything</h1>
+      <h1>Three problem-solving methods</h1>
       <p class="lede">
-        A method is a sequence of steps you can apply to a whole class of
-        problems rather than working each one out from scratch. Learning these
-        three is a better investment than memorising any individual answer.
+        A method is a set of steps that works for a whole group of problems.
+        Learning these three is more useful than memorising single answers.
       </p>
     </div>
 
@@ -50,27 +49,24 @@
       </figure>
 
       <ol>
-        <li><strong>Identify the information in the question.</strong> Read
-          carefully and write down the values and relationships you are given.
-          Not everything in a question is relevant.</li>
-        <li><strong>Identify the probability function.</strong> Continuous
-          measurement suggests the normal distribution; a fixed number of
-          yes/no trials suggests the binomial; counts of events in a window
-          suggest the Poisson.</li>
-        <li><strong>Identify the interval to evaluate.</strong> Write it down
-          formally — P(X &lt; 15), P(X &gt; 10), P(a &lt; X &lt; b). Sketching
-          it is not a waste of time.</li>
-        <li><strong>Rearrange it to fit what you have.</strong> Excel works from
-          the left. Anything else has to be turned into a left-hand area first.
-          This is the step that separates people who can do these questions from
-          people who cannot.</li>
-        <li><strong>Comment on the result.</strong> Say what it means in plain
-          language. If you cannot explain it to someone without statistics, you
-          have not finished.</li>
+        <li><strong>Identify the information in the question.</strong> Write
+          down the values you are given. Not every detail is needed.</li>
+        <li><strong>Identify the probability function.</strong> A continuous
+          measurement suggests the normal distribution. A fixed number of
+          yes/no trials suggests the binomial. Counts of events in a fixed
+          period suggest the Poisson.</li>
+        <li><strong>Identify the interval to calculate.</strong> Write it out:
+          P(X &lt; 15), P(X &gt; 10), P(a &lt; X &lt; b). Sketch it.</li>
+        <li><strong>Rewrite it to match your tool.</strong> Excel measures area
+          from the left. Any other area must be rewritten as a left-hand area
+          first. This step causes the most difficulty.</li>
+        <li><strong>Comment on the result.</strong> Explain it in plain
+          language. If you cannot explain it to someone without statistics
+          training, you have not finished.</li>
       </ol>
 
       <div class="note">
-        <span class="note-title">The rearrangements worth memorising</span>
+        <span class="note-title">Rules to memorise</span>
         <p>P(X &gt; c) = 1 − P(X ≤ c)</p>
         <p>P(a &lt; X &lt; b) = P(X &lt; b) − P(X &lt; a)</p>
         <p style="margin-bottom:0">For <em>discrete</em> data, mind the boundary:
@@ -84,14 +80,14 @@
           is the probability that a value drawn from it is less than −2?</em></p>
           <ol>
             <li>Mean 0, standard deviation 1, value of interest −2.</li>
-            <li>We are told it is normal, so <code>NORM.DIST</code>.</li>
+            <li>The distribution is normal, so use <code>NORM.DIST</code>.</li>
             <li>P(X &lt; −2).</li>
-            <li>Already a left-hand area — no rearrangement needed.</li>
+            <li>This is already a left-hand area, so no rewriting is needed.</li>
             <li><code>=NORM.DIST(-2,0,1,TRUE)</code> = 0.02275.</li>
           </ol>
-          <p style="margin-bottom:0"><strong>Comment:</strong> if a value is
-          picked at random from this distribution, there is about a 2.3% chance
-          it will be below −2.</p>
+          <p style="margin-bottom:0"><strong>Comment:</strong> a value picked
+          at random from this distribution has about a 2.3% chance of being
+          below −2.</p>
         </div>
       </details>
     </section>
@@ -107,54 +103,53 @@
       </figure>
 
       <ol>
-        <li><strong>Identify the information in the question.</strong> Confidence
-          level, distribution, sample size. If no confidence level is given,
-          pick a sensible one and <em>say that you have</em>.</li>
-        <li><strong>Identify missing but solvable information.</strong> The
-          question will rarely hand you everything. The sample mean and standard
-          deviation are usually derivable from the data.</li>
-        <li><strong>Identify the case from the table.</strong> See below.</li>
-        <li><strong>Evaluate the function.</strong> With the correct spread
-          parameter — which is almost always the standard error, not the
-          standard deviation.</li>
+        <li><strong>Identify the information in the question.</strong>
+          Confidence level, distribution, sample size. If no confidence level is
+          given, choose one and state your choice.</li>
+        <li><strong>Identify what is missing but can be calculated.</strong> You
+          can usually calculate the sample mean and standard deviation from the
+          data.</li>
+        <li><strong>Identify the case from the table below.</strong></li>
+        <li><strong>Calculate the interval.</strong> Use the correct spread
+          value. This is almost always the standard error, not the standard
+          deviation.</li>
         <li><strong>Comment on the result.</strong></li>
       </ol>
 
       <div class="note warn">
-        <span class="note-title">The mistake that costs the most marks</span>
-        A confidence interval describes how precisely you have located the
-        <strong>mean</strong>, not how spread out the data is. The spread
-        parameter is σ/√n or S/√n. Using the standard deviation on its own gives
-        an interval √n times too wide.
+        <span class="note-title">The most common mistake</span>
+        A confidence interval measures how precisely you have located the
+        <strong>mean</strong>. It does not measure how spread out the data is.
+        The spread value is σ/√n or S/√n. Using the standard deviation alone
+        gives an interval √n times too wide.
       </div>
 
       <div class="note">
         <span class="note-title">Why Excel calls it <code>standard_dev</code></span>
         <p>
-          <code>NORM.INV</code>'s third argument is labelled
-          <code>standard_dev</code>, so passing it a standard <em>error</em>
-          looks like a mistake. It is not.
+          The third argument of <code>NORM.INV</code> is labelled
+          <code>standard_dev</code>. Passing it a standard <em>error</em> looks
+          wrong, but it is correct.
         </p>
         <p style="margin-bottom:0">
-          The argument wants the standard deviation of <em>whichever
-          distribution you are describing</em>. For a confidence interval that
-          distribution is not your data — it is the distribution of
-          <strong>sample means</strong>, and its standard deviation is exactly
-          what "standard error" means. A standard error <em>is</em> a standard
-          deviation; it is just the standard deviation of a different thing.
+          The argument needs the standard deviation of the distribution you
+          are describing. For a confidence interval, that distribution is not
+          your data. It is the distribution of <strong>sample means</strong>,
+          and its standard deviation is the standard error. A standard error is
+          a standard deviation, measured on a different thing.
         </p>
       </div>
 
       <h3>Which case applies?</h3>
-      <p>Deciding the case comes down to two questions:</p>
+      <p>Two questions decide the case:</p>
       <ul>
-        <li><strong>Do I know the population standard deviation?</strong> If yes,
-          use σ. If no, estimate it from the sample and use S.</li>
-        <li><strong>Can I justify the normal distribution?</strong> Either
-          because the population is normal, or because the sample is large
-          enough for the central limit theorem. If neither, use t.</li>
+        <li><strong>Do you know the population standard deviation?</strong> If
+          yes, use σ. If no, estimate it from the sample and use S.</li>
+        <li><strong>Can you use the normal distribution?</strong> You can if the
+          population is normal, or if the sample is large enough for the central
+          limit theorem. If neither is true, use t.</li>
       </ul>
-      <p>The table formalises the combinations:</p>
+      <p>The table below lists the combinations:</p>
       <div class="table-scroll">
         <table>
           <thead>
@@ -205,26 +200,26 @@
           The average speed was 25 mph with a standard deviation of 2 mph.
           Estimate a 95% confidence interval for the population mean.</em></p>
           <ol>
-            <li>n = 100, mean 25, sd 2, 95% confidence so α = 0.05 and the tails
-              are at 0.025 and 0.975.</li>
-            <li>Nothing further to derive.</li>
-            <li>We are not told the population is normal and we do not know its
-              standard deviation, but n = 100 is large — <strong>Case 4</strong>,
-              inverse normal.</li>
+            <li>n = 100, mean 25, standard deviation 2. 95% confidence, so
+              α = 0.05 and the tails are at 0.025 and 0.975.</li>
+            <li>Nothing else needs calculating.</li>
+            <li>The question does not say the population is normal, and the
+              population standard deviation is unknown. But n = 100 is large, so
+              this is <strong>Case 4</strong>, using the inverse normal.</li>
             <li>Standard error = 2 ÷ √100 = 0.2.<br>
               <code>=NORM.INV(0.025, 25, 0.2)</code> = 24.61<br>
               <code>=NORM.INV(0.975, 25, 0.2)</code> = 25.39</li>
           </ol>
-          <p style="margin-bottom:0"><strong>Comment:</strong> we can say with
-          95% confidence that the mean speed of vehicles passing this site is
-          between 24.61 and 25.39 mph.</p>
+          <p style="margin-bottom:0"><strong>Comment:</strong> with 95%
+          confidence, the mean speed of vehicles passing this site is between
+          24.61 and 25.39 mph.</p>
           <div class="note small">
-            <span class="note-title">Check you used the standard error</span>
-            If you get 25 ± 3.92 mph here, you have used the standard deviation
-            (2) as the spread parameter rather than the standard error (0.2).
-            That answers a different question — it is roughly the range covering
-            individual <em>vehicles</em>, not the precision of the
-            <em>mean</em> — and it comes out √n = 10 times too wide.
+            <span class="note-title">Check that you used the standard error</span>
+            If you get 25 ± 3.92 mph, you have used the standard deviation, 2,
+            instead of the standard error, 0.2. That answers a different
+            question. It gives the range covering individual
+            <em>vehicles</em>, not the precision of the <em>mean</em>, and it is
+            √n = 10 times too wide.
           </div>
         </div>
       </details>
@@ -241,37 +236,37 @@
       </figure>
 
       <ol>
-        <li><strong>State the null and alternative hypothesis.</strong> H₀ is
-          always the position of no change. Decide here whether the test is one-
-          or two-tailed — two-tailed to detect a difference in any direction,
-          one-tailed when the question names a direction.</li>
+        <li><strong>State the null and alternative hypothesis.</strong> H₀
+          always states that nothing has changed. Decide now whether the test is
+          one-tailed or two-tailed. Use two-tailed to detect a difference in any
+          direction. Use one-tailed when the question names a direction.</li>
         <li><strong>Identify the important information.</strong> Sample sizes,
-          means, standard deviations. Tabulate them.</li>
-        <li><strong>Choose a significance level.</strong> If none is given, say
-          which you are using. α = 0.05 corresponds to 95% confidence.</li>
-        <li><strong>Choose and calculate a test statistic.</strong> See the
-          chooser on the <a href="reference.html">reference page</a>.</li>
-        <li><strong>Calculate the critical value and the p-value.</strong> Do
-          both. They always agree, so disagreement means you have made an
-          arithmetic slip.</li>
-        <li><strong>Interpret your results.</strong> In plain language, and
-          without ever claiming to have proved H₀.</li>
+          means and standard deviations. Put them in a table.</li>
+        <li><strong>Choose a significance level.</strong> If none is given,
+          state the one you use. α = 0.05 gives 95% confidence.</li>
+        <li><strong>Choose and calculate a test statistic.</strong> The table at
+          the end of this page lists the tests.</li>
+        <li><strong>Calculate the critical value and the p-value.</strong>
+          Calculate both. They always agree. If they do not, you have made an
+          arithmetic error.</li>
+        <li><strong>Interpret your results.</strong> Use plain language. Never
+          claim to have proved H₀.</li>
       </ol>
 
       <div class="note warn">
-        <span class="note-title">Decide the direction before you look</span>
-        Choosing a one-tailed test after seeing which way your result went is a
-        way of manufacturing significance. Fix the tails when you state the
+        <span class="note-title">Choose the direction first</span>
+        Choosing a one-tailed test after you see the result creates false
+        significance. Decide the number of tails when you state the
         hypotheses.
       </div>
 
       <div class="note">
-        <span class="note-title">Excel cannot do this in one function</span>
-        <code>T.TEST</code> and the Analysis ToolPak both need raw data ranges.
-        When a question gives you only n, the mean and the standard deviation,
-        you must build the test from cell arithmetic — which is what the
+        <span class="note-title">Excel has no single function for this</span>
+        <code>T.TEST</code> and the Analysis ToolPak both need ranges of raw
+        data. When a question gives you only n, the mean and the standard
+        deviation, you must build the test from separate formulas. The
         <a href="workbooks/hypothesis-test-workbench.xlsx">Hypothesis Test
-        Workbench</a> does for you.
+        Workbench</a> does this for you.
       </div>
 
       <details class="solution">
@@ -282,22 +277,22 @@
           121 seconds. The standard deviation was 49 seconds in both. Is the
           difference significant at 95% confidence?</em></p>
           <ol>
-            <li>H₀: μ_L = μ_M. H₁: μ_L ≠ μ_M. Two-tailed, because no direction
-              is specified.</li>
+            <li>H₀: μ_L = μ_M. H₁: μ_L ≠ μ_M. Two-tailed, because the question
+              gives no direction.</li>
             <li>n_L = 64, n_M = 49, means 144 and 121, s = 49 for both.</li>
             <li>95% confidence, so α = 0.05, split as 0.025 per tail.</li>
-            <li>Two independent groups with an unknown population sd — a
-              two-sample t-test.<br>
+            <li>Two independent groups with an unknown population standard
+              deviation, so use a two-sample t-test.<br>
               t = (144 − 121) ÷ (49 × √(1/64 + 1/49)) = 23 ÷ 9.30 =
               <strong>2.473</strong><br>
               df = 64 + 49 − 2 = 111</li>
             <li><code>=T.INV.2T(0.05, 111)</code> = 1.98</li>
             <li>2.473 &gt; 1.98, so <strong>reject H₀</strong>.</li>
           </ol>
-          <p style="margin-bottom:0"><strong>Comment:</strong> there is evidence
-          that bus lateness differs significantly between the two cities. Note
-          what has <em>not</em> been shown: nothing here explains why, and
-          nothing licenses the claim that one city's buses are better run.</p>
+          <p style="margin-bottom:0"><strong>Comment:</strong> there is
+          evidence that bus lateness differs between the two cities. This does
+          not explain why. It does not show that one city runs its buses
+          better.</p>
         </div>
       </details>
     </section>
@@ -336,10 +331,10 @@
         </table>
       </div>
       <p class="small muted" style="margin-bottom:0">
-        The central limit theorem is what makes several of these work: for a
-        large enough sample from almost any population, the distribution of the
-        sample means is approximately normal. It is why "n is large" can stand
-        in for "the population is normal".
+        The central limit theorem makes several of these tests possible. For a
+        large enough sample from almost any population, the sample means follow
+        an approximately normal distribution. This is why a large n can replace
+        the requirement for a normal population.
       </p>
     </section>
 

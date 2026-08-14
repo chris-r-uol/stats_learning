@@ -33,39 +33,39 @@
       <div class="eyebrow">Support material</div>
       <h1>Function reference</h1>
       <p class="lede">
-        Excel first, with the R and Python equivalents beside it. The section on
-        tail directions is where most wrong answers in this course come from —
-        it is worth reading even if you think you know it. There is also a
-        <a href="#symbols">symbols glossary</a> for decoding the notation.
+        Excel first, with the R and Python versions beside it. Most wrong
+        answers in this course come from the tail directions, so read that
+        section carefully. There is also a
+        <a href="#symbols">glossary of symbols</a>.
       </p>
     </div>
 
     <!-- ========================================================== -->
     <section class="card">
-      <h2 id="tails">Tail directions: the traps</h2>
+      <h2 id="tails">Tail directions</h2>
       <p>
-        Nearly every function below has a sibling that returns a different part
-        of the distribution. Picking the wrong one gives a plausible number
-        rather than an obvious error, which is exactly what makes it dangerous.
+        Most functions below have a partner that returns a different part of the
+        distribution. Choosing the wrong one returns a believable number instead
+        of an error message, so the mistake is easy to miss.
       </p>
 
       <div class="note warn">
         <span class="note-title">T.INV versus T.INV.2T</span>
-        <p><code>T.INV(p, df)</code> is a plain <strong>left-tail</strong>
-          lookup: it returns the value with probability p below it.</p>
-        <p><code>T.INV.2T(α, df)</code> is <strong>two-tailed</strong> and
-          splits α between the tails <em>for you</em>.</p>
-        <p style="margin-bottom:0">So <code>T.INV.2T(0.05, 29)</code> equals
+        <p><code>T.INV(p, df)</code> measures from the <strong>left</strong>.
+          It returns the value with probability p below it.</p>
+        <p><code>T.INV.2T(α, df)</code> is <strong>two-tailed</strong>. It
+          divides α between the two tails for you.</p>
+        <p style="margin-bottom:0"><code>T.INV.2T(0.05, 29)</code> equals
           <code>T.INV(0.975, 29)</code> = 2.045. It does <strong>not</strong>
-          equal <code>T.INV(0.95, 29)</code> = 1.699. Passing α/2 to
-          <code>T.INV.2T</code> halves it twice.</p>
+          equal <code>T.INV(0.95, 29)</code> = 1.699. If you pass α/2 to
+          <code>T.INV.2T</code>, α is divided twice.</p>
       </div>
 
       <div class="note warn">
         <span class="note-title">CHISQ.INV versus CHISQ.INV.RT</span>
-        <p><code>CHISQ.INV.RT(α, df)</code> gives the <strong>right</strong>-tail
-          critical value, which is the one you almost always want — a χ²
-          statistic cannot be negative, so there is no left tail to reject in.</p>
+        <p><code>CHISQ.INV.RT(α, df)</code> gives the
+          <strong>right</strong>-tail critical value. This is the one you need.
+          A χ² statistic cannot be negative, so there is no left tail.</p>
         <p style="margin-bottom:0"><code>CHISQ.INV.RT(0.05, 2)</code> =
           <code>CHISQ.INV(0.95, 2)</code> = 5.99. There is no function called
           <code>CHI.INV.RT</code>.</p>
@@ -74,14 +74,16 @@
       <figure style="max-width:26rem">
         <img src="assets/img/chi-squared-tail.svg"
              alt="A chi-squared distribution, with only the right-hand tail shaded as the rejection region.">
-        <figcaption>χ² rejects only in the right tail. Small values mean
-          observed and expected counts agree — evidence <em>for</em> H₀.</figcaption>
+        <figcaption>A χ² test rejects only in the right tail. A small value
+          means the observed and expected counts agree, which supports
+          H₀.</figcaption>
       </figure>
 
       <div class="note warn">
         <span class="note-title">Discrete boundaries</span>
-        <p>For continuous distributions P(X &lt; 10) and P(X ≤ 10) are the same.
-          For counts they are not, because 10 has a probability of its own.</p>
+        <p>For continuous data, P(X &lt; 10) and P(X ≤ 10) are the same. For
+          counts they are different, because 10 has a probability of its
+          own.</p>
         <p style="margin-bottom:0">
           P(X &lt; 10) → <code>BINOM.DIST(9, …, TRUE)</code><br>
           P(X &gt; 15) → <code>1 - BINOM.DIST(15, …, TRUE)</code><br>
@@ -91,10 +93,10 @@
 
       <div class="note">
         <span class="note-title">The cumulative flag</span>
-        <code>TRUE</code> gives the area under the curve up to your value — a
-        probability, and almost always what you want. <code>FALSE</code> gives
-        the height of the curve at that point, which is only meaningful for
-        discrete distributions where it is the probability of that exact
+        <code>TRUE</code> gives the area under the curve up to your value.
+        This is a probability, and it is what you normally need.
+        <code>FALSE</code> gives the height of the curve at that point. For a
+        discrete distribution, that height is the probability of that exact
         outcome.
       </div>
     </section>
@@ -103,32 +105,32 @@
     <section class="card" id="symbols">
       <h2>Symbols and notation</h2>
       <p>
-        The lectures define all of these properly; this table is for the moment
-        mid-question when you cannot remember which Greek letter is which.
+        The lectures define these terms in full. This table is for use during
+        a question, when you need to check a symbol quickly.
       </p>
       <div class="table-scroll">
         <table>
           <thead><tr><th>Symbol</th><th>Say it</th><th>What it means</th></tr></thead>
           <tbody>
-            <tr><td>μ</td><td>"mew"</td><td>The <strong>population</strong> mean — the true average over everything, which you usually cannot measure directly</td></tr>
-            <tr><td>x̄</td><td>"x bar"</td><td>The <strong>sample</strong> mean — the average of the data you actually collected</td></tr>
-            <tr><td>σ</td><td>"sigma"</td><td>Population standard deviation; σ² is the population variance</td></tr>
-            <tr><td>s (or S)</td><td></td><td>Sample standard deviation — what <code>STDEV.S</code> returns; s² is the sample variance</td></tr>
-            <tr><td>n</td><td></td><td>Sample size — how many observations you have. √n is its square root (<code>SQRT(n)</code>)</td></tr>
-            <tr><td>σ/√n, s/√n</td><td></td><td>The <strong>standard error</strong> — how much the sample mean would wobble if you repeated the survey</td></tr>
-            <tr><td>P(X &lt; c)</td><td></td><td>"The probability that the quantity X comes out less than the value c." P(X &gt; c) is greater than; P(a &lt; X &lt; b) is between a and b</td></tr>
-            <tr><td>α</td><td>"alpha"</td><td>The significance level — the false-alarm risk you accept. α = 0.05 corresponds to 95% confidence</td></tr>
-            <tr><td>H₀, H₁</td><td>"H nought", "H one"</td><td>The null hypothesis (nothing changed) and the alternative (something did)</td></tr>
-            <tr><td>z</td><td></td><td>A z-score: how many standard deviations a value sits from the mean — and the test statistic of z-tests</td></tr>
-            <tr><td>t</td><td></td><td>The test statistic of t-tests; follows the t-distribution, a slightly fatter-tailed normal</td></tr>
-            <tr><td>χ²</td><td>"kai squared"</td><td>The chi-squared test statistic, for comparing observed against expected counts</td></tr>
-            <tr><td>df</td><td></td><td>Degrees of freedom — the "size" parameter of the t and χ² distributions</td></tr>
-            <tr><td>λ</td><td>"lambda"</td><td>The average event rate in the Poisson distribution (e.g. 4 calls per minute)</td></tr>
-            <tr><td>Σ</td><td>capital "sigma"</td><td>"Add up all of the following" — Σx² means square each value, then sum them</td></tr>
-            <tr><td>~</td><td>"is distributed as"</td><td>X ~ Nor(0,1) means "X follows a normal distribution with mean 0 and sd 1"</td></tr>
-            <tr><td>R²</td><td>"R squared"</td><td>The share of variation a regression explains, from 0 to 1</td></tr>
-            <tr><td>±</td><td>"plus or minus"</td><td>An interval's half-width: 25 ± 0.39 means from 24.61 to 25.39</td></tr>
-            <tr><td>≠, ≤, ≥</td><td></td><td>Not equal to; at most; at least</td></tr>
+            <tr><td>μ</td><td>"mew"</td><td>The <strong>population</strong> mean. The true average of everything, which you usually cannot measure.</td></tr>
+            <tr><td>x̄</td><td>"x bar"</td><td>The <strong>sample</strong> mean. The average of the data you collected.</td></tr>
+            <tr><td>σ</td><td>"sigma"</td><td>The population standard deviation. σ² is the population variance.</td></tr>
+            <tr><td>s (or S)</td><td></td><td>The sample standard deviation, returned by <code>STDEV.S</code>. s² is the sample variance.</td></tr>
+            <tr><td>n</td><td></td><td>The sample size, the number of observations. √n is its square root, <code>SQRT(n)</code>.</td></tr>
+            <tr><td>σ/√n, s/√n</td><td></td><td>The <strong>standard error</strong>. How much the sample mean would change if you repeated the survey.</td></tr>
+            <tr><td>P(X &lt; c)</td><td></td><td>The probability that X is less than c. P(X &gt; c) means greater than. P(a &lt; X &lt; b) means between a and b.</td></tr>
+            <tr><td>α</td><td>"alpha"</td><td>The significance level. The risk of a false result that you accept. α = 0.05 gives 95% confidence.</td></tr>
+            <tr><td>H₀, H₁</td><td>"H nought", "H one"</td><td>The null hypothesis, that nothing changed, and the alternative, that something did.</td></tr>
+            <tr><td>z</td><td></td><td>A z-score. How many standard deviations a value is from the mean. Also the test statistic of a z-test.</td></tr>
+            <tr><td>t</td><td></td><td>The test statistic of a t-test. It follows the t-distribution, which is like the normal but with wider tails.</td></tr>
+            <tr><td>χ²</td><td>"kai squared"</td><td>The chi-squared test statistic. It compares observed counts with expected counts.</td></tr>
+            <tr><td>df</td><td></td><td>Degrees of freedom. This sets the shape of the t and χ² distributions.</td></tr>
+            <tr><td>λ</td><td>"lambda"</td><td>The average rate of events in a Poisson distribution, for example 4 calls per minute.</td></tr>
+            <tr><td>Σ</td><td>capital "sigma"</td><td>Add up everything that follows. Σx² means square each value, then add the results.</td></tr>
+            <tr><td>~</td><td>"is distributed as"</td><td>X ~ Nor(0,1) means X follows a normal distribution with mean 0 and standard deviation 1.</td></tr>
+            <tr><td>R²</td><td>"R squared"</td><td>The share of the variation that a regression explains, from 0 to 1.</td></tr>
+            <tr><td>±</td><td>"plus or minus"</td><td>Half the width of an interval. 25 ± 0.39 means 24.61 to 25.39.</td></tr>
+            <tr><td>≠, ≤, ≥</td><td></td><td>Not equal to. At most. At least.</td></tr>
           </tbody>
         </table>
       </div>
@@ -156,14 +158,13 @@
 
       <div class="note">
         <span class="note-title">Sample versus population, across three tools</span>
-        <p>Excel makes you choose: <code>STDEV.S</code> divides by n−1,
-          <code>STDEV.P</code> by n. A survey is a sample, so it is nearly
-          always <code>.S</code>.</p>
+        <p>In Excel, <code>STDEV.S</code> divides by n−1 and
+          <code>STDEV.P</code> divides by n. A survey is a sample, so use
+          <code>.S</code> in nearly every case.</p>
         <p style="margin-bottom:0">R's <code>sd()</code> and pandas'
-          <code>.std()</code> both default to n−1. <strong>NumPy does not</strong>
-          — <code>np.std(x)</code> divides by n, so you need
-          <code>np.std(x, ddof=1)</code> to match Excel. This catches people out
-          constantly.</p>
+          <code>.std()</code> both divide by n−1. <strong>NumPy does not.</strong>
+          <code>np.std(x)</code> divides by n, so use
+          <code>np.std(x, ddof=1)</code> to match Excel.</p>
       </div>
     </section>
 
@@ -214,9 +215,9 @@
         </table>
       </div>
       <p class="small muted" style="margin-bottom:0">
-        R and Python both offer a direct upper tail — <code>lower.tail = FALSE</code>
-        and <code>.sf()</code> — which saves the <code>1 - …</code> rearrangement.
-        Excel has no equivalent, so in Excel you always subtract from 1.
+        R and Python can return the upper area directly, with
+        <code>lower.tail = FALSE</code> and <code>.sf()</code>. Excel has no
+        equivalent, so in Excel you subtract from 1.
       </p>
     </section>
 
@@ -272,19 +273,19 @@
       </div>
 
       <div class="note warn">
-        <span class="note-title">Where the three tools genuinely disagree</span>
+        <span class="note-title">Where the three tools disagree</span>
         <p><strong>Summary statistics.</strong> Excel has no function that runs
-          a test from n, the mean and the standard deviation — nor does base R
-          (<code>t.test</code> wants raw data; you need
-          <code>BSDA::tsum.test</code>). SciPy does, via
-          <code>ttest_ind_from_stats</code>. This is why the
-          <a href="workbooks/hypothesis-test-workbench.xlsx">workbench</a>
-          exists.</p>
+          a test from n, the mean and the standard deviation. Base R has none
+          either, because <code>t.test</code> needs raw data. In R, use
+          <code>BSDA::tsum.test</code>. SciPy has
+          <code>ttest_ind_from_stats</code>. The
+          <a href="workbooks/hypothesis-test-workbench.xlsx">workbench</a> fills
+          this gap for Excel.</p>
         <p style="margin-bottom:0"><strong>Yates' correction.</strong> R's
           <code>chisq.test()</code> applies a continuity correction to 2×2
-          tables <em>by default</em>, so it will disagree with your hand
-          calculation and with Excel. Pass <code>correct = FALSE</code> to match.
-          SciPy's <code>chi2_contingency</code> does the same — pass
+          tables by default, so its answer differs from Excel and from a hand
+          calculation. Pass <code>correct = FALSE</code> to match. In SciPy's
+          <code>chi2_contingency</code>, pass
           <code>correction=False</code>.</p>
       </div>
     </section>
@@ -304,9 +305,9 @@
         </table>
       </div>
       <p class="small muted" style="margin-bottom:0">
-        <code>LINEST</code> returns the gradient <em>first</em> and the intercept
-        second — the opposite order to how you write the equation.
-        <code>SLOPE</code> and <code>INTERCEPT</code> are harder to mix up.
+        <code>LINEST</code> returns the gradient first and the intercept
+        second. This is the opposite order to the equation.
+        <code>SLOPE</code> and <code>INTERCEPT</code> are harder to confuse.
       </p>
     </section>
 
@@ -314,21 +315,21 @@
     <section class="card">
       <h2>Excel version differences</h2>
       <ul>
-        <li><strong>Analysis ToolPak.</strong> Available on Windows and, since
-          Excel 2016, on macOS — but not in Excel for the web. Everything in
-          these tutorials can be done without it.</li>
+        <li><strong>Analysis ToolPak.</strong> Available on Windows, and on
+          macOS since Excel 2016. It is not available in Excel for the web. You
+          can complete every question in these tutorials without it.</li>
         <li><strong>Dynamic arrays.</strong> In Microsoft 365 and Excel 2021,
-          <code>LINEST</code> spills its results across cells automatically. In
-          older versions you must select the output range and confirm with
+          <code>LINEST</code> fills the cells it needs automatically. In older
+          versions, select the output range first, then press
           Ctrl+Shift+Enter.</li>
-        <li><strong>Legacy function names.</strong> <code>STDEV</code>,
+        <li><strong>Older function names.</strong> <code>STDEV</code>,
           <code>VAR</code>, <code>MODE</code>, <code>NORMDIST</code>,
-          <code>TINV</code> and <code>CHIINV</code> still work for backwards
-          compatibility. Use the current dotted names — they are clearer about
-          which tail and which divisor you are getting.</li>
+          <code>TINV</code> and <code>CHIINV</code> still work. Use the current
+          names with dots. They state which tail and which divisor you get.</li>
         <li><strong>List separators.</strong> Some regional settings use a
-          semicolon instead of a comma between arguments. If
-          <code>=NORM.DIST(15,25,12,TRUE)</code> errors, try semicolons.</li>
+          semicolon between arguments instead of a comma. If
+          <code>=NORM.DIST(15,25,12,TRUE)</code> gives an error, try
+          semicolons.</li>
       </ul>
     </section>
 

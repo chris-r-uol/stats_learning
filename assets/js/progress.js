@@ -99,7 +99,7 @@
     // want to show they engaged. Deliberately not a score.
     exportText(tutorials) {
       const lines = [
-        'Transport Statistics Tutorials -- my progress',
+        'Transport Statistics Tutorials - my progress',
         'Generated ' + new Date().toLocaleString(),
         ''
       ];
@@ -114,7 +114,7 @@
       lines.push('');
       lines.push(`Overall: ${gDone} of ${gTotal} steps completed`);
       lines.push('');
-      lines.push('This is formative practice and does not count towards assessment.');
+      lines.push('This is practice material. It does not count towards assessment.');
       return lines.join('\n');
     },
 

@@ -104,10 +104,10 @@ def build_data_workbook() -> None:
         "T5 Accidents Weather      Tutorial 5, Question 3",
         "T5 Reaction Distance      Tutorial 5, Question 4",
         "",
-        "On the travel time sheet the observations sit in B4:B58, so the cell",
-        "references used in the tutorial worked solutions apply exactly as written.",
+        "On the travel time sheet, the values are in B4:B58. The solutions in the",
+        "tutorials use this range.",
         "",
-        "The same data is available as CSV in data/csv/ if you prefer R or Python.",
+        "The same data is in data/csv/ as CSV files, for R and Python.",
     ]
     for i, line in enumerate(notes, start=2):
         ws.cell(row=i, column=1, value=line)
@@ -269,17 +269,17 @@ def _verdict(ws, row: int, stat_ref: str, crit_ref: str, p_ref: str,
                 value=f'=IF({p_ref}<{alpha_ref},"Reject H0","Do not reject H0")')
     c.fill = VERDICT_FILL
     c.border = BOX
-    ws.cell(row=row, column=3, value="Reject when p < alpha.").font = NOTE_FONT
+    ws.cell(row=row, column=3, value="Reject H0 if p is less than alpha.").font = NOTE_FONT
     row += 1
     ws.cell(row=row, column=1, value="Routes agree?").border = BOX
     c = ws.cell(row=row, column=2, value=f'=IF(B{row-2}=B{row-1},"yes","CHECK YOUR INPUTS")')
     c.fill = VERDICT_FILL
     c.border = BOX
     ws.cell(row=row, column=3,
-            value="These two always agree. If they don't, an input is wrong.").font = NOTE_FONT
+            value="These two always agree. If they do not, check your inputs.").font = NOTE_FONT
     row += 2
     ws.cell(row=row, column=1,
-            value="Remember: failing to reject H0 is not the same as proving it true.").font = NOTE_FONT
+            value="Note: failing to reject H0 does not prove that H0 is true.").font = NOTE_FONT
     return row + 1
 
 
@@ -297,16 +297,16 @@ def build_workbench() -> None:
         "click Enable Editing. Excel opens downloaded files read-only, and the",
         "input cells will not accept anything until you do.",
         "",
-        "Excel has no function that runs a hypothesis test from summary statistics.",
+        "No Excel function runs a hypothesis test from summary statistics.",
         "T.TEST needs two ranges of raw data, and so does the Analysis ToolPak. When a",
-        "question gives you only n, the mean and the standard deviation, you have to",
-        "build the test out of cell formulas. That is what these sheets do.",
+        "question gives you only n, the mean and the standard deviation, you must",
+        "build the test from separate formulas. These sheets do that for you.",
         "",
         "How to use a sheet",
         "  1. Pick the sheet matching your test (see the chooser below).",
         "  2. Type your numbers into the yellow cells only.",
         "  3. Read the test statistic, the critical value and the p-value.",
-        "  4. Check that both verdicts agree. They always should.",
+        "  4. Check that both results agree. They always should.",
         "",
         "Which test do I need?",
         "  Comparing one sample mean to a known population mean",
@@ -319,9 +319,8 @@ def build_workbench() -> None:
         "  Two categorical variables .............. Chi-Squared",
         "  Is a regression coefficient real? ...... Regression Coefficient T",
         "",
-        "Every sheet reports both the critical-value route and the p-value route.",
-        "They are two ways of asking the same question, and a result you can reach",
-        "two ways is more trustworthy than one you can only reach one way.",
+        "Every sheet gives both the critical value and the p-value. They always",
+        "agree, so you can use one to check the other.",
     ]
     for i, line in enumerate(lines, start=2):
         ws.cell(row=i, column=1, value=line)
@@ -351,9 +350,9 @@ def build_workbench() -> None:
         ("Standard error", f"={sg}/SQRT({n})", "sigma / sqrt(n)"),
         ("Test statistic z", f"=({xb}-{mu})/{se}", "can be negative - that is fine"),
         ("Critical value", f"=IF({tl}=2,NORM.S.INV(1-{al}/2),NORM.S.INV(1-{al}))",
-         "two-tailed splits alpha between the tails"),
+         "a two-tailed test divides alpha between the tails"),
         ("p-value", f"=IF({tl}=2,2*(1-NORM.S.DIST(ABS({z}),TRUE)),1-NORM.S.DIST(ABS({z}),TRUE))",
-         "probability of a result at least this extreme if H0 is true"),
+         "the probability of a result this extreme if H0 is true"),
     ])
     r += 1
     _verdict(ws, r, z, crit, p, al)
@@ -385,7 +384,7 @@ def build_workbench() -> None:
         ("Degrees of freedom", f"={n}-1", "n - 1"),
         ("Test statistic t", f"=({xb}-{mu})/{se}", ""),
         ("Critical value", f"=IF({tl}=2,T.INV.2T({al},{df}),T.INV(1-{al},{df}))",
-         "T.INV.2T already halves alpha - do not halve it yourself"),
+         "T.INV.2T divides alpha for you - do not divide it yourself"),
         ("p-value", f"=IF({tl}=2,T.DIST.2T(ABS({t}),{df}),T.DIST.RT(ABS({t}),{df}))", ""),
     ])
     r += 1
@@ -421,8 +420,8 @@ def build_workbench() -> None:
     r += 1
     r = _verdict(ws, r, z, crit, p, al)
     ws.cell(row=r + 1, column=1,
-            value=("Note: with unknown population sds a t-test is the more standard choice. "
-                   "At these sample sizes the two give nearly the same answer.")).font = NOTE_FONT
+            value=("Note: when the population sds are unknown, a t-test is the usual "
+                   "choice. At these sample sizes both give nearly the same answer.")).font = NOTE_FONT
     autosize(ws, 26)
     ws.column_dimensions["C"].width = 62
 
@@ -446,7 +445,7 @@ def build_workbench() -> None:
                               f"B{r+3}", f"B{r+4}", f"B{r+5}")
     r = _outputs(ws, r, [
         ("Pooled sd", f"=SQRT((({n1}-1)*{s1}^2+({n2}-1)*{s2}^2)/({n1}+{n2}-2))",
-         "when both sds are equal this is just that value"),
+         "if both sds are equal, this equals that value"),
         ("Standard error of difference", f"={sp}*SQRT(1/{n1}+1/{n2})", ""),
         ("Degrees of freedom", f"={n1}+{n2}-2", "n1 + n2 - 2"),
         ("Test statistic t", f"=({m1}-{m2})/{se}", ""),
@@ -492,8 +491,8 @@ def build_workbench() -> None:
     r += 1
     r = _verdict(ws, r, t, crit, p, al)
     ws.cell(row=r + 1, column=1,
-            value=("If you have both raw columns you can cross-check with "
-                   "=T.TEST(range1, range2, 2, 1) - the 1 means paired.")).font = NOTE_FONT
+            value=("If you have both raw columns, check the result with "
+                   "=T.TEST(range1, range2, 2, 1). The 1 means paired.")).font = NOTE_FONT
     autosize(ws, 26)
     ws.column_dimensions["C"].width = 62
 
@@ -517,15 +516,16 @@ def build_workbench() -> None:
     r = _outputs(ws, r, [
         ("Degrees of freedom", f"=({nr}-1)*({nc}-1)", "(rows - 1) x (columns - 1)"),
         ("Critical value", f"=CHISQ.INV.RT({al},{df})",
-         "CHISQ.INV.RT, not CHI.INV.RT - the latter does not exist"),
+         "use CHISQ.INV.RT - there is no function called CHI.INV.RT"),
         ("p-value", f"=CHISQ.DIST.RT({stat},{df})", ""),
     ])
     r += 1
     r = _verdict(ws, r, stat, crit, p, al, two_tailed=False)
     for line in [
-        "Chi-squared is never two-tailed: the statistic cannot be negative, so there is no left tail.",
-        "If any expected value is below 5, pool similar categories together and recount the",
-        "degrees of freedom before using this sheet.",
+        "A chi-squared test is never two-tailed. The statistic cannot be negative,",
+        "so there is no left tail.",
+        "If any expected value is below 5, combine similar categories first, then",
+        "recount the degrees of freedom.",
     ]:
         r += 1
         ws.cell(row=r, column=1, value=line).font = NOTE_FONT

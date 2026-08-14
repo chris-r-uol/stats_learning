@@ -2,9 +2,9 @@ tutorial: 3
 title: Sampling Distributions and Interval Estimation
 
 intro: |
-  You almost never measure a whole population. You measure a sample and then
-  make a claim about the population behind it — and an honest claim comes with
-  a statement of how confident you are. That is what a confidence interval is.
+  You rarely measure a whole population. You measure a sample, then make a
+  claim about the population. A confidence interval states how precise that
+  claim is.
 
 learning_outcomes:
   - Calculate critical values from the normal distribution.
@@ -24,30 +24,30 @@ datasets:
 supplementary: |
   ![The five steps of the interval estimation method](assets/img/method-intervals.svg)
 
-  **The one thing to get right: the spread parameter.**
+  **Use the standard error, not the standard deviation.**
 
-  A confidence interval is not about how spread out your *data* is. It is about
-  how precisely you have pinned down the *mean*. Those are different questions
-  and they have different answers. The spread you feed into `NORM.INV` is the
-  **standard error** — the standard deviation divided by √n — not the standard
-  deviation itself.
+  A confidence interval does not describe how spread out your data is. It
+  describes how precisely you have measured the **mean**. These are different
+  questions with different answers.
 
-  This is why collecting more data narrows the interval: √n grows, so the
-  standard error shrinks.
+  The spread value you put into `NORM.INV` is the **standard error**. That is
+  the standard deviation divided by √n.
+
+  More data gives a narrower interval, because √n grows and the standard error
+  gets smaller.
 
   ### Which case applies?
 
-  Deciding the case comes down to **two questions**:
+  Two questions decide the case:
 
-  1. **Do I know the population standard deviation?** If yes, use σ. If no,
+  1. **Do you know the population standard deviation?** If yes, use σ. If no,
      estimate it from the sample and use S.
-  2. **Can I justify the normal distribution?** If yes — either because the
-     population is normal, or because the sample is large enough for the
-     central limit theorem — use the inverse normal. Otherwise use the
-     inverse t.
+  2. **Can you use the normal distribution?** You can if the population is
+     normal, or if the sample is large enough for the central limit theorem. If
+     neither is true, use the t-distribution.
 
-  The table formalises the combinations, and the questions here quote it by
-  case number:
+  The table below lists the combinations. The questions refer to these case
+  numbers.
 
   | Case | Population normal? | Population variance known? | Sample size | Use | Statistic |
   |---|---|---|---|---|---|
@@ -63,12 +63,11 @@ questions:
   - id: t3-q1
     title: Question 1 — Critical values
     prompt: |
-      For a normal distribution with mean μ = 25 and standard deviation 3, find
-      the critical value c satisfying **P(μ − c < X < μ + c) = 0.95**.
+      A normal distribution has mean μ = 25 and standard deviation 3. Find the
+      critical value c where **P(μ − c < X < μ + c) = 0.95**.
 
-      This question is about critical values on the distribution itself, not
-      about a sample — so there is no standard error here, just the standard
-      deviation.
+      This question is about the distribution itself, not about a sample. Use
+      the standard deviation, not a standard error.
     steps:
       - kind: numeric
         ask: What area lies in *each* tail?
@@ -79,15 +78,15 @@ questions:
           - value: 0.05
             tol: {abs: 0.0005}
             feedback: |
-              That is the area in *both* tails combined. The normal distribution
-              is symmetric, so the 0.05 splits equally: 0.025 in each. Forgetting
-              to halve α is the most common mistake in this whole tutorial.
+              This is the area in **both** tails together. The normal
+              distribution is symmetric, so divide 0.05 by 2. Each tail holds
+              0.025.
           - value: 0.95
             feedback: |
-              That is the area under the central body of the curve. The tails
-              are what is left over — 1 − 0.95, shared between two of them.
+              This is the area in the middle. The tails hold what is left:
+              1 − 0.95, shared between two tails.
         hints:
-          - The total area is 1, and the middle accounts for 0.95. What is left, and how many tails share it?
+          - The total area is 1. The middle holds 0.95. How much is left, and how many tails share it?
 
       - kind: interval
         ask: Give the lower and upper bounds of the interval.
@@ -99,8 +98,8 @@ questions:
           - value: 20.065
             tol: {abs: 0.02}
             feedback: |
-              You have used 0.05 rather than 0.025 for the lower bound. For a
-              two-sided interval each tail takes half of α.
+              You have used 0.05 for the lower bound. Each tail takes half of α,
+              so use 0.025.
         solution:
           excel: "=NORM.INV(0.025,25,3)   and  =NORM.INV(0.975,25,3)"
           r: "qnorm(c(0.025, 0.975), mean = 25, sd = 3)"
@@ -113,33 +112,31 @@ questions:
         verify: NORM_INV(0.975, 25, 3) - 25
         traps:
           - value: 30.88
-            tol: {abs: 0.02}
             feedback: |
-              That is the upper bound itself, not the distance from the mean.
-              c is measured *from* μ: 30.88 − 25.
+              This is the upper bound. The value c is the distance from the
+              mean: 30.88 − 25.
           - value: 11.76
             tol: {abs: 0.03}
             feedback: |
-              That is the full width of the interval. c is the half-width — the
-              distance from the mean to either bound.
+              This is the full width of the interval. The value c is half of it,
+              measured from the mean to one bound.
         solution:
           working: |
             c = 30.88 − 25 = 25 − 19.12 = **5.88**
 
-            Notice that 5.88 = 1.96 × 3. The 1.96 is the critical value of the
-            *standard* normal at 95%, and you will meet it constantly from here
-            on. Whenever you see ±1.96 × (a spread), this is what is happening.
+            Note that 5.88 = 1.96 × 3. The value 1.96 is the 95% critical value
+            of the standard normal distribution. You will use it often.
           excel: "=NORM.INV(0.975,25,3)-25    or  =NORM.S.INV(0.975)*3"
 
   # ----------------------------------------------------------- Question 2
   - id: t3-q2
     title: Question 2 — The same method, different numbers
     prompt: |
-      For a normal distribution with mean −2 and standard deviation 0.1, find
-      the critical value c satisfying **P(μ − c < X < μ + c) = 0.99**.
+      A normal distribution has mean −2 and standard deviation 0.1. Find the
+      critical value c where **P(μ − c < X < μ + c) = 0.99**.
 
-      Same method as Question 1. Watch the negative mean and the change of
-      confidence level.
+      Use the method from Question 1. The mean is negative and the confidence
+      level has changed.
     steps:
       - kind: numeric
         ask: What area lies in each tail now?
@@ -150,12 +147,12 @@ questions:
           - value: 0.01
             tol: {abs: 0.0002}
             feedback: |
-              That is both tails combined. Halve it — 0.005 in each.
+              This is both tails together. Divide by 2. Each tail holds 0.005.
           - value: 0.025
             tol: {abs: 0.0002}
             feedback: |
-              That is the figure for a 95% interval. This question asks for 99%,
-              so α = 0.01 and each tail takes 0.005.
+              This is the value for a 95% interval. Here the interval is 99%, so
+              α = 0.01 and each tail holds 0.005.
 
       - kind: interval
         ask: Give the lower and upper bounds.
@@ -167,10 +164,10 @@ questions:
           - value: 2.258
             tol: {abs: 0.005}
             feedback: |
-              Check your signs. The mean is −2, so both bounds are negative and
-              the "lower" one is the more negative: −2.258.
+              Check the signs. The mean is −2, so both bounds are negative. The
+              lower bound is −2.258.
         hints:
-          - The mean is negative, so both bounds will be too. Lower means further from zero here.
+          - The mean is negative, so both bounds are negative. The lower bound is further from zero.
 
       - kind: numeric
         ask: What is the critical value c?
@@ -181,10 +178,9 @@ questions:
           working: |
             c = −1.742 − (−2) = **0.258**
 
-            Compare with Question 1: there the multiplier was 1.96 for 95%
-            confidence, here it is 2.576 for 99%. Demanding more confidence
-            makes the interval wider. You cannot be more certain and more
-            precise at the same time without collecting more data.
+            In Question 1 the multiplier was 1.96, for 95% confidence. Here it
+            is 2.576, for 99%. Higher confidence gives a wider interval. To gain
+            confidence and precision at the same time, you need more data.
           excel: "=NORM.INV(0.995,-2,0.1)+2"
 
   # ----------------------------------------------------------- Question 3
@@ -192,9 +188,9 @@ questions:
     title: Question 3 — Fuel consumption
     dataset_label: T3 Fuel Consumption
     prompt: |
-      A study measured the fuel consumption of a sample of **27 cars** (data on
-      the **T3 Fuel Consumption** sheet). The **population** standard deviation
-      is known to be **1.3 L/100km**.
+      A study measured the fuel consumption of **27 cars**. The data is on the
+      **T3 Fuel Consumption** sheet. The **population** standard deviation is
+      **1.3 L/100km**.
     steps:
       - kind: numeric
         ask: What is the mean of the sample data?
@@ -213,26 +209,23 @@ questions:
           - value: Case 2
             correct: true
             feedback: |
-              Right. We are not told the population is normal, but we *do* know
-              the population standard deviation, and n = 27 is at least 20. That
-              is Case 2, using the inverse normal with σ.
+              Correct. The question does not say the population is normal. It
+              does give the population standard deviation, and n = 27 is at
+              least 20. Case 2 uses the inverse normal with σ.
           - value: Case 1
             feedback: |
-              Case 1 needs the population to be normally distributed, and
-              nothing in the question tells us that. Never assume normality
-              because it would be convenient — with n = 27 and a known σ you
-              do not need to.
+              Case 1 needs a normal population. The question does not say the
+              population is normal, so you cannot assume it.
           - value: Case 3
             feedback: |
-              Case 3 is for when the population variance is **unknown** and you
-              have to estimate it from the sample. Here σ is given in the
-              question, so you can use it directly.
+              Case 3 is for an unknown population variance. Here σ is given, so
+              use it.
           - value: Case 4
             feedback: |
-              Case 4 is for an unknown population variance. You have been given
-              σ = 1.3, so you are better off than that — use Case 2.
+              Case 4 is for an unknown population variance. Here σ = 1.3 is
+              given, so Case 2 applies.
         hints:
-          - Work through two questions: do you know the population standard deviation, and can you justify the normal distribution?
+          - Ask the two questions. Do you know the population standard deviation? Can you use the normal distribution?
 
       - kind: numeric
         ask: What is the spread parameter (the standard error) for the interval?
@@ -243,34 +236,31 @@ questions:
           - value: 1.3
             tol: {abs: 0.005}
             feedback: |
-              That is the population standard deviation itself. The interval is
-              about the precision of the *mean*, so divide by √n: 1.3 ÷ √27.
+              This is the population standard deviation. The interval measures
+              the precision of the mean, so divide by √n: 1.3 ÷ √27.
           - value: 0.0481
             tol: {abs: 0.005}
             feedback: |
-              You have divided by n rather than √n. It is the square root of the
-              sample size.
+              You have divided by n. Divide by √n, the square root of the sample
+              size.
         hints:
           - Standard error = σ ÷ √n.
         solution:
           working: |
             Standard error = σ ÷ √n = 1.3 ÷ √27 = **0.25**
           note: |
-            **This is where Excel's labelling trips people up.** In the next
-            part you will type this 0.25 into `NORM.INV`, whose third argument
-            Excel calls **`standard_dev`** — so it looks as though you are
-            putting a standard error where a standard deviation is wanted.
+            **Excel names this argument `standard_dev`.** In the next part you
+            put 0.25 into `NORM.INV`, in an argument labelled `standard_dev`. It
+            looks like the wrong value, but it is correct.
 
-            You are not making a mistake. `NORM.INV` wants the standard
-            deviation *of whichever distribution you are describing*. Here that
-            distribution is not the fuel consumption of individual cars — it is
-            the distribution of **sample means**, and the standard deviation of
-            that distribution is exactly what "standard error" means.
+            `NORM.INV` needs the standard deviation of the distribution you are
+            describing. Here that distribution is not the fuel consumption of
+            single cars. It is the distribution of **sample means**. The
+            standard deviation of that distribution is the standard error.
 
-            So a standard error **is** a standard deviation. It is just the
-            standard deviation of a different thing: not how much cars vary,
-            but how much your estimate of the average would vary if you
-            repeated the survey.
+            A standard error is a standard deviation. It measures a different
+            thing: not how much cars vary, but how much your estimate of the
+            average would vary if you repeated the survey.
 
       - kind: interval
         ask: Estimate a 95% confidence interval for the population mean fuel consumption.
@@ -282,35 +272,29 @@ questions:
         verify: "[NORM_INV(0.025, float(fuel.mean()), 1.3/math.sqrt(27)), NORM_INV(0.975, float(fuel.mean()), 1.3/math.sqrt(27))]"
         solution:
           working: |
-            Using Case 2 — inverse normal, population σ, standard error
-            1.3 ÷ √27 = 0.25:
+            Case 2 uses the inverse normal with the population σ. The standard
+            error is 1.3 ÷ √27 = 0.25.
 
             - `=NORM.INV(0.025, 10.08, 0.25)` = 9.59
             - `=NORM.INV(0.975, 10.08, 0.25)` = 10.57
 
-            **We can say with 95% confidence that the population mean fuel
-            consumption is 10.08 ± 0.49 L/100km.**
+            **With 95% confidence, the population mean fuel consumption is
+            10.08 ± 0.49 L/100km.**
 
-            Note what that sentence does and does not claim. It is a statement
-            about where the *population mean* plausibly lies, not about where
-            any individual car's consumption lies.
+            This states where the population **mean** lies. It does not state
+            where the consumption of a single car lies.
           excel: "=NORM.INV(0.025,10.08,0.25)   and  =NORM.INV(0.975,10.08,0.25)"
           r: "mean(x) + c(-1,1) * qnorm(0.975) * 1.3 / sqrt(27)"
           python: "df.x.mean() + np.array([-1,1]) * scipy.stats.norm.ppf(.975) * 1.3/np.sqrt(27)"
           note: |
-            **Excel labels that third argument `standard_dev`, and you are
-            passing it the standard error (0.25), not the standard deviation
-            (1.3). That is correct.** `NORM.INV` wants the standard deviation
-            of the distribution you are describing, and here that is the
-            distribution of sample means — whose standard deviation is the
-            standard error. If you pass 1.3 you get the range covering
-            individual *cars*, which is a different and much wider thing.
+            The third argument of `NORM.INV` is labelled `standard_dev`, and you
+            pass it the standard error, 0.25. This is correct. If you pass 1.3
+            instead, you get the range covering single cars, which is much
+            wider.
 
-            Excel also has `CONFIDENCE.NORM(alpha, sigma, n)`, which takes σ and
-            n separately and does the √n for you — `=CONFIDENCE.NORM(0.05, 1.3,
-            27)` returns the half-width 0.49 directly. It sidesteps the
-            labelling confusion, but building the interval from `NORM.INV`
-            keeps the machinery visible.
+            Excel also has `CONFIDENCE.NORM(alpha, sigma, n)`. It takes σ and n
+            separately and divides by √n for you.
+            `=CONFIDENCE.NORM(0.05, 1.3, 27)` returns the half-width, 0.49.
 
       - kind: choice
         ask: What happens to the 95% confidence interval if you increase the sample size?
@@ -318,36 +302,32 @@ questions:
           - value: It gets narrower
             correct: true
             feedback: |
-              Yes. The standard error is σ ÷ √n, so a larger n makes the spread
-              parameter smaller and the interval tighter. Note the √ though —
-              to halve the width you need **four times** the data, which is why
-              large surveys get expensive fast.
+              Correct. The standard error is σ ÷ √n. A larger n makes it
+              smaller, so the interval narrows. Note the square root: to halve
+              the width, you need **four times** as much data.
           - value: It gets wider
             feedback: |
-              The other way round. More data means a more precise estimate of
-              the mean, so the interval narrows.
+              More data gives a more precise estimate of the mean, so the
+              interval gets narrower.
           - value: It stays the same
             feedback: |
-              The sample size appears in the standard error as σ ÷ √n, so
-              changing n definitely changes the interval.
+              The sample size is part of the standard error, σ ÷ √n. Changing n
+              changes the interval.
           - value: It depends on the values of the new observations
             feedback: |
-              For a Case 2 interval, no — σ is known and fixed, so the width
-              depends only on n. New observations move the *centre* of the
-              interval, but its width is set by σ ÷ √n alone.
+              In Case 2, σ is known and fixed, so the width depends only on n.
+              New values move the centre of the interval, but not its width.
 
   # ----------------------------------------------------------- Question 4
   - id: t3-q4
     title: Question 4 — HGV weights
     dataset_label: T3 HGV Weights
     prompt: |
-      High noise pollution may be related to passing heavy goods vehicles. The
-      weight of **38 randomly selected vehicles** was measured (data on the
-      **T3 HGV Weights** sheet). Estimate the mean weight of HGVs using these
-      roads, with a 95% confidence interval.
+      Noise pollution may be linked to heavy goods vehicles. The weight of **38
+      vehicles** was measured. The data is on the **T3 HGV Weights** sheet.
 
-      This time nothing is given about the population — you have only the
-      sample.
+      Estimate the mean weight of HGVs on these roads, with a 95% confidence
+      interval. You are given nothing about the population, only the sample.
     steps:
       - kind: numeric
         ask: What is the sample mean?
@@ -366,8 +346,8 @@ questions:
           - value: 7.49
             tol: {abs: 0.03}
             feedback: |
-              That is `STDEV.P`. These 38 vehicles are a sample of all HGVs
-              using the road, so use `STDEV.S`.
+              This is `STDEV.P`. These 38 vehicles are a sample of all HGVs on
+              the road, so use `STDEV.S`.
 
       - kind: choice
         ask: Which case applies?
@@ -375,23 +355,22 @@ questions:
           - value: Case 4
             correct: true
             feedback: |
-              Right. The population distribution is unknown and so is its
-              variance, but n = 38 is comfortably over 30, so the central limit
-              theorem lets you use the inverse normal with the *sample* standard
-              deviation.
+              Correct. You know neither the population distribution nor its
+              variance. But n = 38 is above 30, so the central limit theorem
+              allows the inverse normal with the sample standard deviation.
           - value: Case 2
             feedback: |
-              Case 2 requires a known population variance. Here you only have
-              the sample standard deviation, estimated from the data.
+              Case 2 needs a known population variance. Here you have only the
+              sample standard deviation.
           - value: Case 3
             feedback: |
-              Case 3 needs the population to be normally distributed, which you
-              have not been told. With n = 38 you can lean on the central limit
-              theorem instead — that is Case 4.
+              Case 3 needs a normal population. The question does not say the
+              population is normal. With n = 38 you can use the central limit
+              theorem instead, which is Case 4.
           - value: Case 1
             feedback: |
-              Case 1 needs both a normal population *and* a known variance. You
-              have neither.
+              Case 1 needs a normal population and a known variance. You have
+              neither.
 
       - kind: interval
         ask: Give the 95% confidence interval for the mean HGV weight.
@@ -405,37 +384,37 @@ questions:
           - value: 7.41
             tol: {abs: 0.15}
             feedback: |
-              You have used the standard deviation (7.59) as the spread
-              parameter instead of the standard error (7.59 ÷ √38 = 1.23). The
-              interval is about the precision of the mean, not the spread of
-              individual vehicles.
+              You have used the standard deviation, 7.59, as the spread value.
+              Use the standard error: 7.59 ÷ √38 = 1.23. The interval measures
+              the precision of the mean, not the spread of single vehicles.
         hints:
           - Standard error = 7.59 ÷ √38.
         solution:
           working: |
-            - Sample mean 22.29, sample sd 7.59, n = 38
+            - Sample mean 22.29, sample standard deviation 7.59, n = 38
             - Standard error = 7.59 ÷ √38 = 1.23
             - `=NORM.INV(0.025, 22.29, 1.23)` = 19.88
             - `=NORM.INV(0.975, 22.29, 1.23)` = 24.70
 
-            **With 95% confidence the mean weight of the HGV population is
+            **With 95% confidence, the mean weight of the HGV population is
             22.29 ± 2.41 tonnes.**
           excel: "=NORM.INV(0.025,22.29,1.23)   and  =NORM.INV(0.975,22.29,1.23)"
           r: "mean(w) + c(-1,1) * qnorm(0.975) * sd(w) / sqrt(38)"
           python: "scipy.stats.norm.interval(0.95, df.w.mean(), df.w.std()/np.sqrt(38))"
           note: |
-            Try this with the t-distribution too and compare. With 37 degrees of
-            freedom the critical t is 2.026 against the normal's 1.96 — an
-            interval about 3% wider. As n grows the t-distribution converges on
-            the normal, which is exactly why Case 4 is allowed to use the normal
-            once n is large enough.
+            Try the same calculation with the t-distribution and compare. With
+            37 degrees of freedom the critical t is 2.026, against 1.96 for the
+            normal. The interval is about 3% wider.
+
+            As n grows, the t-distribution gets closer to the normal. This is
+            why Case 4 allows the normal when the sample is large.
 
   # ----------------------------------------------------------- Question 5
   - id: t3-q5
     title: Question 5 — What extra knowledge buys you
     dataset_label: T3 HGV Weights
     prompt: |
-      Repeat Question 4, but now assume the **population variance is 64** and
+      Repeat Question 4. This time, assume the **population variance is 64** and
       that vehicle weights are **normally distributed**. What has changed?
     steps:
       - kind: numeric
@@ -447,9 +426,8 @@ questions:
         traps:
           - value: 64
             feedback: |
-              That is the variance. The standard deviation is its square root —
-              and it is the standard deviation that goes into the interval
-              calculation.
+              This is the variance. Take its square root. The interval uses the
+              standard deviation.
 
       - kind: choice
         ask: Which case applies now?
@@ -457,26 +435,22 @@ questions:
           - value: Case 1
             correct: true
             feedback: |
-              Right. You have been told the population is normal *and* given its
-              variance, which is the most favourable situation — Case 1, and no
-              minimum sample size needed.
+              Correct. The population is normal and its variance is known. This
+              is Case 1, and there is no minimum sample size.
           - value: Case 2
             feedback: |
-              Case 2 is for when you cannot assume normality and have to lean on
-              a large sample instead. Here the question tells you the population
-              *is* normal, so Case 1 applies. The arithmetic is identical — both
-              use the inverse normal with σ — but the justification is stronger.
+              Case 2 is for when you cannot assume a normal population. Here the
+              question states that the population is normal, so Case 1 applies.
+              The calculation is the same, but the reason is stronger.
           - value: Case 4
             feedback: |
-              Case 4 is for an unknown population variance. You have been given
-              it as 64, so you are in a stronger position than Case 4 assumes.
-              The arithmetic happens to be identical — both use the inverse
-              normal — but the justification you write down should be the
-              stronger one.
+              Case 4 is for an unknown population variance. Here the variance is
+              given as 64. The calculation is the same, but you should record
+              the stronger reason.
           - value: Case 3
             feedback: |
-              Case 3 is for a normal population with **unknown** variance. Here
-              the variance is given, so you can do better than estimating it.
+              Case 3 is for a normal population with an **unknown** variance.
+              Here the variance is given.
 
       - kind: interval
         ask: Give the new 95% confidence interval.
@@ -488,67 +462,63 @@ questions:
         verify: "[NORM_INV(0.025, float(hgv.mean()), 8/math.sqrt(38)), NORM_INV(0.975, float(hgv.mean()), 8/math.sqrt(38))]"
         solution:
           working: |
-            The standard error is now built from the *population* σ:
-            8 ÷ √38 = 1.298.
+            The standard error now uses the population σ: 8 ÷ √38 = 1.298.
 
             - `=NORM.INV(0.025, 22.29, 1.29777)` = 19.75
             - `=NORM.INV(0.975, 22.29, 1.29777)` = 24.83
 
             **22.29 ± 2.54 tonnes.**
           note: |
-            Compare this with Question 4, where the same `NORM.INV` call was
-            justified by the central limit theorem and a sample estimate of the
-            spread. Here it is justified by a stated normal population and a
-            known σ. Same function, same shape of answer, quite different
-            grounds — and it is the grounds you would have to defend.
+            In Question 4, the same `NORM.INV` calculation was justified by the
+            central limit theorem and a sample estimate of the spread. Here it
+            is justified by a normal population and a known σ. The function is
+            the same. The reason is different, and the reason is what you must
+            defend.
 
       - kind: freetext
         ask: |
-          The interval got slightly *wider* than in Question 4, even though you
-          now know more. Explain why, and say whether the new interval is
-          better or worse.
+          The interval is *wider* than in Question 4, although you now know
+          more. Explain why. Then say whether the new interval is better or
+          worse.
         min_length: 80
         rubric:
-          - Notes that the population sd (8) is larger than the sample estimate (7.59), which is what widened the interval.
-          - Explains that the new interval is nonetheless more trustworthy, because it rests on known facts rather than an estimate from 38 vehicles.
-          - Distinguishes a *narrower* interval from a *better* one.
+          - States that the population standard deviation (8) is larger than the sample estimate (7.59), which widened the interval.
+          - States that the new interval is more reliable, because it uses a known value instead of an estimate from 38 vehicles.
+          - Separates a narrower interval from a better interval.
         solution:
           working: |
-            **Model answer.** The interval widened because the population
-            standard deviation (8 tonnes) is a little larger than the estimate
-            we had made from our 38 vehicles (7.59 tonnes) — our sample happened
-            to be slightly less variable than the fleet as a whole. Even so, the
-            new interval is the better one: it rests on a known property of the
-            population rather than on an estimate that could itself be off. A
-            narrower interval is not automatically a better interval, and it is
-            worth being suspicious of any method that makes your uncertainty
-            look smaller without giving you more information.
+            **Model answer.** The interval is wider because the population
+            standard deviation, 8 tonnes, is larger than the estimate from our
+            sample, 7.59 tonnes. Our 38 vehicles happened to vary a little less
+            than the whole fleet. The new interval is still the better one,
+            because it uses a known property of the population instead of an
+            estimate that could be wrong. A narrower interval is not always a
+            better interval. Treat any method that reduces your stated
+            uncertainty without adding information with caution.
           note: |
-            This is the real lesson of Questions 4 and 5 together. Students
-            often assume "narrower = better". It is not: an interval is only as
-            good as the assumptions holding it up.
+            A narrower interval is not automatically better. An interval is only
+            as reliable as the assumptions behind it.
 
   # ----------------------------------------------------------- Question 6
   - id: t3-q6
     title: Question 6 — Sigma notation
     prompt: |
-      Some disciplines state confidence as **n-sigma** — how many standard
-      deviations from the mean.
+      Some fields state confidence as **n-sigma**. This counts how many standard
+      deviations the interval covers.
 
-      | | Confidence | Reads as |
+      | | Confidence | Strength of evidence |
       |---|---|---|
-      | 1-sigma | 68% | not very convincing |
-      | 2-sigma | 95.4% | somewhat convincing |
-      | 3-sigma | 99.7% | very convincing |
-      | 4-sigma | >99.99% | incredibly convincing |
+      | 1-sigma | 68% | weak |
+      | 2-sigma | 95.4% | moderate |
+      | 3-sigma | 99.7% | strong |
+      | 4-sigma | >99.99% | very strong |
 
-      A study of driving speed on a motorway sampled 100 vehicles. The average
-      speed was **64 mph** and the variance was **9 mph²**.
+      A study of driving speed on a motorway measured 100 vehicles. The average
+      speed was **64 mph**. The variance was **9 mph²**.
     note: |
-      Note the units. Variance is in **squared** units, so 9 mph² — and that is
-      exactly what tells you the standard deviation is 3 mph rather than 9. If
-      you ever see a variance quoted in plain mph, treat it as a warning sign
-      and check which quantity is actually meant.
+      Check the units. Variance is measured in **squared** units, so 9 mph².
+      This tells you the standard deviation is 3 mph, not 9. If you see a
+      variance given in plain mph, check which value is meant.
     steps:
       - kind: numeric
         ask: What is the standard deviation?
@@ -559,9 +529,8 @@ questions:
         traps:
           - value: 9
             feedback: |
-              That is the variance. Take its square root — and notice that the
-              units tell you which is which: variance is in mph², standard
-              deviation in mph.
+              This is the variance. Take its square root. The units tell you
+              which is which: variance is in mph², standard deviation in mph.
 
       - kind: table
         ask: Give the half-width of each sigma interval.
@@ -577,7 +546,7 @@ questions:
         verify: "[3, 6, 9, 12]"
         solution:
           working: |
-            With a standard deviation of 3 mph:
+            The standard deviation is 3 mph.
 
             | | Interval |
             |---|---|
@@ -586,12 +555,9 @@ questions:
             | 3-sigma | 64 ± 9 mph |
             | 4-sigma | 64 ± 12 mph |
 
-            The appeal of this shortcut is that it skips the critical-value
-            lookup entirely while still supporting a meaningful comment. Its
-            limitation is that it only works when the inverse normal is
-            appropriate — you cannot use it when you should be reaching for the
-            t-distribution.
+            This method needs no critical value lookup. It works only when the
+            inverse normal is suitable. Do not use it when the t-distribution is
+            required.
           note: |
-            2-sigma is 95.4%, not 95%. The familiar 95% interval is 1.96 sigma.
-            They are close enough to be used loosely in conversation, but if you
-            are quoting a number, quote the right one.
+            2-sigma is 95.4%, not 95%. A 95% interval is 1.96 sigma. The two are
+            close, but quote the correct one.
