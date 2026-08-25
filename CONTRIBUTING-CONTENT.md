@@ -369,6 +369,18 @@ statistics is already demanding. Every word should do work.
    "genuinely", "simply", "just", "actually" almost always delete cleanly.
 7. **Prefer a full stop to a dash.** Long sentences held together by dashes are
    the main thing to avoid.
+8. **British English.** Write `-ise`, not `-ize`: summarise, visualise,
+   categorise. Write colour, behaviour, centre, metre, litre, analyse, maths,
+   grey, lorry. `python tools/check_language.py` enforces this and runs in CI.
+
+**practice or practise?** The noun is **practice**, the verb is **practise**.
+"This is practice material" takes a c. "Practise the statistics" takes an s.
+American English uses `practice` for both, so the s is the British form, not a
+mistake. The same rule gives licence (noun) and license (verb).
+
+Excel function names, CSS keywords and code identifiers keep their American
+spelling: `STANDARDIZE`, `text-align: center`, `behavior: 'smooth'`,
+`math.sqrt`. The checker skips code, so these never trigger it.
 
 **Example**
 

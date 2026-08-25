@@ -28,6 +28,9 @@ jobs:
       - name: Evaluate the workbench formulas
         run: python tools/check_workbench.py
 
+      - name: Check the text is British English
+        run: python tools/check_language.py
+
       # Compares cell contents rather than bytes: an .xlsx is a ZIP carrying
       # timestamps, so two builds of identical content never match byte for byte.
       - name: Check the workbooks are in step with the data

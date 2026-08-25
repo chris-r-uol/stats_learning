@@ -110,7 +110,7 @@ questions:
 
       - kind: choice
         prose: true
-        ask: Vehicle types (car, truck, bus, and so on).
+        ask: Vehicle types (car, lorry, bus, and so on).
         options:
           - value: Nominal
             correct: true

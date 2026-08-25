@@ -150,6 +150,15 @@ names catches `CHI.INV.RT`; this catches a formula pointing at the wrong cell,
 which is the worse failure because the sheet returns a plausible number instead
 of an error.
 
+```bash
+.venv/bin/python tools/check_language.py   # also runs in CI
+```
+
+checks that every word a student reads is British English, across 22,000+ words
+of tutorial YAML, HTML, markdown and user-facing code strings. It skips code, so
+`STANDARDIZE`, `text-align: center` and `math.sqrt` never trip it, and it knows
+that practice is the noun and practise the verb.
+
 And `tests/selfcheck.html` (open it in the browser while serving locally) drives
 the real checking logic over all 120 steps: it confirms the correct answer is
 accepted and that **every trap and distractor returns its own explanation**
