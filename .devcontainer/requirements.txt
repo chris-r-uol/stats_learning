@@ -1,0 +1,9 @@
+# Python packages for the tutorial problems.
+# Kept separate from the repository's own tooling in /requirements.txt.
+numpy>=1.26
+scipy>=1.11
+pandas>=2.0
+matplotlib>=3.8
+openpyxl>=3.1      # read the .xlsx data workbook directly
+jupyterlab>=4.0
+ipykernel>=6.29

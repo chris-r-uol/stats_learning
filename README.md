@@ -7,6 +7,33 @@ specific mistake they made**.
 
 Formative only. No marks, no accounts, no server.
 
+## Working in Python or R
+
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/chris-r-uol/stats_learning)
+
+Students who would rather use Python or R than Excel can open a Codespace and
+start immediately, with no local installation. It provides Python (numpy,
+scipy, pandas, matplotlib, JupyterLab) and R (with `e1071` for skewness and
+`BSDA` for tests from summary statistics), plus the datasets.
+
+```
+notebooks/tutorial-1.ipynb … tutorial-5.ipynb   Python, one per tutorial
+r/tutorial-1.R … tutorial-5.R                   R, one per tutorial
+```
+
+Both sets are **generated from `content/tutorial-*.yml`** by
+`tools/build_starters.py`, so the questions can never drift from the website.
+They contain the questions and load the data; they contain no answers, because
+the checking stays on the site. CI fails if they fall out of step.
+
+Codespaces bills against the account that opens it. Personal accounts include
+free hours each month, and GitHub Education gives students a larger allowance.
+
+**Turn on prebuilds before a teaching session.** Without them the container
+builds on first open, which takes several minutes per student. With them it
+starts in seconds. Settings → Codespaces → Set up prebuild, targeting `main`.
+This is a repository setting, so it cannot be committed here.
+
 **Live site:** enable GitHub Pages on this repository (Settings → Pages →
 Source: GitHub Actions) and it will publish on the next push to `main`.
 
@@ -21,6 +48,9 @@ methodology.html      the three problem-solving methods
 reference.html        Excel/R/Python function index and the tail-direction traps
 
 content/              the questions, as YAML — this is what you edit
+notebooks/            Python starters, generated from content/
+r/                    R starters, generated from content/
+.devcontainer/        the Codespace: Python + R + the datasets
 assets/               css, js, generated SVG figures, vendored libraries
 data/                 datasets as .xlsx and .csv
 workbooks/            the Hypothesis Test Workbench

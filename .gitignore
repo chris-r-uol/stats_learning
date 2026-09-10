@@ -11,3 +11,6 @@ __pycache__/
 
 # The original Word handout stays local — see ERRATA.md for its contents
 *.docx
+
+# Jupyter
+.ipynb_checkpoints/

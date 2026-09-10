@@ -1,0 +1,52 @@
+{
+  "name": "Transport Statistics — Python and R",
+
+  // Ubuntu 22.04: CRAN publishes apt builds of R for it, and its system Python
+  // (3.10) predates PEP 668, so pip install works without extra flags.
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu-22.04",
+
+  "features": {
+    // "os-provided" uses the Python already packaged for Ubuntu. Asking for a
+    // specific version makes the feature compile CPython from source, which
+    // adds several minutes to the build for no benefit here.
+    "ghcr.io/devcontainers/features/python:1": {
+      "version": "os-provided",
+      "installTools": true
+    },
+
+    // vscodeRSupport is deliberately "minimal". "full" adds languageserver and
+    // httpgd, which on Ubuntu only exist as amd64 apt binaries, so the build
+    // fails on an arm64 machine such as an Apple Silicon Mac.
+    "ghcr.io/rocker-org/devcontainer-features/r-apt:0": {
+      "vscodeRSupport": "minimal",
+      "installRMarkdown": false,
+      "installRadian": true,
+      "installJupyterlab": false
+    }
+  },
+
+  "postCreateCommand": "bash .devcontainer/postCreate.sh",
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-toolsai.jupyter",
+        "REditorSupport.r"
+      ],
+      "settings": {
+        "r.bracketedPaste": true,
+        "files.trimTrailingWhitespace": true
+      }
+    }
+  },
+
+  // So a student can preview the tutorial website from inside the Codespace:
+  //   python3 -m http.server 8791
+  "forwardPorts": [8791],
+  "portsAttributes": {
+    "8791": { "label": "Tutorial website", "onAutoForward": "notify" }
+  },
+
+  "remoteUser": "vscode"
+}

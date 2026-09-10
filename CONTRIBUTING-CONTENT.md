@@ -303,6 +303,19 @@ The one exception is `freetext`, which has no derivable answer: give those a
 `solution.working` containing the model answer, or the student has nothing to
 mark themselves against.
 
+## After you edit a question
+
+The Codespace starter files are generated from these YAML files, so regenerate
+them and commit the result:
+
+```bash
+python tools/build_starters.py
+```
+
+This rewrites `notebooks/tutorial-*.ipynb` and `r/tutorial-*.R` with the new
+question text. CI runs `--check` and fails if you forget. The starters never
+contain answers, so you do not have to think about hiding anything.
+
 ## `verify:` — how CI checks your answer
 
 Any step may carry a `verify:` expression. It is evaluated in Python and
