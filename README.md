@@ -31,8 +31,17 @@ free hours each month, and GitHub Education gives students a larger allowance.
 
 **Turn on prebuilds before a teaching session.** Without them the container
 builds on first open, which takes several minutes per student. With them it
-starts in seconds. Settings → Codespaces → Set up prebuild, targeting `main`.
-This is a repository setting, so it cannot be committed here.
+starts in seconds.
+
+Settings → Codespaces → "Set up prebuild" → target `main`, region matching your
+students, then Create. GitHub has no API for prebuild configuration, so this
+cannot be committed here.
+
+The package installation lives in `onCreateCommand`, not `postCreateCommand`.
+Cloud services bake `onCreateCommand` into a prebuild, whereas
+`postCreateCommand` runs "once the dev container has been assigned to a user",
+which would mean every student waiting through the installs even with prebuilds
+on. Keep anything slow in `.devcontainer/onCreate.sh`.
 
 **Live site:** enable GitHub Pages on this repository (Settings → Pages →
 Source: GitHub Actions) and it will publish on the next push to `main`.

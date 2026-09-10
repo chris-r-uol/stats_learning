@@ -25,6 +25,10 @@
     }
   },
 
+  // onCreateCommand is baked into a prebuild; postCreateCommand is not. The
+  // package installation therefore goes in onCreate, so a Codespace started
+  // from a prebuild opens in seconds rather than repeating the installs.
+  "onCreateCommand": "bash .devcontainer/onCreate.sh",
   "postCreateCommand": "bash .devcontainer/postCreate.sh",
 
   "customizations": {
