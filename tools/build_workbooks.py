@@ -18,6 +18,7 @@ Run:  python tools/build_workbooks.py
 from __future__ import annotations
 
 import csv
+import re
 import sys
 from pathlib import Path
 
@@ -29,6 +30,87 @@ ROOT = Path(__file__).resolve().parents[1]
 CSV_DIR = ROOT / "data" / "csv"
 XLSX_DIR = ROOT / "data" / "xlsx"
 WB_DIR = ROOT / "workbooks"
+
+# ---------------------------------------------------------------------------
+# Excel function names
+# ---------------------------------------------------------------------------
+#
+# Excel 2010 renamed the statistical functions -- NORMSINV became NORM.S.INV,
+# TINV became T.INV.2T, and so on. Inside the .xlsx the new names are stored
+# with an "_xlfn." prefix; Excel strips it again when it shows you the formula.
+#
+# openpyxl writes whatever string it is handed, so a formula built as plain
+# "NORM.S.INV(...)" is saved under a name Excel does not know, and every cell
+# using it opens as #NAME?. Clicking into the cell and pressing Enter fixes it,
+# because that makes Excel re-parse the formula from the displayed text -- which
+# is why the fault looks cosmetic and is not.
+#
+# The prefix is not optional and not harmless either way round: a pre-2010
+# function written as "_xlfn.SQRT" fails in exactly the same way. So the names
+# below are prefixed and everything else is left alone.
+XLFN = {
+    "NORM.DIST", "NORM.INV", "NORM.S.DIST", "NORM.S.INV",
+    "T.DIST", "T.DIST.2T", "T.DIST.RT", "T.INV", "T.INV.2T", "T.TEST",
+    "CHISQ.DIST", "CHISQ.DIST.RT", "CHISQ.INV", "CHISQ.INV.RT", "CHISQ.TEST",
+    "F.DIST", "F.DIST.RT", "F.INV", "F.INV.RT", "F.TEST",
+    "Z.TEST", "CONFIDENCE.NORM", "CONFIDENCE.T",
+    "STDEV.S", "STDEV.P", "VAR.S", "VAR.P",
+    "COVARIANCE.P", "COVARIANCE.S",
+    "MODE.SNGL", "MODE.MULT", "RANK.EQ", "RANK.AVG",
+    "PERCENTILE.INC", "PERCENTILE.EXC", "QUARTILE.INC", "QUARTILE.EXC",
+    "BINOM.DIST", "POISSON.DIST", "EXPON.DIST", "SKEW.P",
+}
+
+# A function name immediately followed by '('. The lookbehind keeps the pattern
+# off the tail of a name that has already been qualified: in "_xlfn.NORM.S.INV"
+# the characters before NORM, S and INV are all dots, so none of them matches
+# and qualify() can safely run twice.
+_CALL_RE = re.compile(r"(?<![A-Za-z0-9_.])([A-Z][A-Z0-9.]*)(?=\()")
+
+
+def qualify(formula: str) -> str:
+    """Rewrite a formula so Excel recognises its function names."""
+    def one(m):
+        name = m.group(1)
+        if name in XLFN:
+            return "_xlfn." + name
+        if "." in name:
+            raise ValueError(
+                f"{name!r} is a dotted function name that is not in XLFN. "
+                "Dotted names date from the 2010 rename and Excel stores them "
+                "prefixed, so add it to XLFN -- or Excel will show #NAME?.")
+        return name
+    return _CALL_RE.sub(one, formula)
+
+
+def qualify_workbook(wb) -> int:
+    """Qualify every formula in the workbook. Returns the number rewritten."""
+    n = 0
+    for ws in wb.worksheets:
+        for row in ws.iter_rows():
+            for cell in row:
+                value = cell.value
+                if isinstance(value, str) and value.startswith("="):
+                    qualified = qualify(value)
+                    if qualified != value:
+                        cell.value = qualified
+                        n += 1
+    return n
+
+
+def build(builder) -> "Workbook":
+    """Build a workbook and make it safe to open in Excel.
+
+    Kept separate from the builders so there is one place where this happens,
+    and so --check compares like with like.
+    """
+    wb = builder()
+    qualify_workbook(wb)
+    # Nothing is cached in the file, so Excel has to calculate on open anyway.
+    # Saying so explicitly makes the other spreadsheet applications do it too.
+    wb.calculation.fullCalcOnLoad = True
+    return wb
+
 
 HEAD_FILL = PatternFill("solid", fgColor="1F4E5F")
 HEAD_FONT = Font(color="FFFFFF", bold=True)
@@ -606,7 +688,7 @@ def check() -> int:
         if not path.exists():
             problems.append(f"{path.relative_to(ROOT)} is missing")
             continue
-        fresh = cell_contents(builder())
+        fresh = cell_contents(build(builder))
         committed = cell_contents(load_workbook(path))
         if fresh == committed:
             print(f"  {path.relative_to(ROOT)}: {len(fresh)} cells match")
@@ -637,7 +719,7 @@ def main() -> int:
     print("Building workbooks...")
     for builder, path in TARGETS:
         path.parent.mkdir(parents=True, exist_ok=True)
-        wb = builder()
+        wb = build(builder)
         wb.save(path)
         print(f"  wrote {path.relative_to(ROOT)}  ({len(wb.sheetnames)} sheets)")
     print("Done.")

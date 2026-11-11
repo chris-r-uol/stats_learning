@@ -48,7 +48,10 @@ CELL_RE = re.compile(r"\b([A-Z]{1,2}\d{1,4})\b")
 
 def translate(formula: str) -> str:
     """Turn an Excel formula into an equivalent Python expression."""
-    src = formula.lstrip("=")
+    # Post-2007 function names are stored with an "_xlfn." prefix (see
+    # build_workbooks.XLFN). That prefix is how the name is filed, not part of
+    # the name itself, so strip it before looking the function up.
+    src = formula.lstrip("=").replace("_xlfn.", "")
     placeholders: dict[str, str] = {}
 
     def stash(text: str) -> str:

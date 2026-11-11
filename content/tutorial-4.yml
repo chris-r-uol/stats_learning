@@ -366,6 +366,22 @@ questions:
         tol: {abs: 0.02}
         verify: (10.9 - 12) / (3.5 / math.sqrt(100))
         traps:
+          - value: 31.14
+            tol: {abs: 0.2}
+            feedback: |
+              You have divided the sample mean by the standard error without
+              subtracting μ₀: 10.9 ÷ 0.35. The lecture notes write the z
+              statistic as x̄ ÷ (σ/√n), with no μ₀ in it. That form is right
+              only in the example it appears in, which tests a mean *change*
+              against zero: subtracting μ₀ = 0 changes nothing, so the notes
+              leave it out. Here μ₀ is 12, so the subtraction matters:
+
+              (10.9 − 12) ÷ 0.35 = **−3.14**
+
+              The size of your answer is the warning sign. A z of 31 would put
+              the sample 31 standard errors from the mean, which no real
+              measurement does. Question 5 is the paired test where μ₀ really
+              is zero and the short form applies.
           - value: -0.314
             tol: {abs: 0.02}
             feedback: |

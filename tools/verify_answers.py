@@ -11,9 +11,11 @@ Three layers:
                       evaluated and checked against the `answer:` stored next to
                       it, plus structural schema checks.
 
-Also lints the Excel formulas in the workbooks against a list of real function
-names, because a plausible-looking function that does not exist (CHI.INV.RT)
-is exactly the kind of error this project is meant to remove.
+Also lints the Excel formulas in the workbooks: against a list of real function
+names, because a plausible-looking function that does not exist (CHI.INV.RT) is
+exactly the kind of error this project is meant to remove, and against the
+"_xlfn." storage prefix every post-2007 function name needs, because without it
+Excel opens the cell as #NAME?.
 
 Run:  python tools/verify_answers.py
 Exit code is non-zero if anything fails, so CI can gate on it.
@@ -443,16 +445,24 @@ REAL_EXCEL_FUNCTIONS = {
     "Z.TEST",
 }
 
-FUNC_RE = re.compile(r"\b([A-Z][A-Z0-9.]*)\s*\(")
+# Captures the optional storage prefix separately from the name, so the lint
+# can tell a missing prefix from a spurious one.
+FUNC_RE = re.compile(r"(_xlfn\.)?([A-Z][A-Z0-9.]*)\s*\(")
 
 
 def lint_excel_formulas() -> None:
     section("Excel formula lint")
     try:
         from openpyxl import load_workbook
+
+        from build_workbooks import XLFN
     except ImportError:
         print("  openpyxl not installed, skipping")
         return
+
+    # Everything in XLFN is by definition a real function, so take the union
+    # rather than maintaining the same names in two places and drifting.
+    known = REAL_EXCEL_FUNCTIONS | XLFN
 
     paths = list((ROOT / "workbooks").glob("*.xlsx")) + \
             list((ROOT / "data" / "xlsx").glob("*.xlsx"))
@@ -463,12 +473,21 @@ def lint_excel_formulas() -> None:
             for row in ws.iter_rows():
                 for cell in row:
                     if isinstance(cell.value, str) and cell.value.startswith("="):
-                        for fn in FUNC_RE.findall(cell.value):
+                        where = f"{path.name}!{ws.title}!{cell.coordinate}"
+                        for match in FUNC_RE.finditer(cell.value):
+                            prefixed, fn = bool(match.group(1)), match.group(2)
                             seen.add(fn)
-                            if fn not in REAL_EXCEL_FUNCTIONS:
+                            if fn not in known:
                                 FAILURES.append(
-                                    f"{path.name}!{ws.title}!{cell.coordinate}: "
-                                    f"'{fn}' is not a known Excel function")
+                                    f"{where}: '{fn}' is not a known Excel function")
+                            elif fn in XLFN and not prefixed:
+                                FAILURES.append(
+                                    f"{where}: '{fn}' is stored without its '_xlfn.' "
+                                    "prefix, so Excel opens the cell as #NAME?")
+                            elif fn not in XLFN and prefixed:
+                                FAILURES.append(
+                                    f"{where}: '{fn}' predates the 2010 rename and "
+                                    "must not carry an '_xlfn.' prefix")
     print(f"  {len(seen)} distinct functions used, all recognised"
           if not FAILURES else f"  {len(seen)} distinct functions used")
 
