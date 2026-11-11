@@ -730,12 +730,20 @@ questions:
             feedback: |
               This is `T.INV(0.95, 29)`, the one-tailed value. For a two-tailed
               test use `T.INV.2T(0.05, 29)`, or `T.INV(0.975, 29)`.
-          - value: 2.462
+          - value: 2.364
             tol: {abs: 0.01}
             feedback: |
               You have divided α by 2 and also used the two-tailed function, so
               α has been halved twice. `T.INV.2T` takes the full α. Enter 0.05,
               not 0.025.
+          - value: 2.462
+            tol: {abs: 0.01}
+            feedback: |
+              This is `T.INV(0.99, 29)`, the 1% one-tail value, which is the
+              same as `T.INV.2T(0.02, 29)`. Your degrees of freedom are right
+              but α is not. This test uses α = 0.05, so the two-tailed value
+              is `T.INV.2T(0.05, 29)` or `T.INV(0.975, 29)`. On a printed
+              t-table, read the 0.025 one-tail column, not the 0.01 one.
         solution:
           excel: "=T.INV.2T(0.05,29)"
           r: "qt(0.975, df = 29)"

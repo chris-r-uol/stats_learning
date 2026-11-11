@@ -228,6 +228,7 @@ th, td { border: 1px solid var(--border); padding: .45rem .65rem; text-align: le
 thead th { background: var(--bg-soft); font-weight: 700; }
 tbody tr:nth-child(even) { background: var(--bg-soft); }
 td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+td.tailcell, th.tailcell { white-space: nowrap; }
 
 /* ------------------------------------------------------------ controls */
 

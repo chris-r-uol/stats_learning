@@ -35,7 +35,8 @@
       <p class="lede">
         Excel first, with the R and Python versions beside it. Most wrong
         answers in this course come from the tail directions, so read that
-        section carefully. There is also a
+        section carefully. There is a table of
+        <a href="#pvalues">p-values for every distribution</a> and a
         <a href="#symbols">glossary of symbols</a>.
       </p>
     </div>
@@ -237,7 +238,174 @@
 
     <!-- ========================================================== -->
     <section class="card">
+      <h2 id="pvalues">p-values, distribution by distribution</h2>
+      <p>
+        You have a test statistic and you want its p-value. The function you
+        need depends on the distribution <em>and</em> on the tail direction, so
+        both are set out below. Every row was checked against the worked
+        examples in the tutorials. For χ² and F it is the right tail you want;
+        the left-tail rows are there for completeness.
+      </p>
+      <p class="small muted">
+        A p-value is always an area in the tail, so it is always between 0 and
+        1. If your answer is bigger than 1, or negative, you have used an
+        inverse function such as <code>T.INV</code> by mistake. Those return a
+        statistic, not a probability.
+      </p>
+
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>Distribution</th><th>Tail</th><th>Excel</th><th>R</th><th>Python (scipy.stats)</th></tr></thead>
+          <tbody>
+            <tr><td rowspan="3">Standard normal (z)</td>
+                <td class="tailcell">left, P(Z &lt; z)</td>
+                <td><code>NORM.S.DIST(z, TRUE)</code></td>
+                <td><code>pnorm(z)</code></td>
+                <td><code>norm.cdf(z)</code></td></tr>
+            <tr><td class="tailcell">right, P(Z &gt; z)</td>
+                <td><code>1-NORM.S.DIST(z, TRUE)</code></td>
+                <td><code>pnorm(z, lower.tail=FALSE)</code></td>
+                <td><code>norm.sf(z)</code></td></tr>
+            <tr><td class="tailcell">two-tailed</td>
+                <td><code>2*NORM.S.DIST(-ABS(z), TRUE)</code></td>
+                <td><code>2*pnorm(-abs(z))</code></td>
+                <td><code>2*norm.sf(abs(z))</code></td></tr>
+
+            <tr><td rowspan="3">t</td>
+                <td class="tailcell">left, P(T &lt; t)</td>
+                <td><code>T.DIST(t, df, TRUE)</code></td>
+                <td><code>pt(t, df)</code></td>
+                <td><code>t.cdf(t, df)</code></td></tr>
+            <tr><td class="tailcell">right, P(T &gt; t)</td>
+                <td><code>T.DIST.RT(t, df)</code></td>
+                <td><code>pt(t, df, lower.tail=FALSE)</code></td>
+                <td><code>t.sf(t, df)</code></td></tr>
+            <tr><td class="tailcell">two-tailed</td>
+                <td><code>T.DIST.2T(ABS(t), df)</code></td>
+                <td><code>2*pt(-abs(t), df)</code></td>
+                <td><code>2*t.sf(abs(t), df)</code></td></tr>
+
+            <tr><td rowspan="2">χ²</td>
+                <td class="tailcell">right, P(X &gt; x)</td>
+                <td><code>CHISQ.DIST.RT(x, df)</code></td>
+                <td><code>pchisq(x, df, lower.tail=FALSE)</code></td>
+                <td><code>chi2.sf(x, df)</code></td></tr>
+            <tr><td class="tailcell">left, P(X &lt; x)</td>
+                <td><code>CHISQ.DIST(x, df, TRUE)</code></td>
+                <td><code>pchisq(x, df)</code></td>
+                <td><code>chi2.cdf(x, df)</code></td></tr>
+
+            <tr><td rowspan="2">F</td>
+                <td class="tailcell">right, P(F &gt; f)</td>
+                <td><code>F.DIST.RT(f, df1, df2)</code></td>
+                <td><code>pf(f, df1, df2, lower.tail=FALSE)</code></td>
+                <td><code>f.sf(f, df1, df2)</code></td></tr>
+            <tr><td class="tailcell">left, P(F &lt; f)</td>
+                <td><code>F.DIST(f, df1, df2, TRUE)</code></td>
+                <td><code>pf(f, df1, df2)</code></td>
+                <td><code>f.cdf(f, df1, df2)</code></td></tr>
+
+            <tr><td rowspan="2">Binomial (exact, discrete)</td>
+                <td class="tailcell">P(X ≤ k)</td>
+                <td><code>BINOM.DIST(k, n, p, TRUE)</code></td>
+                <td><code>pbinom(k, n, p)</code></td>
+                <td><code>binom.cdf(k, n, p)</code></td></tr>
+            <tr><td class="tailcell">P(X ≥ k)</td>
+                <td><code>1-BINOM.DIST(k-1, n, p, TRUE)</code></td>
+                <td><code>pbinom(k-1, n, p, lower.tail=FALSE)</code></td>
+                <td><code>binom.sf(k-1, n, p)</code></td></tr>
+
+            <tr><td rowspan="2">Poisson (exact, discrete)</td>
+                <td class="tailcell">P(X ≤ k)</td>
+                <td><code>POISSON.DIST(k, λ, TRUE)</code></td>
+                <td><code>ppois(k, λ)</code></td>
+                <td><code>poisson.cdf(k, λ)</code></td></tr>
+            <tr><td class="tailcell">P(X ≥ k)</td>
+                <td><code>1-POISSON.DIST(k-1, λ, TRUE)</code></td>
+                <td><code>ppois(k-1, λ, lower.tail=FALSE)</code></td>
+                <td><code>poisson.sf(k-1, λ)</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="note warn">
+        <span class="note-title">Four traps in the table above</span>
+        <p><strong>1. <code>T.DIST.2T</code> rejects a negative t.</strong>
+          <code>T.DIST.2T(-9.22, 29)</code> returns <code>#NUM!</code>, not a
+          p-value. Wrap the statistic in <code>ABS</code>. This catches people
+          out on paired tests, where a fall in the measurement gives a negative
+          t. <code>T.DIST.2T(ABS(-9.22), 29)</code> = 4.0 × 10⁻¹⁰, the answer
+          to Tutorial 4 Question 5.</p>
+        <p><strong>2. Only z and t may be doubled.</strong> Doubling one tail
+          works because those two distributions are symmetric. χ² and F are
+          not, so <code>2*CHISQ.DIST.RT(...)</code> is wrong. In this course the
+          χ² and F tests are right-tailed anyway, so you need one tail only.</p>
+        <p><strong>3. The discrete tests need <code>k-1</code>.</strong> For a
+          count, P(X ≥ k) is <code>1-BINOM.DIST(k-1, ...)</code>, not
+          <code>1-BINOM.DIST(k, ...)</code>. Using k leaves out the value k
+          itself. With n = 20, p = 0.3 and k = 10 the correct answer is
+          <strong>0.048</strong> and the common mistake gives
+          <strong>0.017</strong> — one rejects at α = 0.05 and the other does
+          not. The subtraction is only needed for whole-number counts;
+          the continuous rows above do not need it.</p>
+        <p style="margin-bottom:0"><strong>4. Excel has no upper-tail normal
+          function.</strong> There is <code>T.DIST.RT</code> and
+          <code>CHISQ.DIST.RT</code> and <code>F.DIST.RT</code>, but no
+          <code>NORM.S.DIST.RT</code>. Subtract from 1 instead.</p>
+      </div>
+
+      <h3>Straight from the data</h3>
+      <p>
+        If you still have the raw columns, these return the p-value in one step,
+        with no test statistic in between. Use one of these as a second check on
+        a p-value you worked out by hand.
+      </p>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>Test</th><th>Excel</th><th>Returns</th></tr></thead>
+          <tbody>
+            <tr><td>t-test, paired or two-sample</td>
+                <td><code>T.TEST(range1, range2, tails, type)</code></td>
+                <td>p-value. <code>tails</code> is 1 or 2;
+                    <code>type</code> is 1 paired, 2 equal variance,
+                    3 unequal</td></tr>
+            <tr><td>z-test, one sample, σ known</td>
+                <td><code>Z.TEST(range, μ₀, σ)</code></td>
+                <td>the <strong>right-tailed</strong> p-value. For a
+                    left-tailed test use <code>1-Z.TEST(...)</code>; for two
+                    tails, double the smaller tail</td></tr>
+            <tr><td>χ², goodness of fit or independence</td>
+                <td><code>CHISQ.TEST(actual, expected)</code></td>
+                <td>p-value, right-tailed. It works out the degrees of freedom
+                    from the shape of the ranges</td></tr>
+            <tr><td>F-test, two variances</td>
+                <td><code>F.TEST(range1, range2)</code></td>
+                <td><strong>two-tailed</strong> p-value. Halve it for a
+                    one-tailed test</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="note small">
+        <span class="note-title">Reading a p-value Excel shows as 4.03E-10</span>
+        <p style="margin-bottom:0">
+          That is scientific notation for 0.000000000403, or 4.03 × 10⁻¹⁰. The
+          <code>E-10</code> means "move the decimal point ten places left". It
+          is a very small number, so it is far below 0.05 and you reject the
+          null hypothesis. Students sometimes read the 10 as the p-value and
+          conclude the opposite. Widen the column or format the cell as
+          scientific if Excel shows <code>####</code>.
+        </p>
+      </div>
+    </section>
+
+    <!-- ========================================================== -->
+    <section class="card">
       <h2>Hypothesis testing</h2>
+      <p class="small muted">
+        The p rows here are the two this course uses most. For every
+        distribution and both tail directions, see
+        <a href="#pvalues">p-values, distribution by distribution</a>.
+      </p>
       <div class="table-scroll">
         <table>
           <thead><tr><th>Task</th><th>Excel</th><th>R</th><th>Python (scipy.stats)</th></tr></thead>
