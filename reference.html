@@ -129,6 +129,7 @@
             <tr><td>λ</td><td>"lambda"</td><td>The average rate of events in a Poisson distribution, for example 4 calls per minute.</td></tr>
             <tr><td>Σ</td><td>capital "sigma"</td><td>Add up everything that follows. Σx² means square each value, then add the results.</td></tr>
             <tr><td>~</td><td>"is distributed as"</td><td>X ~ Nor(0,1) means X follows a normal distribution with mean 0 and standard deviation 1.</td></tr>
+            <tr><td>S_xx, S_yy, S_xy</td><td>"S x x"</td><td>Sums of squared deviations, used to build a regression. S_xx = Σ(x − x̄)², and S_xy = Σ(x − x̄)(y − ȳ). <code>DEVSQ</code> gives S_xx and S_yy in one step.</td></tr>
             <tr><td>R²</td><td>"R squared"</td><td>The share of the variation that a regression explains, from 0 to 1.</td></tr>
             <tr><td>±</td><td>"plus or minus"</td><td>Half the width of an interval. 25 ± 0.39 means 24.61 to 25.39.</td></tr>
             <tr><td>≠, ≤, ≥</td><td></td><td>Not equal to. At most. At least.</td></tr>
@@ -165,6 +166,7 @@
             <tr><td>Sample sd</td><td><code>STDEV.S(r)</code></td><td><code>sd(x)</code></td><td><code>x.std()</code></td></tr>
             <tr><td>Population sd</td><td><code>STDEV.P(r)</code></td><td><code>—</code></td><td><code>x.std(ddof=0)</code></td></tr>
             <tr><td>Sample variance</td><td><code>VAR.S(r)</code></td><td><code>var(x)</code></td><td><code>x.var()</code></td></tr>
+            <tr><td>Σ(x − x̄)²</td><td><code>DEVSQ(r)</code></td><td><code>sum((x-mean(x))^2)</code></td><td><code>((x-x.mean())**2).sum()</code></td></tr>
             <tr><td>Skewness</td><td><code>SKEW(r)</code></td><td><code>e1071::skewness(x, type=2)</code></td><td><code>x.skew()</code></td></tr>
             <tr><td>Quartiles</td><td><code>QUARTILE.INC(r, n)</code></td><td><code>quantile(x, p)</code></td><td><code>x.quantile(p)</code></td></tr>
           </tbody>
@@ -479,6 +481,9 @@
         <table>
           <thead><tr><th>Quantity</th><th>Excel</th><th>R</th><th>Python</th></tr></thead>
           <tbody>
+            <tr><td>S_xx</td><td><code>DEVSQ(x)</code></td><td><code>sum((x-mean(x))^2)</code></td><td><code>((x-x.mean())**2).sum()</code></td></tr>
+            <tr><td>S_yy</td><td><code>DEVSQ(y)</code></td><td><code>sum((y-mean(y))^2)</code></td><td><code>((y-y.mean())**2).sum()</code></td></tr>
+            <tr><td>S_xy</td><td><code>SUMPRODUCT(x-AVERAGE(x), y-AVERAGE(y))</code></td><td><code>sum((x-mean(x))*(y-mean(y)))</code></td><td><code>((x-x.mean())*(y-y.mean())).sum()</code></td></tr>
             <tr><td>Gradient</td><td><code>SLOPE(y, x)</code></td><td><code>coef(lm(y~x))[2]</code></td><td><code>linregress(x,y).slope</code></td></tr>
             <tr><td>Intercept</td><td><code>INTERCEPT(y, x)</code></td><td><code>coef(lm(y~x))[1]</code></td><td><code>linregress(x,y).intercept</code></td></tr>
             <tr><td>R²</td><td><code>RSQ(y, x)</code></td><td><code>summary(lm(y~x))$r.squared</code></td><td><code>linregress(x,y).rvalue**2</code></td></tr>

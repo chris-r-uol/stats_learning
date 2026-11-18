@@ -672,7 +672,46 @@ questions:
            float((warning*reaction).sum() - 10*warning.mean()*reaction.mean())]
         hints:
           - "S_xx = Σw² − n·w̄². The other two follow the same pattern."
+          - |
+            Excel can do the squaring for you. `DEVSQ(range)` returns
+            Σ(x − x̄)², which is S_xx. So `=DEVSQ(w_range)` gives S_xx and
+            `=DEVSQ(r_range)` gives S_yy. On the **T5 Reaction Distance**
+            sheet those ranges are **B4:B13** and **C4:C13**. There is no
+            matching function for S_xy, because it uses two variables.
           - "w̄ = 193.5 and r̄ = 67.911."
+        solution:
+          working: |
+            The two forms of each quantity give the same answer:
+
+            - S_xx = Σw² − n·w̄² = Σ(w − w̄)²
+            - S_yy = Σr² − n·r̄² = Σ(r − r̄)²
+            - S_xy = Σwr − n·w̄·r̄ = Σ(w − w̄)(r − r̄)
+
+            `DEVSQ` calculates the second form, so you do not need columns of
+            squares:
+
+            1. `=DEVSQ(w_range)` gives S_xx = **107702.5**
+            2. `=DEVSQ(r_range)` gives S_yy = **3442.51**
+            3. S_xy has no function of its own. Subtract the means yourself,
+               then multiply the pairs with `SUMPRODUCT` to get **17685.1**
+
+            Prefer the deviation form when the numbers are large. Σw² − n·w̄²
+            subtracts two big numbers to leave a small one, which loses digits.
+          excel: |
+            =DEVSQ(w_range)
+            =DEVSQ(r_range)
+            =SUMPRODUCT(w_range-AVERAGE(w_range), r_range-AVERAGE(r_range))
+          r: |
+            sum((warning - mean(warning))^2)
+            sum((reaction - mean(reaction))^2)
+            sum((warning - mean(warning)) * (reaction - mean(reaction)))
+          python: |
+            ((w - w.mean())**2).sum()
+            ((r - r.mean())**2).sum()
+            ((w - w.mean()) * (r - r.mean())).sum()
+          note: |
+            `DEVSQ` is also the quickest route to a variance or a standard
+            deviation by hand: s² = `DEVSQ(range)/(COUNT(range)-1)`.
 
       - kind: numeric
         ask: What is the gradient a?
